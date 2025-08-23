@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: UserService
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: ${DB_PASSWORD:admin}
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://cognito-idp.eu-west-3.amazonaws.com/${USER_POOL_ID}/.well-known/jwks.json
+          issuer-uri: https://cognito-idp.eu-west-3.amazonaws.com/${USER_POOL_ID}
+
+server:
+  port: 8081
+  servlet:
+    context-path: /api
