@@ -39,12 +39,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             Jwt jwt = tokenService.getJwt();
             Map<String, Object> claims = tokenService.getClaims(jwt);
-            log.info("claims: {}", claims);
-            User user = tokenService.getUser(jwt);
-            log.info("user: {}", user);
+            String cognitoSub = tokenService.getCognitoSub(jwt);
+            String username = tokenService.getUsername(jwt);
 
-            if (userRepository.findByCognitoSub(user.getCognitoSub()).isEmpty()) {
-                userRepository.save(user);
+            log.info("Bearer: {}", jwt.getTokenValue());
+            log.info("JWT: {}", jwt);
+            log.info("claims: {}", claims);
+            log.info("Cognito Sub: {}", cognitoSub);
+            log.info("Username: {}", username);
+
+            if (userRepository.findByCognitoSub(cognitoSub).isEmpty()) {
+                User user = userRepository.save(new User(username, cognitoSub));
                 log.info("New user saved: {}", user.getUsername());
             }
         } catch (AuthenticationNotFoundException e) {

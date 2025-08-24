@@ -2,7 +2,6 @@ package it.softengunina.userservice.services;
 
 import it.softengunina.userservice.exceptions.AuthenticationNotFoundException;
 import it.softengunina.userservice.exceptions.JwtNotFoundException;
-import it.softengunina.userservice.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,23 +13,6 @@ import java.util.Map;
 @Service
 @Slf4j
 public class TokenService {
-
-    public Authentication getAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            throw new AuthenticationNotFoundException("No Authentication found in SecurityContext.");
-        }
-        return authentication;
-    }
-
-    public Jwt getJwt(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            return jwt;
-        } else {
-            throw new JwtNotFoundException("Authentication object is not an instance of Jwt.");
-        }
-    }
-
     public Jwt getJwt() {
         Authentication authentication = getAuthentication();
         return getJwt(authentication);
@@ -53,30 +35,23 @@ public class TokenService {
         return jwt.getClaimAsString("username");
     }
 
-    public String getUsername() {
-        Jwt jwt = getJwt();
-        return getUsername(jwt);
-    }
-
     public Map<String, Object> getClaims(Jwt jwt) {
         return jwt.getClaims();
     }
 
-    public Map<String, Object> getClaims() {
-        Jwt jwt = getJwt();
-        return jwt.getClaims();
+    private Authentication getAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new AuthenticationNotFoundException("No Authentication found in SecurityContext.");
+        }
+        return authentication;
     }
 
-    public User getUser(Jwt jwt) {
-        String username = getUsername(jwt);
-        String cognitoSub = getCognitoSub(jwt);
-        log.info("Username: {}", username);
-        log.info("Cognito Sub: {}", cognitoSub);
-        return new User(username, cognitoSub);
-    }
-
-    public User getUser() {
-        Jwt jwt = getJwt();
-        return getUser(jwt);
+    private Jwt getJwt(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            return jwt;
+        } else {
+            throw new JwtNotFoundException("Authentication object is not an instance of Jwt.");
+        }
     }
 }

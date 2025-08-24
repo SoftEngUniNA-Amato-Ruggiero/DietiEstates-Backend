@@ -1,6 +1,6 @@
 package it.softengunina.userservice.controller;
 
-import it.softengunina.userservice.dto.AgencyAndManagerDTO;
+import it.softengunina.userservice.dto.AgencyManagerRoleDTO;
 import it.softengunina.userservice.dto.RealEstateAgencyDTO;
 import it.softengunina.userservice.model.RealEstateAgency;
 import it.softengunina.userservice.model.RealEstateManager;
@@ -12,7 +12,6 @@ import it.softengunina.userservice.services.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +49,7 @@ public class AgencyController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public AgencyAndManagerDTO createAgency(@RequestBody RealEstateAgencyDTO req) {
+    public AgencyManagerRoleDTO createAgency(@RequestBody RealEstateAgencyDTO req) {
         String cognitoSub = tokenService.getCognitoSub();
         User user = userRepository.findByCognitoSub(cognitoSub)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
@@ -60,7 +59,7 @@ public class AgencyController {
 
         try {
             RealEstateManager manager = promotionService.promoteUserToManager(user, agency);
-            return new AgencyAndManagerDTO(agency, manager);
+            return new AgencyManagerRoleDTO(agency, manager, manager.getRole());
 
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Manager not created");

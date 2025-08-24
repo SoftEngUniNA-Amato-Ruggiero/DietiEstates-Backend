@@ -45,9 +45,11 @@ class UserControllerTest {
         user.setId(1L);
 
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         Mockito.when(userRepository.findByUsername("wrongUsername")).thenReturn(Optional.empty());
+        Mockito.when(userRepository.findByCognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
         Mockito.when(userRepository.findById(2L)).thenReturn(Optional.empty());
     }
 
@@ -68,5 +70,17 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.cognitoSub").value(user.getCognitoSub()));
+    }
+
+    @Test
+    void getRole() throws Exception {
+        Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
+
+        mockMvc.perform(get("/users/role"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user.id").value(user.getId()))
+                .andExpect(jsonPath("$.user.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.user.cognitoSub").value(user.getCognitoSub()))
+                .andExpect(jsonPath("$.role").value(user.getRole()));
     }
 }

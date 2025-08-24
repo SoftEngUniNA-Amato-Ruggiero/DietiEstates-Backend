@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class AgencyAndManagerDTO {
+public class AgencyManagerRoleDTO {
     @NotNull
     @Valid
     private RealEstateAgency agency;
@@ -19,4 +19,7 @@ public class AgencyAndManagerDTO {
     @NotNull
     @Valid
     private RealEstateManager manager;
+
+    @NotNull
+    private String role;
 }
