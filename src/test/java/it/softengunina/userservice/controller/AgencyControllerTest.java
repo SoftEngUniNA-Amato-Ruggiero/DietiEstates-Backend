@@ -1,13 +1,13 @@
 package it.softengunina.userservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.softengunina.userservice.dto.RealEstateAgencyDTO;
 import it.softengunina.userservice.model.RealEstateAgency;
-import it.softengunina.userservice.model.RealEstateAgent;
 import it.softengunina.userservice.model.RealEstateManager;
 import it.softengunina.userservice.model.User;
 import it.softengunina.userservice.repository.RealEstateAgencyRepository;
-import it.softengunina.userservice.repository.RealEstateAgentRepository;
-import it.softengunina.userservice.repository.RealEstateManagerRepository;
 import it.softengunina.userservice.repository.UserRepository;
+import it.softengunina.userservice.services.PromotionService;
 import it.softengunina.userservice.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,13 +19,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,16 +43,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AgencyControllerTest {
     @Autowired
     MockMvc mockMvc;
+
     @MockitoBean
     RealEstateAgencyRepository agencyRepository;
-    @MockitoBean
-    RealEstateManagerRepository managerRepository;
-    @MockitoBean
-    RealEstateAgentRepository<RealEstateAgent> agentRepository;
     @MockitoBean
     UserRepository<User> userRepository;
     @MockitoBean
     TokenService tokenService;
+    @MockitoBean
+    PromotionService promotionService;
 
     RealEstateAgency agency;
     RealEstateManager manager;
@@ -69,6 +71,24 @@ class AgencyControllerTest {
 
         Mockito.when(agencyRepository.findById(agency.getId())).thenReturn(Optional.of(agency));
         Mockito.when(agencyRepository.findById(9L)).thenReturn(Optional.empty());
+
+        Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByCognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
+        Mockito.when(userRepository.findByCognitoSub("wrongSub")).thenReturn(Optional.empty());
+
+        Mockito.doNothing()
+                .when(promotionService)
+                .verifyUserIsNotAnAgent(user);
+
+        Mockito.doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent"))
+                .when(promotionService)
+                .verifyUserIsNotAnAgent(manager);
+
+        Mockito.when(agencyRepository.saveAndFlush(Mockito.any(RealEstateAgency.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Mockito.when(promotionService.promoteUserToManager(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
+                .thenAnswer(invocation -> new RealEstateManager(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
     }
 
     @Test
@@ -81,7 +101,7 @@ class AgencyControllerTest {
 
     @Test
     void getAgencyById() throws Exception {
-        mockMvc.perform(get("/agencies/1"))
+        mockMvc.perform(get("/agencies/" + agency.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(agency.getName()))
                 .andExpect(jsonPath("$.iban").value(agency.getIban()));
@@ -89,7 +109,19 @@ class AgencyControllerTest {
 
     @Test
     void getAgencyById_NotFound() throws Exception {
-        mockMvc.perform(get("/agencies/2"))
+        mockMvc.perform(get("/agencies/" + 2L))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createAgency() throws Exception {
+        RealEstateAgencyDTO req = new RealEstateAgencyDTO("requestIban", "requestAgency");
+        Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(post("/agencies")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isCreated());
     }
 }

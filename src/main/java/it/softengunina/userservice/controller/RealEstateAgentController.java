@@ -4,9 +4,9 @@ import it.softengunina.userservice.dto.UserDTO;
 import it.softengunina.userservice.model.RealEstateAgent;
 import it.softengunina.userservice.model.RealEstateManager;
 import it.softengunina.userservice.model.User;
-import it.softengunina.userservice.repository.RealEstateAgentRepository;
 import it.softengunina.userservice.repository.RealEstateManagerRepository;
 import it.softengunina.userservice.repository.UserRepository;
+import it.softengunina.userservice.services.PromotionService;
 import it.softengunina.userservice.services.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,19 +18,18 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/agents")
 public class RealEstateAgentController {
-    UserRepository<User> userRepository;
-    RealEstateAgentRepository<RealEstateAgent> agentRepository;
-    RealEstateManagerRepository managerRepository;
-    TokenService tokenService;
+    private final UserRepository<User> userRepository;
+    private final RealEstateManagerRepository managerRepository;
+    private final TokenService tokenService;
+    private final PromotionService promotionService;
 
     RealEstateAgentController(UserRepository<User> userRepository,
-                              RealEstateAgentRepository<RealEstateAgent> agentRepository,
                               RealEstateManagerRepository managerRepository,
-                              TokenService tokenService) {
+                              TokenService tokenService, PromotionService promotionService) {
         this.userRepository = userRepository;
-        this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
         this.tokenService = tokenService;
+        this.promotionService = promotionService;
     }
 
     @PostMapping
@@ -40,17 +39,15 @@ public class RealEstateAgentController {
         RealEstateManager manager = managerRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Only managers can create agents"));
 
-        if (agentRepository.findByUsername(req.getUsername()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent");
-        }
-
         User user = userRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        agentRepository.insertAgent(user.getId(), manager.getAgency().getId());
-        agentRepository.flush();
+        promotionService.verifyUserIsNotAnAgent(user);
 
-        return agentRepository.findById(user.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Agent not found after creation"));
+        try {
+            return promotionService.promoteUserToAgent(user, manager.getAgency());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
     }
 }
