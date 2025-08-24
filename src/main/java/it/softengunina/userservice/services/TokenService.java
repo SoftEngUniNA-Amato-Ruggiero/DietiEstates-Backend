@@ -67,8 +67,16 @@ public class TokenService {
         return jwt.getClaims();
     }
 
+    public User getUser(Jwt jwt) {
+        String username = getUsername(jwt);
+        String cognitoSub = getCognitoSub(jwt);
+        log.info("Username: {}", username);
+        log.info("Cognito Sub: {}", cognitoSub);
+        return new User(username, cognitoSub);
+    }
+
     public User getUser() {
         Jwt jwt = getJwt();
-        return new User(getUsername(jwt), getCognitoSub(jwt));
+        return getUser(jwt);
     }
 }

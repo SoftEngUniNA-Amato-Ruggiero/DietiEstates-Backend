@@ -40,11 +40,11 @@ public class RealEstateAgentController {
         RealEstateManager manager = managerRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Only managers can create agents"));
 
-        if (agentRepository.findByEmail(req.getEmail()).isPresent()) {
+        if (agentRepository.findByUsername(req.getUsername()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent");
         }
 
-        User user = userRepository.findByEmail(req.getEmail())
+        User user = userRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         agentRepository.insertAgent(user.getId(), manager.getAgency().getId());

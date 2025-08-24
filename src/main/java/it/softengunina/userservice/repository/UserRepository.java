@@ -9,14 +9,14 @@ import java.util.Optional;
 
 @Primary
 public interface UserRepository<T extends User> extends JpaRepository<T,Long> {
-    @Query("SELECT u FROM #{#entityName} u WHERE u.email = :email")
-    Optional<T> findByEmail(String email);
+    @Query("SELECT u FROM #{#entityName} u WHERE u.username = :username")
+    Optional<T> findByUsername(String username);
 
     @Query("SELECT u FROM #{#entityName} u WHERE u.cognitoSub = :cognitoSub")
     Optional<T> findByCognitoSub(String cognitoSub);
 
-    @Query("SELECT COUNT(u) > 0 FROM #{#entityName} u WHERE u.email = :email")
-    boolean existsByEmail(String email);
+    @Query("SELECT COUNT(u) > 0 FROM #{#entityName} u WHERE u.username = :username")
+    boolean existsByUsername(String username);
 
     @Query("SELECT COUNT(u) > 0 FROM #{#entityName} u WHERE u.cognitoSub = :cognitoSub")
     boolean existsByCognitoSub(String cognitoSub);

@@ -19,11 +19,11 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Email
+//    @Email
     @Column(unique = true, nullable = false)
     @Getter
     @Setter
-    private String email;
+    private String username;
 
     @NotBlank
     @Column(unique = true, nullable = false)
@@ -31,8 +31,8 @@ public class User {
     @Setter
     private String cognitoSub;
 
-    public User(@NonNull String email, @NonNull String cognitoSub) {
-        this.email = email;
+    public User(@NonNull String username, @NonNull String cognitoSub) {
+        this.username = username;
         this.cognitoSub = cognitoSub;
     }
 }

@@ -19,8 +19,8 @@ public class RealEstateAgent extends User {
     @Setter
     protected RealEstateAgency agency;
 
-    public RealEstateAgent(@NonNull String email, @NonNull String cognitoSub, @NonNull RealEstateAgency agency) {
-        super(email, cognitoSub);
+    public RealEstateAgent(@NonNull String username, @NonNull String cognitoSub, @NonNull RealEstateAgency agency) {
+        super(username, cognitoSub);
         this.agency = agency;
     }
 }

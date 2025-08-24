@@ -9,7 +9,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class RealEstateManager extends RealEstateAgent {
-    public RealEstateManager(@NonNull String email, @NonNull String cognitoSub, @NonNull RealEstateAgency agency) {
-        super(email, cognitoSub, agency);
+    public RealEstateManager(@NonNull String username, @NonNull String cognitoSub, @NonNull RealEstateAgency agency) {
+        super(username, cognitoSub, agency);
     }
 }

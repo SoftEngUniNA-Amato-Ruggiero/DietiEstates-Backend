@@ -25,8 +25,8 @@ class UserRepositoryTest {
     }
 
     @Test
-    void findByEmail() {
-        User user = repository.findByEmail("email@test.com").orElse(null);
+    void findByUsername() {
+        User user = repository.findByUsername("email@test.com").orElse(null);
         assertAll(
                 () -> assertNotNull(user),
                 () -> assertEquals(testUser, user)
@@ -43,8 +43,8 @@ class UserRepositoryTest {
     }
 
     @Test
-    void existsByEmail() {
-        assertTrue(repository.existsByEmail("email@test.com"));
+    void existsByUsername() {
+        assertTrue(repository.existsByUsername("email@test.com"));
     }
 
     @Test
