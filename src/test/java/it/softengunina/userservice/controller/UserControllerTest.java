@@ -2,6 +2,7 @@ package it.softengunina.userservice.controller;
 
 import it.softengunina.userservice.model.User;
 import it.softengunina.userservice.repository.UserRepository;
+import it.softengunina.userservice.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,6 +34,8 @@ class UserControllerTest {
 
     @MockitoBean
     UserRepository<User> userRepository;
+    @MockitoBean
+    TokenService tokenService;
 
     User user;
 
