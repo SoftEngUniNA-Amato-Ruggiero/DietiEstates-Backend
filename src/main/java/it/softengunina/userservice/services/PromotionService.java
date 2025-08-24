@@ -7,10 +7,8 @@ import it.softengunina.userservice.model.User;
 import it.softengunina.userservice.repository.RealEstateAgentRepository;
 import it.softengunina.userservice.repository.RealEstateManagerRepository;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PromotionService {
@@ -24,12 +22,6 @@ public class PromotionService {
         this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
         this.self = self;
-    }
-
-    public void verifyUserIsNotAnAgent(User user) throws ResponseStatusException {
-        if (agentRepository.findById(user.getId()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent");
-        }
     }
 
     @Transactional

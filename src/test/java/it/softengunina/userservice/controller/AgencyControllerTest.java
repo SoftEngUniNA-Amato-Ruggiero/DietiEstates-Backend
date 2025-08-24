@@ -19,10 +19,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -75,14 +73,6 @@ class AgencyControllerTest {
         Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByCognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
         Mockito.when(userRepository.findByCognitoSub("wrongSub")).thenReturn(Optional.empty());
-
-        Mockito.doNothing()
-                .when(promotionService)
-                .verifyUserIsNotAnAgent(user);
-
-        Mockito.doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent"))
-                .when(promotionService)
-                .verifyUserIsNotAnAgent(manager);
 
         Mockito.when(agencyRepository.saveAndFlush(Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));

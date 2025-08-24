@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,16 +38,6 @@ class PromotionServiceTest {
         agency = agencyRepository.saveAndFlush(new RealEstateAgency("agencyIban", "agencyName"));
         agent = agentRepository.saveAndFlush(new RealEstateAgent("agentUsername", "agentSub", agency));
         user = userRepository.saveAndFlush(new User("userUsername", "userSub"));
-    }
-
-    @Test
-    void verifyUserIsNotAnAgent_whenAgent() {
-        assertThrows(ResponseStatusException.class, () -> promotionService.verifyUserIsNotAnAgent(agent));
-    }
-
-    @Test
-    void verifyUserIsNotAnAgent_whenUser() {
-        assertDoesNotThrow(() -> promotionService.verifyUserIsNotAnAgent(user));
     }
 
     @Test

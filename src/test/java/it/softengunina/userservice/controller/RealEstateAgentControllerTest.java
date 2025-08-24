@@ -18,10 +18,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -68,14 +66,6 @@ class RealEstateAgentControllerTest {
 
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByUsername("wrongUsername")).thenReturn(Optional.empty());
-
-        Mockito.doNothing()
-                .when(promotionService)
-                .verifyUserIsNotAnAgent(user);
-
-        Mockito.doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent"))
-                .when(promotionService)
-                .verifyUserIsNotAnAgent(manager);
 
         Mockito.when(promotionService.promoteUserToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
