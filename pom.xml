@@ -11,8 +11,8 @@
     <groupId>it.softengunina</groupId>
     <artifactId>DietiEstates-Backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>UserService</name>
-    <description>User service</description>
+    <name>DietiEstates-Backend</name>
+    <description>DietiEstates Backend</description>
     <url/>
     <licenses>
         <license/>
