@@ -1,5 +1,6 @@
 package it.softengunina.userservice.dto;
 
+import it.softengunina.userservice.model.User;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.Setter;
 public class UserAndRoleDTO {
     @NotNull
     @Valid
-    private UserDTO user;
+    private User user;
 
     @NotNull
     private String role;

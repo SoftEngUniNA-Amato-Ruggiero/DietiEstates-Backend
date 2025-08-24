@@ -33,4 +33,8 @@ public class User {
         this.username = username;
         this.cognitoSub = cognitoSub;
     }
+
+    public String getRole() {
+        return this.getClass().getSimpleName();
+    }
 }

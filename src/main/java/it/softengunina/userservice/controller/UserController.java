@@ -1,7 +1,9 @@
 package it.softengunina.userservice.controller;
 
+import it.softengunina.userservice.dto.UserAndRoleDTO;
 import it.softengunina.userservice.model.User;
 import it.softengunina.userservice.repository.UserRepository;
+import it.softengunina.userservice.services.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +14,11 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/users")
 public class UserController {
     private final UserRepository<User> userRepository;
+    private final TokenService tokenService;
 
-    UserController(UserRepository<User> userRepository) {
+    UserController(UserRepository<User> userRepository, TokenService tokenService) {
         this.userRepository = userRepository;
+        this.tokenService = tokenService;
     }
 
     @GetMapping
@@ -27,5 +31,12 @@ public class UserController {
     public User getUserById(@PathVariable Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/role")
+    public UserAndRoleDTO getRole() {
+        User user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return new UserAndRoleDTO(user, user.getRole());
     }
 }
