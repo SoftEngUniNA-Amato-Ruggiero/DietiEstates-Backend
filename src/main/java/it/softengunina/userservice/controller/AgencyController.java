@@ -1,5 +1,6 @@
 package it.softengunina.userservice.controller;
 
+import it.softengunina.userservice.dto.AgencyAndManagerDTO;
 import it.softengunina.userservice.dto.RealEstateAgencyDTO;
 import it.softengunina.userservice.model.RealEstateAgency;
 import it.softengunina.userservice.model.RealEstateManager;
@@ -49,7 +50,7 @@ public class AgencyController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public Pair<RealEstateAgency, RealEstateManager> createAgency(@RequestBody RealEstateAgencyDTO req) {
+    public AgencyAndManagerDTO createAgency(@RequestBody RealEstateAgencyDTO req) {
         String cognitoSub = tokenService.getCognitoSub();
         User user = userRepository.findByCognitoSub(cognitoSub)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
@@ -59,7 +60,7 @@ public class AgencyController {
 
         try {
             RealEstateManager manager = promotionService.promoteUserToManager(user, agency);
-            return Pair.of(agency, manager);
+            return new AgencyAndManagerDTO(agency, manager);
 
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Manager not created");

@@ -1,6 +1,7 @@
 package it.softengunina.userservice.dto;
 
 import it.softengunina.userservice.model.RealEstateAgency;
+import it.softengunina.userservice.model.RealEstateManager;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,5 +18,5 @@ public class AgencyAndManagerDTO {
 
     @NotNull
     @Valid
-    private RealEstateAgency manager;
+    private RealEstateManager manager;
 }
