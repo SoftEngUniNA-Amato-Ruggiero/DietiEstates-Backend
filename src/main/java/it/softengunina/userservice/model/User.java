@@ -1,7 +1,6 @@
 package it.softengunina.userservice.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -19,7 +18,6 @@ public class User {
     private Long id;
 
     @NotBlank
-//    @Email
     @Column(unique = true, nullable = false)
     @Getter
     @Setter

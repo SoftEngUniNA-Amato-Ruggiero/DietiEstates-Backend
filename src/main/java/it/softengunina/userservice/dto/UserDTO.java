@@ -8,6 +8,5 @@ import lombok.*;
 @Setter
 public class UserDTO {
     @NotBlank
-//    @Email
     private String username;
 }
