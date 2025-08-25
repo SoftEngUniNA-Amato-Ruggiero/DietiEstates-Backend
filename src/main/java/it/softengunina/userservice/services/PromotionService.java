@@ -25,7 +25,38 @@ public class PromotionService {
     }
 
     @Transactional
-    public RealEstateAgent promoteUserToAgent(User user, RealEstateAgency agency) {
+    public RealEstateAgent promoteToAgent(User user, RealEstateAgency agency) {
+        if (user instanceof RealEstateAgent) {
+            throw new IllegalArgumentException("User is already an agent");
+        }
+        return self.promoteUserToAgent(user, agency);
+    }
+
+    @Transactional
+    public RealEstateManager promoteToManager(User user, RealEstateAgency agency) {
+        switch (user) {
+            case RealEstateManager u -> {
+                if (u.getAgency().equals(agency)) {
+                    throw new IllegalArgumentException("User is already a manager of this agency");
+                } else {
+                    throw new IllegalArgumentException("User belongs to another agency");
+                }
+            }
+            case RealEstateAgent u -> {
+                if (u.getAgency().equals(agency)) {
+                    return self.promoteAgentToManager(u);
+                } else {
+                    throw new IllegalArgumentException("User belongs to another agency");
+                }
+            }
+            default -> {
+                return self.promoteUserToManager(user, agency);
+            }
+        }
+    }
+
+    @Transactional
+    RealEstateAgent promoteUserToAgent(User user, RealEstateAgency agency) {
         agentRepository.insertAgent(user.getId(), agency.getId());
         agentRepository.flush();
         return agentRepository.findById(user.getId())
@@ -33,7 +64,7 @@ public class PromotionService {
     }
 
     @Transactional
-    public RealEstateManager promoteAgentToManager(RealEstateAgent agent) {
+    RealEstateManager promoteAgentToManager(RealEstateAgent agent) {
         managerRepository.insertManager(agent.getId());
         managerRepository.flush();
         return managerRepository.findById(agent.getId())
@@ -41,7 +72,7 @@ public class PromotionService {
     }
 
     @Transactional
-    public RealEstateManager promoteUserToManager(User user, RealEstateAgency agency) {
+    RealEstateManager promoteUserToManager(User user, RealEstateAgency agency) {
         RealEstateAgent agent = self.promoteUserToAgent(user, agency);
         return self.promoteAgentToManager(agent);
     }

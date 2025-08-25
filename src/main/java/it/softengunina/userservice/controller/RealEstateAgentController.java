@@ -42,12 +42,10 @@ public class RealEstateAgentController {
         User user = userRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        if (user instanceof RealEstateAgent) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent");
-        }
-
         try {
-            return promotionService.promoteUserToAgent(user, manager.getAgency());
+            return promotionService.promoteToAgent(user, manager.getAgency());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

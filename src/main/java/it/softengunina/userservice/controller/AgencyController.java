@@ -3,7 +3,6 @@ package it.softengunina.userservice.controller;
 import it.softengunina.userservice.dto.AgencyManagerRoleDTO;
 import it.softengunina.userservice.dto.RealEstateAgencyDTO;
 import it.softengunina.userservice.model.RealEstateAgency;
-import it.softengunina.userservice.model.RealEstateAgent;
 import it.softengunina.userservice.model.RealEstateManager;
 import it.softengunina.userservice.model.User;
 import it.softengunina.userservice.repository.RealEstateAgencyRepository;
@@ -51,22 +50,17 @@ public class AgencyController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public AgencyManagerRoleDTO createAgency(@RequestBody RealEstateAgencyDTO req) {
-        String cognitoSub = tokenService.getCognitoSub();
-        User user = userRepository.findByCognitoSub(cognitoSub)
+        User user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
 
-        if (user instanceof RealEstateAgent) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent");
-        }
-
-        RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
-
         try {
-            RealEstateManager manager = promotionService.promoteUserToManager(user, agency);
+            RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
+            RealEstateManager manager = promotionService.promoteToManager(user, agency);
             return new AgencyManagerRoleDTO(agency, manager, manager.getRole());
-
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Manager not created");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Agency or manager not created");
         }
     }
 }

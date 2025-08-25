@@ -67,7 +67,7 @@ class RealEstateAgentControllerTest {
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByUsername("wrongUsername")).thenReturn(Optional.empty());
 
-        Mockito.when(promotionService.promoteUserToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
+        Mockito.when(promotionService.promoteToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
     }
 

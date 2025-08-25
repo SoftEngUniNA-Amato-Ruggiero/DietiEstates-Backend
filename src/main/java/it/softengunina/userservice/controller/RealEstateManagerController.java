@@ -1,7 +1,6 @@
 package it.softengunina.userservice.controller;
 
 import it.softengunina.userservice.dto.UserDTO;
-import it.softengunina.userservice.model.RealEstateAgent;
 import it.softengunina.userservice.model.RealEstateManager;
 import it.softengunina.userservice.model.User;
 import it.softengunina.userservice.repository.RealEstateManagerRepository;
@@ -43,24 +42,10 @@ public class RealEstateManagerController {
         User user = userRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        if (user instanceof RealEstateManager u) {
-            if (u.getAgency().equals(manager.getAgency())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already a manager of your agency");
-            } else {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "User belongs to another agency");
-            }
-        }
-
-        if (user instanceof RealEstateAgent u) {
-            if (u.getAgency().equals(manager.getAgency())) {
-                return promotionService.promoteAgentToManager(u);
-            } else {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "User belongs to another agency");
-            }
-        }
-
         try {
-            return promotionService.promoteUserToManager(user, manager.getAgency());
+            return promotionService.promoteToManager(user, manager.getAgency());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

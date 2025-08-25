@@ -77,8 +77,11 @@ class AgencyControllerTest {
         Mockito.when(agencyRepository.saveAndFlush(Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Mockito.when(promotionService.promoteUserToManager(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
+        Mockito.when(promotionService.promoteToManager(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> new RealEstateManager(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
+
+        Mockito.when(promotionService.promoteToManager(Mockito.eq(manager), Mockito.any(RealEstateAgency.class)))
+                .thenThrow(new IllegalArgumentException("User is already a manager of this agency"));
     }
 
     @Test
