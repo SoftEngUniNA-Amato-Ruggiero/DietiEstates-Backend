@@ -66,14 +66,15 @@ class RealEstateAgentControllerTest {
 
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByUsername("wrongUsername")).thenReturn(Optional.empty());
-
-        Mockito.when(promotionService.promoteToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
-                .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
     }
 
     @Test
     void createAgent() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
+        Mockito.when(promotionService.promoteToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
+                .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
+
+
         UserDTO req = new UserDTO(user.getUsername());
         ObjectMapper objectMapper = new ObjectMapper();
 
