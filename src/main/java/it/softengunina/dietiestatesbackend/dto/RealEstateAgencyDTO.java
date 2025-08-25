@@ -9,6 +9,8 @@ import lombok.*;
 @Getter
 @Setter
 public class RealEstateAgencyDTO {
+    private Long id;
+
     @NotBlank
     private String iban;
 
@@ -16,6 +18,7 @@ public class RealEstateAgencyDTO {
     private String name;
 
     public RealEstateAgencyDTO (RealEstateAgency agency) {
+        this.id = agency.getId();
         this.iban = agency.getIban();
         this.name = agency.getName();
     }
