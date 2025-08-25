@@ -31,8 +31,8 @@ public class TokenService {
         return getCognitoSub(jwt);
     }
 
-    public String getUsername(Jwt jwt) {
-        return jwt.getClaimAsString("username");
+    public String getEmail(Jwt jwt) {
+        return jwt.getClaimAsString("email");
     }
 
     public Map<String, Object> getClaims(Jwt jwt) {

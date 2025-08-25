@@ -40,7 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             Jwt jwt = tokenService.getJwt();
             Map<String, Object> claims = tokenService.getClaims(jwt);
             String cognitoSub = tokenService.getCognitoSub(jwt);
-            String username = tokenService.getUsername(jwt);
+            String username = tokenService.getEmail(jwt);
 
             log.info("Bearer: {}", jwt.getTokenValue());
             log.info("JWT: {}", jwt);
