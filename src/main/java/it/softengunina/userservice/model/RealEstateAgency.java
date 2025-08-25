@@ -1,9 +1,11 @@
 package it.softengunina.userservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "real_estate_agencies")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
