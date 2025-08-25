@@ -6,19 +6,34 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class UserAgencyRoleDTO {
     @NotNull
     @Valid
-    private User user;
+    private UserDTO user;
 
     @Valid
-    private RealEstateAgency agency;
+    private RealEstateAgencyDTO agency;
 
     @NotNull
     private String role;
+
+    public UserAgencyRoleDTO(User user) {
+        this.user = new UserDTO(user);
+
+        RealEstateAgency userAgency = user.getAgency();
+        if (userAgency != null) {
+            this.agency = new RealEstateAgencyDTO(userAgency);
+        } else {
+            this.agency = null;
+        }
+
+        this.role = user.getRole();
+    }
 }

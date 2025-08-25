@@ -70,7 +70,7 @@ class RealEstateManagerControllerTest {
         Mockito.when(promotionService.promoteToManager(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> new RealEstateManager(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
 
-        UserDTO req = new UserDTO(user.getUsername());
+        UserDTO req = new UserDTO(user);
         ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc.perform(post("/managers")

@@ -37,6 +37,6 @@ public class UserController {
     public UserAgencyRoleDTO getRole() {
         User user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return new UserAgencyRoleDTO(user, user.getAgency(), user.getRole());
+        return new UserAgencyRoleDTO(user);
     }
 }

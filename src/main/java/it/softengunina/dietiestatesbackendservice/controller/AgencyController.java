@@ -42,8 +42,9 @@ public class AgencyController {
     }
 
     @GetMapping
-    public Page<RealEstateAgency> getAgencies(Pageable pageable) {
-        return agencyRepository.findAll(pageable);
+    public Page<RealEstateAgencyDTO> getAgencies(Pageable pageable) {
+        Page<RealEstateAgency> agencies = agencyRepository.findAll(pageable);
+        return agencies.map(agency -> new RealEstateAgencyDTO(agency.getIban(), agency.getName()));
     }
 
     @GetMapping("/{id}")
@@ -57,7 +58,7 @@ public class AgencyController {
         RealEstateAgency agency = agencyRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agency not found"));
         Page<RealEstateAgent> agents = agentRepository.findByAgency(agency, pageable);
-        return agents.map(agent -> new UserDTO(agent.getUsername()));
+        return agents.map(UserDTO::new);
     }
 
     @PostMapping
@@ -70,7 +71,7 @@ public class AgencyController {
         try {
             RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
             RealEstateManager manager = promotionService.promoteToManager(user, agency);
-            return new UserAgencyRoleDTO(manager, agency, manager.getRole());
+            return new UserAgencyRoleDTO(manager);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (Exception e) {

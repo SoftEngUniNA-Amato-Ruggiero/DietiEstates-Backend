@@ -77,7 +77,7 @@ class UserControllerTest {
         mockMvc.perform(get("/users/role"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.user.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.user.cognitoSub").value(user.getCognitoSub()))
+                .andExpect(jsonPath("$.agency").isEmpty())
                 .andExpect(jsonPath("$.role").value(user.getRole()));
     }
 }
