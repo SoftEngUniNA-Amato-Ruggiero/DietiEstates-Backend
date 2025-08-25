@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Component
 @Slf4j
@@ -37,22 +36,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         try {
             log.info("Processing request: {} {}", request.getMethod(), request.getRequestURI());
 
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader != null) {
-                log.info("Authorization = {}", authHeader);
-            } else {
-                log.warn("Authorization header is missing.");
-            }
-
             Jwt jwt = tokenService.getJwt();
-            Map<String, Object> claims = tokenService.getClaims(jwt);
             String cognitoSub = tokenService.getCognitoSub(jwt);
             String username = tokenService.getEmail(jwt);
-
-            log.info("Bearer: {}", jwt.getTokenValue());
-            log.info("claims: {}", claims);
-            log.info("Cognito Sub: {}", cognitoSub);
-            log.info("Username: {}", username);
 
             if (userRepository.findByCognitoSub(cognitoSub).isEmpty()) {
                 User user = userRepository.save(new User(username, cognitoSub));

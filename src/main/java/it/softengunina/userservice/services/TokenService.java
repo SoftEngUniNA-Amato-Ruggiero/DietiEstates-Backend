@@ -1,14 +1,13 @@
 package it.softengunina.userservice.services;
 
 import it.softengunina.userservice.exceptions.AuthenticationNotFoundException;
+import it.softengunina.userservice.exceptions.MissingClaimException;
 import it.softengunina.userservice.exceptions.JwtNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -21,7 +20,7 @@ public class TokenService {
     public String getCognitoSub(Jwt jwt) {
         String cognitoSub = jwt.getSubject();
         if (cognitoSub == null || cognitoSub.isEmpty()) {
-            throw new JwtNotFoundException("Cognito sub claim is missing or empty.");
+            throw new MissingClaimException("Cognito sub claim is missing or empty.");
         }
         return cognitoSub;
     }
@@ -32,11 +31,11 @@ public class TokenService {
     }
 
     public String getEmail(Jwt jwt) {
-        return jwt.getClaimAsString("email");
-    }
-
-    public Map<String, Object> getClaims(Jwt jwt) {
-        return jwt.getClaims();
+        String email = jwt.getClaimAsString("email");
+        if (email == null || email.isEmpty()) {
+            throw new MissingClaimException("Email claim is missing or empty.");
+        }
+        return email;
     }
 
     private Authentication getAuthentication() {
