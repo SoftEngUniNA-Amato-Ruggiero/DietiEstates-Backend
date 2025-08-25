@@ -3,7 +3,7 @@
     <option name="ACTIVE_PROFILES" value="prod" />
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <module name="DietiEstates-Backend" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="it.softengunina.userservice.DietiEstatesBackendServiceApplication" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="it.softengunina.dietiestatesbackendservice.DietiEstatesBackendServiceApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
