@@ -14,7 +14,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
-    @Setter
+    @Setter(AccessLevel.PROTECTED)
     private Long id;
 
     @NotBlank
@@ -26,7 +26,7 @@ public class User {
     @NotBlank
     @Column(unique = true, nullable = false)
     @Getter
-    @Setter
+    @Setter(AccessLevel.PROTECTED)
     private String cognitoSub;
 
     public User(@NonNull String username, @NonNull String cognitoSub) {

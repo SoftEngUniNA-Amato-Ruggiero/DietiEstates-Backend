@@ -31,8 +31,8 @@ class RealEstateAgentRepositoryTest {
     }
 
     @Test
-    void findByAgencyId() {
-        Page<RealEstateAgent> agents = agentRepository.findByAgencyId(testAgency.getId(), Pageable.unpaged());
+    void findByAgency() {
+        Page<RealEstateAgent> agents = agentRepository.findByAgency(testAgency, Pageable.unpaged());
         assertAll(
                 () -> assertTrue(agents.getContent().contains(testAgent)),
                 () -> assertEquals(1, agents.getTotalElements())

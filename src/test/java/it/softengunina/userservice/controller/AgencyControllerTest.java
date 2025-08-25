@@ -21,6 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -55,6 +56,7 @@ class AgencyControllerTest {
     @MockitoBean
     PromotionService promotionService;
 
+    Long agencyId = 1L;
     RealEstateAgency agency;
     RealEstateManager manager;
     RealEstateAgent agent;
@@ -63,21 +65,17 @@ class AgencyControllerTest {
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("testIban", "testAgency");
-        agency.setId(1L);
         manager = new RealEstateManager("managerEmail", "managerSub", new RealEstateAgency("differentIban", "differentAgency"));
-        manager.setId(1L);
         agent = new RealEstateAgent("agentEmail", "agentSub", agency);
-        agent.setId(3L);
         user = new User("testEmail", "testSub");
-        user.setId(2L);
 
         Mockito.when(agencyRepository.findAll(Mockito.any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(agency)));
 
-        Mockito.when(agencyRepository.findById(agency.getId())).thenReturn(Optional.of(agency));
+        Mockito.when(agencyRepository.findById(agencyId)).thenReturn(Optional.of(agency));
         Mockito.when(agencyRepository.findById(9L)).thenReturn(Optional.empty());
 
-        Mockito.when(agentRepository.findByAgencyId(Mockito.eq(agency.getId()), Mockito.any(PageRequest.class)))
+        Mockito.when(agentRepository.findByAgency(Mockito.eq(agency), Mockito.any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(agent)));
 
         Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
@@ -104,7 +102,7 @@ class AgencyControllerTest {
 
     @Test
     void getAgencyById() throws Exception {
-        mockMvc.perform(get("/agencies/" + agency.getId()))
+        mockMvc.perform(get("/agencies/" + agencyId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(agency.getName()))
                 .andExpect(jsonPath("$.iban").value(agency.getIban()));
@@ -118,10 +116,9 @@ class AgencyControllerTest {
 
     @Test
     void getAgentsByAgencyId() throws Exception {
-        mockMvc.perform(get("/agencies/" + agency.getId() + "/agents"))
+        mockMvc.perform(get("/agencies/" + agencyId + "/agents"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].username").value(agent.getUsername()))
-                .andExpect(jsonPath("$.content[0].cognitoSub").value(agent.getCognitoSub()));
+                .andExpect(jsonPath("$.content[0].username").value(agent.getUsername()));
     }
 
     @Test

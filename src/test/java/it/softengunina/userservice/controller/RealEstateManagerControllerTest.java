@@ -54,11 +54,8 @@ class RealEstateManagerControllerTest {
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("agencyIban", "agencyName");
-        agency.setId(1L);
         manager = new RealEstateManager("managerName", "managerSub", agency);
-        manager.setId(1L);
         user = new User("userName", "userSub");
-        user.setId(2L);
 
         Mockito.when(managerRepository.findByCognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
         Mockito.when(managerRepository.findByCognitoSub("wrongSub")).thenReturn(Optional.empty());

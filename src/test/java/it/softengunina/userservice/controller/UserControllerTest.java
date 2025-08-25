@@ -38,15 +38,15 @@ class UserControllerTest {
     TokenService tokenService;
 
     User user;
+    Long userId = 1L;
 
     @BeforeEach
     void setUp() {
         user = new User("testUsername", "testCognitoSub");
-        user.setId(1L);
 
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         Mockito.when(userRepository.findByUsername("wrongUsername")).thenReturn(Optional.empty());
         Mockito.when(userRepository.findByCognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
@@ -58,16 +58,14 @@ class UserControllerTest {
         mockMvc.perform(get("/users")
         .param("username", user.getUsername()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.cognitoSub").value(user.getCognitoSub()));
     }
 
     @Test
     void getUserById() throws Exception {
-        mockMvc.perform(get("/users/" + user.getId()))
+        mockMvc.perform(get("/users/" + userId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.cognitoSub").value(user.getCognitoSub()));
     }
@@ -78,7 +76,6 @@ class UserControllerTest {
 
         mockMvc.perform(get("/users/role"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user.id").value(user.getId()))
                 .andExpect(jsonPath("$.user.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.user.cognitoSub").value(user.getCognitoSub()))
                 .andExpect(jsonPath("$.role").value(user.getRole()));

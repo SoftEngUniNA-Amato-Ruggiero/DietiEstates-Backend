@@ -2,6 +2,7 @@ package it.softengunina.userservice.controller;
 
 import it.softengunina.userservice.dto.RealEstateAgencyDTO;
 import it.softengunina.userservice.dto.UserAgencyRoleDTO;
+import it.softengunina.userservice.dto.UserDTO;
 import it.softengunina.userservice.model.RealEstateAgency;
 import it.softengunina.userservice.model.RealEstateAgent;
 import it.softengunina.userservice.model.RealEstateManager;
@@ -52,10 +53,11 @@ public class AgencyController {
     }
 
     @GetMapping("/{id}/agents")
-    public Page<RealEstateAgent> getAgentsByAgencyId(@PathVariable Long id, Pageable pageable) {
+    public Page<UserDTO> getAgentsByAgencyId(@PathVariable Long id, Pageable pageable) {
         RealEstateAgency agency = agencyRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agency not found"));
-        return agentRepository.findByAgencyId(agency.getId(), pageable);
+        Page<RealEstateAgent> agents = agentRepository.findByAgency(agency, pageable);
+        return agents.map(agent -> new UserDTO(agent.getUsername()));
     }
 
     @PostMapping
