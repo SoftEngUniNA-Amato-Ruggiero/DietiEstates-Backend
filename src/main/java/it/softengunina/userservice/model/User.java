@@ -34,6 +34,10 @@ public class User {
         this.cognitoSub = cognitoSub;
     }
 
+    public RealEstateAgency getAgency() {
+        return null;
+    }
+
     public String getRole() {
         return this.getClass().getSimpleName();
     }

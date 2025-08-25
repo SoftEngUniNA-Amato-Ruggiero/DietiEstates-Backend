@@ -1,8 +1,6 @@
 package it.softengunina.userservice.controller;
 
 import it.softengunina.userservice.dto.UserAgencyRoleDTO;
-import it.softengunina.userservice.model.RealEstateAgency;
-import it.softengunina.userservice.model.RealEstateAgent;
 import it.softengunina.userservice.model.User;
 import it.softengunina.userservice.repository.UserRepository;
 import it.softengunina.userservice.services.TokenService;
@@ -39,10 +37,6 @@ public class UserController {
     public UserAgencyRoleDTO getRole() {
         User user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        RealEstateAgency agency = null;
-        if (user instanceof RealEstateAgent a) {
-             agency = a.getAgency();
-        }
-        return new UserAgencyRoleDTO(user, agency, user.getRole());
+        return new UserAgencyRoleDTO(user, user.getAgency(), user.getRole());
     }
 }

@@ -33,4 +33,14 @@ class UserTest {
     void getRoleManager() {
         assertEquals("RealEstateManager", manager.getRole());
     }
+
+    @Test
+    void getAgencyUser() {
+        assertNull(user.getAgency());
+    }
+
+    @Test
+    void getAgencyAgent() {
+        assertEquals(agency, agent.getAgency());
+    }
 }
