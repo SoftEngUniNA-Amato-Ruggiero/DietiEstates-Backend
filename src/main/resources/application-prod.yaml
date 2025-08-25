@@ -1,6 +1,6 @@
 spring:
   application:
-    name: DietiEstatesBackendService
+    name: DietiEstatesBackend
 
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres

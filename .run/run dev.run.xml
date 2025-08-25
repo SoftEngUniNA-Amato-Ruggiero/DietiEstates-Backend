@@ -2,7 +2,7 @@
   <configuration default="false" name="run dev" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <module name="DietiEstates-Backend" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="it.softengunina.dietiestatesbackendservice.DietiEstatesBackendServiceApplication" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="it.softengunina.dietiestatesbackend.DietiEstatesBackendApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
