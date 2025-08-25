@@ -5,8 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.Set;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,10 +32,10 @@ class RealEstateAgentRepositoryTest {
 
     @Test
     void findByAgencyId() {
-        Set<RealEstateAgent> agents = agentRepository.findByAgencyId(testAgency.getId());
+        Page<RealEstateAgent> agents = agentRepository.findByAgencyId(testAgency.getId(), Pageable.unpaged());
         assertAll(
-                () -> assertTrue(agents.contains(testAgent)),
-                () -> assertEquals(1, agents.size())
+                () -> assertTrue(agents.getContent().contains(testAgent)),
+                () -> assertEquals(1, agents.getTotalElements())
         );
     }
 

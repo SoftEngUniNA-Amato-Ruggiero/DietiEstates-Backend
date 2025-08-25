@@ -1,5 +1,6 @@
 package it.softengunina.userservice.dto;
 
+import it.softengunina.userservice.model.RealEstateAgency;
 import it.softengunina.userservice.model.User;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -10,10 +11,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserAndRoleDTO {
+public class UserAgencyRoleDTO {
     @NotNull
     @Valid
     private User user;
+
+    @Valid
+    private RealEstateAgency agency;
 
     @NotNull
     private String role;

@@ -3,9 +3,11 @@ package it.softengunina.userservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.userservice.dto.RealEstateAgencyDTO;
 import it.softengunina.userservice.model.RealEstateAgency;
+import it.softengunina.userservice.model.RealEstateAgent;
 import it.softengunina.userservice.model.RealEstateManager;
 import it.softengunina.userservice.model.User;
 import it.softengunina.userservice.repository.RealEstateAgencyRepository;
+import it.softengunina.userservice.repository.RealEstateAgentRepository;
 import it.softengunina.userservice.repository.UserRepository;
 import it.softengunina.userservice.services.PromotionService;
 import it.softengunina.userservice.services.TokenService;
@@ -47,12 +49,15 @@ class AgencyControllerTest {
     @MockitoBean
     UserRepository<User> userRepository;
     @MockitoBean
+    RealEstateAgentRepository<RealEstateAgent> agentRepository;
+    @MockitoBean
     TokenService tokenService;
     @MockitoBean
     PromotionService promotionService;
 
     RealEstateAgency agency;
     RealEstateManager manager;
+    RealEstateAgent agent;
     User user;
 
     @BeforeEach
@@ -61,6 +66,8 @@ class AgencyControllerTest {
         agency.setId(1L);
         manager = new RealEstateManager("managerEmail", "managerSub", new RealEstateAgency("differentIban", "differentAgency"));
         manager.setId(1L);
+        agent = new RealEstateAgent("agentEmail", "agentSub", agency);
+        agent.setId(3L);
         user = new User("testEmail", "testSub");
         user.setId(2L);
 
@@ -69,6 +76,9 @@ class AgencyControllerTest {
 
         Mockito.when(agencyRepository.findById(agency.getId())).thenReturn(Optional.of(agency));
         Mockito.when(agencyRepository.findById(9L)).thenReturn(Optional.empty());
+
+        Mockito.when(agentRepository.findByAgencyId(Mockito.eq(agency.getId()), Mockito.any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(agent)));
 
         Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByCognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
@@ -104,6 +114,14 @@ class AgencyControllerTest {
     void getAgencyById_NotFound() throws Exception {
         mockMvc.perform(get("/agencies/" + 2L))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getAgentsByAgencyId() throws Exception {
+        mockMvc.perform(get("/agencies/" + agency.getId() + "/agents"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].username").value(agent.getUsername()))
+                .andExpect(jsonPath("$.content[0].cognitoSub").value(agent.getCognitoSub()));
     }
 
     @Test

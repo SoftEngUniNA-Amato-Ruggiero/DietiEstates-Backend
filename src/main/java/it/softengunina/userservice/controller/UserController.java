@@ -1,6 +1,8 @@
 package it.softengunina.userservice.controller;
 
-import it.softengunina.userservice.dto.UserAndRoleDTO;
+import it.softengunina.userservice.dto.UserAgencyRoleDTO;
+import it.softengunina.userservice.model.RealEstateAgency;
+import it.softengunina.userservice.model.RealEstateAgent;
 import it.softengunina.userservice.model.User;
 import it.softengunina.userservice.repository.UserRepository;
 import it.softengunina.userservice.services.TokenService;
@@ -34,9 +36,13 @@ public class UserController {
     }
 
     @GetMapping("/role")
-    public UserAndRoleDTO getRole() {
+    public UserAgencyRoleDTO getRole() {
         User user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return new UserAndRoleDTO(user, user.getRole());
+        RealEstateAgency agency = null;
+        if (user instanceof RealEstateAgent a) {
+             agency = a.getAgency();
+        }
+        return new UserAgencyRoleDTO(user, agency, user.getRole());
     }
 }
