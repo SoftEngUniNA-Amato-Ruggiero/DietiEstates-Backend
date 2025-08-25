@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +54,6 @@ class JwtRequestFilterTest {
 
     String testSub = "testSub";
     String testEmail = "test@email.com";
-    Map<String, Object> claims = Map.of("cognitoSub", testSub, "email", testEmail);
 
     @BeforeEach
     void setUp() {
