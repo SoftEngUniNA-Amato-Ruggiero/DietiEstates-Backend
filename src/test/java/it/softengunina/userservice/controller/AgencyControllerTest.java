@@ -114,4 +114,16 @@ class AgencyControllerTest {
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    void createAgency_whenUserIsAlreadyAgent() throws Exception {
+        RealEstateAgencyDTO req = new RealEstateAgencyDTO("requestIban", "requestAgency");
+        Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(post("/agencies")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isConflict());
+    }
 }
