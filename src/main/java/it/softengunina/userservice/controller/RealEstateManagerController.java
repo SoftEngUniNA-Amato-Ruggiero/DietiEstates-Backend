@@ -38,7 +38,7 @@ public class RealEstateManagerController {
     @Transactional
     public RealEstateManager createManager(@RequestBody UserDTO req) {
         RealEstateManager manager = managerRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Only managers can promote users to managers"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
         User user = userRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -51,9 +51,9 @@ public class RealEstateManagerController {
             }
         }
 
-        if (user instanceof RealEstateAgent agent) {
-            if (agent.getAgency().equals(manager.getAgency())) {
-                return promotionService.promoteAgentToManager(agent);
+        if (user instanceof RealEstateAgent u) {
+            if (u.getAgency().equals(manager.getAgency())) {
+                return promotionService.promoteAgentToManager(u);
             } else {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "User belongs to another agency");
             }

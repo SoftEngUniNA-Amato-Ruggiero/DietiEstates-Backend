@@ -37,7 +37,7 @@ public class RealEstateAgentController {
     @Transactional
     public RealEstateAgent createAgent(@RequestBody UserDTO req) {
         RealEstateManager manager = managerRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Only managers can create agents"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
         User user = userRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
