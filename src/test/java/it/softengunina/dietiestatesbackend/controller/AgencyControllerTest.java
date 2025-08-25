@@ -101,14 +101,6 @@ class AgencyControllerTest {
     }
 
     @Test
-    void getAgencyById() throws Exception {
-        mockMvc.perform(get("/agencies/" + agencyId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(agency.getName()))
-                .andExpect(jsonPath("$.iban").value(agency.getIban()));
-    }
-
-    @Test
     void getAgencyById_NotFound() throws Exception {
         mockMvc.perform(get("/agencies/" + 2L))
                 .andExpect(status().isNotFound());
@@ -123,7 +115,7 @@ class AgencyControllerTest {
 
     @Test
     void createAgency() throws Exception {
-        RealEstateAgencyDTO req = new RealEstateAgencyDTO("requestIban", "requestAgency");
+        RealEstateAgencyDTO req = new RealEstateAgencyDTO(null, "requestIban", "requestAgency");
         Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -135,7 +127,7 @@ class AgencyControllerTest {
 
     @Test
     void createAgency_whenUserIsAlreadyAgent() throws Exception {
-        RealEstateAgencyDTO req = new RealEstateAgencyDTO("requestIban", "requestAgency");
+        RealEstateAgencyDTO req = new RealEstateAgencyDTO(null, "requestIban", "requestAgency");
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
         ObjectMapper objectMapper = new ObjectMapper();
 

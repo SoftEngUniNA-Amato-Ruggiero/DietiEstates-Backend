@@ -44,13 +44,14 @@ public class AgencyController {
     @GetMapping
     public Page<RealEstateAgencyDTO> getAgencies(Pageable pageable) {
         Page<RealEstateAgency> agencies = agencyRepository.findAll(pageable);
-        return agencies.map(agency -> new RealEstateAgencyDTO(agency.getIban(), agency.getName()));
+        return agencies.map(RealEstateAgencyDTO::new);
     }
 
     @GetMapping("/{id}")
-    public RealEstateAgency getAgencyById(@PathVariable Long id) {
-        return agencyRepository.findById(id)
+    public RealEstateAgencyDTO getAgencyById(@PathVariable Long id) {
+        RealEstateAgency agency = agencyRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return new RealEstateAgencyDTO(agency);
     }
 
     @GetMapping("/{id}/agents")

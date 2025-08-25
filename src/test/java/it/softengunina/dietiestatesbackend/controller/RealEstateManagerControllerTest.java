@@ -77,7 +77,9 @@ class RealEstateManagerControllerTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.cognitoSub").value(user.getCognitoSub()));
+                .andExpect(jsonPath("$.user.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.agency.name").value(agency.getName()))
+                .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
+                .andExpect(jsonPath("$.role").value("RealEstateManager"));
     }
 }

@@ -1,6 +1,7 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.dto.UserAgencyRoleDTO;
+import it.softengunina.dietiestatesbackend.dto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.repository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
@@ -22,15 +23,17 @@ public class UserController {
     }
 
     @GetMapping
-    public User getUserByUsername(@RequestParam String username) {
-        return userRepository.findByUsername(username)
+    public UserDTO getUserByUsername(@RequestParam String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return new UserDTO(user);
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userRepository.findById(id)
+    public UserDTO getUserById(@PathVariable Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return new UserDTO(user);
     }
 
     @GetMapping("/role")

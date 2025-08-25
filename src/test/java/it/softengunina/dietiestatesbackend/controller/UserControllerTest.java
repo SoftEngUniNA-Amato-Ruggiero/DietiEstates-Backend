@@ -58,16 +58,14 @@ class UserControllerTest {
         mockMvc.perform(get("/users")
         .param("username", user.getUsername()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.cognitoSub").value(user.getCognitoSub()));
+                .andExpect(jsonPath("$.username").value(user.getUsername()));
     }
 
     @Test
     void getUserById() throws Exception {
         mockMvc.perform(get("/users/" + userId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.cognitoSub").value(user.getCognitoSub()));
+                .andExpect(jsonPath("$.username").value(user.getUsername()));
     }
 
     @Test
