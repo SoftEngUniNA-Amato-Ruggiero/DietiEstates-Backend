@@ -1,6 +1,6 @@
 package it.softengunina.userservice.repository;
 
-import it.softengunina.userservice.model.RealEstateManager;
+import it.softengunina.userservice.model.users.RealEstateManager;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,9 +1,9 @@
 package it.softengunina.userservice.services;
 
 import it.softengunina.userservice.model.RealEstateAgency;
-import it.softengunina.userservice.model.RealEstateAgent;
-import it.softengunina.userservice.model.RealEstateManager;
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.RealEstateAgent;
+import it.softengunina.userservice.model.users.RealEstateManager;
+import it.softengunina.userservice.model.users.User;
 import it.softengunina.userservice.repository.RealEstateAgencyRepository;
 import it.softengunina.userservice.repository.RealEstateAgentRepository;
 import it.softengunina.userservice.repository.RealEstateManagerRepository;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @Rollback
-class PromotionServiceTest {
+class UserPromotionServiceTest {
     @Autowired
     RealEstateAgencyRepository agencyRepository;
     @Autowired
@@ -28,7 +28,7 @@ class PromotionServiceTest {
     @Autowired
     UserRepository<User> userRepository;
     @Autowired
-    PromotionService promotionService;
+    UserPromotionService promotionService;
 
     RealEstateAgency agency;
     RealEstateManager manager;

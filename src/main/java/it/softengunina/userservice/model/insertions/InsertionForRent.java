@@ -1,6 +1,6 @@
 package it.softengunina.userservice.model.insertions;
 
-import it.softengunina.userservice.model.RealEstateAgent;
+import it.softengunina.userservice.model.users.RealEstateAgent;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

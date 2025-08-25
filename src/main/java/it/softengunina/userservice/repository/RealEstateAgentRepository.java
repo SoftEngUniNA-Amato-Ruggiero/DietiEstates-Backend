@@ -1,7 +1,7 @@
 package it.softengunina.userservice.repository;
 
 import it.softengunina.userservice.model.RealEstateAgency;
-import it.softengunina.userservice.model.RealEstateAgent;
+import it.softengunina.userservice.model.users.RealEstateAgent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;

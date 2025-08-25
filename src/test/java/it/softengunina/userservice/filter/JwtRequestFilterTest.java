@@ -7,7 +7,7 @@ import ch.qos.logback.core.read.ListAppender;
 import it.softengunina.userservice.exceptions.AuthenticationNotFoundException;
 import it.softengunina.userservice.exceptions.MissingClaimException;
 import it.softengunina.userservice.exceptions.JwtNotFoundException;
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.User;
 import it.softengunina.userservice.repository.UserRepository;
 import it.softengunina.userservice.services.TokenService;
 import jakarta.servlet.FilterChain;

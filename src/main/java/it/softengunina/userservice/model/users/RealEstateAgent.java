@@ -1,5 +1,6 @@
-package it.softengunina.userservice.model;
+package it.softengunina.userservice.model.users;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import it.softengunina.userservice.model.RealEstateAgency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

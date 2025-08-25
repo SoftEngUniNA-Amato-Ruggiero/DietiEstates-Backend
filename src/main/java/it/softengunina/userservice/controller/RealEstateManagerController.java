@@ -1,11 +1,11 @@
 package it.softengunina.userservice.controller;
 
 import it.softengunina.userservice.dto.UserDTO;
-import it.softengunina.userservice.model.RealEstateManager;
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.RealEstateManager;
+import it.softengunina.userservice.model.users.User;
 import it.softengunina.userservice.repository.RealEstateManagerRepository;
 import it.softengunina.userservice.repository.UserRepository;
-import it.softengunina.userservice.services.PromotionService;
+import it.softengunina.userservice.services.UserPromotionService;
 import it.softengunina.userservice.services.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,12 +20,12 @@ public class RealEstateManagerController {
     private final UserRepository<User> userRepository;
     private final RealEstateManagerRepository managerRepository;
     private final TokenService tokenService;
-    private final PromotionService promotionService;
+    private final UserPromotionService promotionService;
 
     RealEstateManagerController(UserRepository<User> userRepository,
                                 RealEstateManagerRepository managerRepository,
                                 TokenService tokenService,
-                                PromotionService promotionService) {
+                                UserPromotionService promotionService) {
         this.userRepository = userRepository;
         this.managerRepository = managerRepository;
         this.tokenService = tokenService;

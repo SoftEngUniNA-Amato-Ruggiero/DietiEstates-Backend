@@ -1,4 +1,5 @@
-package it.softengunina.userservice.model;
+package it.softengunina.userservice.model.users;
+import it.softengunina.userservice.model.RealEstateAgency;
 import jakarta.persistence.*;
 import lombok.*;
 

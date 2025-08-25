@@ -3,13 +3,13 @@ package it.softengunina.userservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.userservice.dto.RealEstateAgencyDTO;
 import it.softengunina.userservice.model.RealEstateAgency;
-import it.softengunina.userservice.model.RealEstateAgent;
-import it.softengunina.userservice.model.RealEstateManager;
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.RealEstateAgent;
+import it.softengunina.userservice.model.users.RealEstateManager;
+import it.softengunina.userservice.model.users.User;
 import it.softengunina.userservice.repository.RealEstateAgencyRepository;
 import it.softengunina.userservice.repository.RealEstateAgentRepository;
 import it.softengunina.userservice.repository.UserRepository;
-import it.softengunina.userservice.services.PromotionService;
+import it.softengunina.userservice.services.UserPromotionService;
 import it.softengunina.userservice.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,7 @@ class AgencyControllerTest {
     @MockitoBean
     TokenService tokenService;
     @MockitoBean
-    PromotionService promotionService;
+    UserPromotionService promotionService;
 
     Long agencyId = 1L;
     RealEstateAgency agency;

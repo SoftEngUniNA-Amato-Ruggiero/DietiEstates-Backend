@@ -4,13 +4,13 @@ import it.softengunina.userservice.dto.RealEstateAgencyDTO;
 import it.softengunina.userservice.dto.UserAgencyRoleDTO;
 import it.softengunina.userservice.dto.UserDTO;
 import it.softengunina.userservice.model.RealEstateAgency;
-import it.softengunina.userservice.model.RealEstateAgent;
-import it.softengunina.userservice.model.RealEstateManager;
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.RealEstateAgent;
+import it.softengunina.userservice.model.users.RealEstateManager;
+import it.softengunina.userservice.model.users.User;
 import it.softengunina.userservice.repository.RealEstateAgencyRepository;
 import it.softengunina.userservice.repository.RealEstateAgentRepository;
 import it.softengunina.userservice.repository.UserRepository;
-import it.softengunina.userservice.services.PromotionService;
+import it.softengunina.userservice.services.UserPromotionService;
 import it.softengunina.userservice.services.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,12 +28,12 @@ public class AgencyController {
     private final UserRepository<User> userRepository;
     private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
     private final TokenService tokenService;
-    private final PromotionService promotionService;
+    private final UserPromotionService promotionService;
 
     AgencyController(RealEstateAgencyRepository agencyRepository,
                      UserRepository<User> userRepository,
                      RealEstateAgentRepository<RealEstateAgent> agentRepository,
-                     TokenService tokenService, PromotionService promotionService) {
+                     TokenService tokenService, UserPromotionService promotionService) {
         this.agencyRepository = agencyRepository;
         this.userRepository = userRepository;
         this.agentRepository = agentRepository;

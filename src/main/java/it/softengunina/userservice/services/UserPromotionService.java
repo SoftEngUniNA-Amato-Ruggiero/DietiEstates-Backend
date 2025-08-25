@@ -1,9 +1,9 @@
 package it.softengunina.userservice.services;
 
 import it.softengunina.userservice.model.RealEstateAgency;
-import it.softengunina.userservice.model.RealEstateAgent;
-import it.softengunina.userservice.model.RealEstateManager;
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.RealEstateAgent;
+import it.softengunina.userservice.model.users.RealEstateManager;
+import it.softengunina.userservice.model.users.User;
 import it.softengunina.userservice.repository.RealEstateAgentRepository;
 import it.softengunina.userservice.repository.RealEstateManagerRepository;
 import org.springframework.context.annotation.Lazy;
@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PromotionService {
+public class UserPromotionService {
     private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
     private final RealEstateManagerRepository managerRepository;
-    private final PromotionService self;
+    private final UserPromotionService self;
 
-    PromotionService(RealEstateAgentRepository<RealEstateAgent> agentRepository,
-                     RealEstateManagerRepository managerRepository,
-                     @Lazy PromotionService self) {
+    UserPromotionService(RealEstateAgentRepository<RealEstateAgent> agentRepository,
+                         RealEstateManagerRepository managerRepository,
+                         @Lazy UserPromotionService self) {
         this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
         this.self = self;

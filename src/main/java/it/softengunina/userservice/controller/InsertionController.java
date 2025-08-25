@@ -1,6 +1,6 @@
 package it.softengunina.userservice.controller;
 
-import it.softengunina.userservice.model.RealEstateAgent;
+import it.softengunina.userservice.model.users.RealEstateAgent;
 import it.softengunina.userservice.model.insertions.Address;
 import it.softengunina.userservice.model.insertions.Insertion;
 import it.softengunina.userservice.model.insertions.InsertionForSale;

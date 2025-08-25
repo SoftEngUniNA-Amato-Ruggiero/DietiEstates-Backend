@@ -1,7 +1,7 @@
 package it.softengunina.userservice.dto;
 
 import it.softengunina.userservice.model.RealEstateAgency;
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.User;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package it.softengunina.userservice.controller;
 
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.User;
 import it.softengunina.userservice.repository.UserRepository;
 import it.softengunina.userservice.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;

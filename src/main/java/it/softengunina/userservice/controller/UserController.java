@@ -1,7 +1,7 @@
 package it.softengunina.userservice.controller;
 
 import it.softengunina.userservice.dto.UserAgencyRoleDTO;
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.User;
 import it.softengunina.userservice.repository.UserRepository;
 import it.softengunina.userservice.services.TokenService;
 import lombok.extern.slf4j.Slf4j;

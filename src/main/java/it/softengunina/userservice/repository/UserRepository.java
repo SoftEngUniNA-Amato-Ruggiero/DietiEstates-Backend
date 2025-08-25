@@ -1,6 +1,6 @@
 package it.softengunina.userservice.repository;
 
-import it.softengunina.userservice.model.User;
+import it.softengunina.userservice.model.users.User;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

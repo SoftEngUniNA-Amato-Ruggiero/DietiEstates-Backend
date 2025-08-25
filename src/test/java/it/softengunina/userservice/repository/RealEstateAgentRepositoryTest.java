@@ -1,6 +1,8 @@
 package it.softengunina.userservice.repository;
 
 import it.softengunina.userservice.model.*;
+import it.softengunina.userservice.model.users.RealEstateAgent;
+import it.softengunina.userservice.model.users.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
