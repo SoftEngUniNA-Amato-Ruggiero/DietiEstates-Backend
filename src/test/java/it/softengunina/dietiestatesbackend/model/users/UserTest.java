@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
+import it.softengunina.dietiestatesbackend.services.PromotionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserTest {
     User user;
     RealEstateAgency agency;
-    PromotionServiceImpl strategyService;
+    PromotionService promotionService;
 
     @BeforeEach
     void setUp() {
-        strategyService = Mockito.mock(PromotionServiceImpl.class);
+        promotionService = Mockito.mock(PromotionService.class);
         user = new User("testUser", "testSub1");
         agency = new RealEstateAgency("testIban", "testAgency");
     }
@@ -31,12 +31,26 @@ class UserTest {
     }
 
     @Test
-    void getPromotionToAgentCommand() {
-        assertNotNull(user.getPromotionToAgentCommand(agency));
+    void getPromotionToAgentFunction() {
+        Mockito.when(promotionService.promoteUserToAgent(user, agency)).thenReturn(new RealEstateAgent(user.getUsername(), user.getCognitoSub(), agency));
+        RealEstateAgent agent = user.getPromotionToAgentFunction(promotionService).apply(agency);
+        assertAll(
+                () -> assertNotNull(agent),
+                () -> assertEquals(user.getUsername(), agent.getUsername()),
+                () -> assertEquals(user.getCognitoSub(), agent.getCognitoSub()),
+                () -> assertEquals(agency, agent.getAgency())
+        );
     }
 
     @Test
-    void getPromotionToManagerCommand() {
-        assertNotNull(user.getPromotionToManagerCommand(agency));
+    void getPromotionToManagerFunction() {
+        Mockito.when(promotionService.promoteUserToManager(user, agency)).thenReturn(new RealEstateManager(user.getUsername(), user.getCognitoSub(), agency));
+        RealEstateManager manager = user.getPromotionToManagerFunction(promotionService).apply(agency);
+        assertAll(
+                () -> assertNotNull(manager),
+                () -> assertEquals(user.getUsername(), manager.getUsername()),
+                () -> assertEquals(user.getCognitoSub(), manager.getCognitoSub()),
+                () -> assertEquals(agency, manager.getAgency())
+        );
     }
 }

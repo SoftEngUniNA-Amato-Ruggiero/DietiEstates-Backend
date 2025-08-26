@@ -1,6 +1,5 @@
 package it.softengunina.dietiestatesbackend.controller;
 
-import it.softengunina.dietiestatesbackend.model.users.PromotionToManagerCommand;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
@@ -73,8 +72,7 @@ public class AgencyController {
 
         try {
             RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
-            PromotionToManagerCommand command = user.getPromotionToManagerCommand(agency);
-            RealEstateManager manager = command.execute(promotionService);
+            RealEstateManager manager = user.getPromotionToManagerFunction(promotionService).apply(agency);
             return new UserAgencyRoleDTO(manager);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());

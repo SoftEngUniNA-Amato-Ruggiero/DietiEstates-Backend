@@ -1,9 +1,12 @@
 package it.softengunina.dietiestatesbackend.model.users;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.services.PromotionService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.function.Function;
 
 @Entity
 @Table(name = "real_estate_agents")
@@ -26,16 +29,18 @@ public class RealEstateAgent extends User {
     }
 
     @Override
-    public PromotionToAgentCommand getPromotionToAgentCommand(RealEstateAgency agency) {
+    public Function<RealEstateAgency, RealEstateAgent> getPromotionToAgentFunction(PromotionService service) {
         throw new IllegalArgumentException("User cannot be promoted to agent.");
     }
 
     @Override
-    public PromotionToManagerCommand getPromotionToManagerCommand(RealEstateAgency agency) {
-        if (agency.equals(this.agency)) {
-            return new PromoteAgentToManagerToManagerCommand(this);
-        } else {
-            throw new IllegalArgumentException("User belongs to another agency");
-        }
+    public Function<RealEstateAgency, RealEstateManager> getPromotionToManagerFunction(PromotionService service) {
+        return inputAgency -> {
+            if (inputAgency.equals(this.agency)) {
+                return service.promoteAgentToManager(this);
+            } else {
+                throw new IllegalArgumentException("User belongs to another agency");
+            }
+        };
     }
 }

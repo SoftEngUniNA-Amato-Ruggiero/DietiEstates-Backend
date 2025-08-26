@@ -1,7 +1,10 @@
 package it.softengunina.dietiestatesbackend.model.users;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.services.PromotionService;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.function.Function;
 
 @Entity
 @Table(name = "real_estate_managers")
@@ -15,7 +18,7 @@ public class RealEstateManager extends RealEstateAgent {
     }
 
     @Override
-    public PromotionToManagerCommand getPromotionToManagerCommand(RealEstateAgency agency) {
+    public Function<RealEstateAgency, RealEstateManager> getPromotionToManagerFunction(PromotionService service) {
         throw new IllegalArgumentException("User cannot be promoted to manager.");
     }
 }
