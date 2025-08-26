@@ -1,5 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import it.softengunina.dietiestatesbackend.commands.PromoteAgentToManagerCommand;
+import it.softengunina.dietiestatesbackend.commands.PromotionCommand;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -26,12 +28,16 @@ public class RealEstateAgent extends User {
     }
 
     @Override
-    public boolean canBePromotedToManagerOfAgency(RealEstateAgency agency) {
-        return agency.equals(this.agency);
+    public PromotionCommand<RealEstateAgent> getPromotionToAgentCommand(RealEstateAgency agency) {
+        throw new IllegalArgumentException("User cannot be promoted to agent.");
     }
 
     @Override
-    public boolean canBePromotedToAgentOfAgency(RealEstateAgency agency) {
-        return false;
+    public PromotionCommand<RealEstateManager> getPromotionToManagerCommand(RealEstateAgency agency) {
+        if (agency.equals(this.agency)) {
+            return new PromoteAgentToManagerCommand(this);
+        } else {
+            throw new IllegalArgumentException("User belongs to another agency");
+        }
     }
 }

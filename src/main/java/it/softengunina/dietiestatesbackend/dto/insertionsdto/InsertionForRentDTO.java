@@ -11,7 +11,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InsertionForRentDTO extends InsertionDTO {
+    private Double rent;
+
     public InsertionForRentDTO(InsertionForRent insertion) {
         super(insertion);
+        this.rent = insertion.getRent();
     }
 }

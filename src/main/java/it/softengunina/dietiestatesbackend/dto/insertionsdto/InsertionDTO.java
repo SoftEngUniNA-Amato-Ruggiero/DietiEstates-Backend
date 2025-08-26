@@ -18,15 +18,11 @@ public class InsertionDTO {
     private Address address;
     private InsertionDetails details;
     private UserDTO uploader;
-    private Double price;
-    private Double rent;
 
-    public InsertionDTO(Insertion insertion) {
+    protected InsertionDTO(Insertion insertion) {
         this.id = insertion.getId();
         this.address = insertion.getAddress();
         this.details = insertion.getDetails();
         this.uploader = new UserDTO(insertion.getUploader());
-        this.price = insertion.getPrice();
-        this.rent = insertion.getRent();
     }
 }

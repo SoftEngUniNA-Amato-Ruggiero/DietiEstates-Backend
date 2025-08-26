@@ -9,8 +9,8 @@ import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
-import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -54,7 +54,7 @@ class AgencyControllerTest {
     @MockitoBean
     TokenService tokenService;
     @MockitoBean
-    UserPromotionService promotionService;
+    PromotionServiceImpl promotionStrategy;
 
     Long agencyId = 1L;
     RealEstateAgency agency;
@@ -85,11 +85,9 @@ class AgencyControllerTest {
         Mockito.when(agencyRepository.saveAndFlush(Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Mockito.when(promotionService.promoteToManager(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
+        Mockito.when(promotionStrategy.promoteUserToManager(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> new RealEstateManager(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
 
-        Mockito.when(promotionService.promoteToManager(Mockito.eq(manager), Mockito.any(RealEstateAgency.class)))
-                .thenThrow(new IllegalArgumentException("User is already a manager of this agency"));
     }
 
     @Test
@@ -98,6 +96,14 @@ class AgencyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].name").value(agency.getName()))
                 .andExpect(jsonPath("$.content[0].iban").value(agency.getIban()));
+    }
+
+    @Test
+    void getAgencyById() throws Exception {
+        mockMvc.perform(get("/agencies/" + agencyId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(agency.getName()))
+                .andExpect(jsonPath("$.iban").value(agency.getIban()));
     }
 
     @Test

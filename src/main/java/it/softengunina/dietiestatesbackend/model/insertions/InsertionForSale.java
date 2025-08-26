@@ -5,13 +5,13 @@ import jakarta.persistence.Entity;
 import lombok.*;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class InsertionForSale extends Insertion {
     @Getter
     @Setter
-    private double price;
+    private Double price;
 
     public InsertionForSale(Address address, InsertionDetails details, RealEstateAgent uploader, double price) {
         super(address, details, uploader);

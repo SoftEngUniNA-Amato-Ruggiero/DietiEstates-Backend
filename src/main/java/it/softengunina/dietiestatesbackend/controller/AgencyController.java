@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller;
 
+import it.softengunina.dietiestatesbackend.commands.PromotionCommand;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
@@ -10,8 +11,8 @@ import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
-import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,12 +29,13 @@ public class AgencyController {
     private final UserRepository<User> userRepository;
     private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
     private final TokenService tokenService;
-    private final UserPromotionService promotionService;
+    private final PromotionServiceImpl promotionService;
 
     AgencyController(RealEstateAgencyRepository agencyRepository,
                      UserRepository<User> userRepository,
                      RealEstateAgentRepository<RealEstateAgent> agentRepository,
-                     TokenService tokenService, UserPromotionService promotionService) {
+                     TokenService tokenService,
+                     PromotionServiceImpl promotionService) {
         this.agencyRepository = agencyRepository;
         this.userRepository = userRepository;
         this.agentRepository = agentRepository;
@@ -71,7 +73,8 @@ public class AgencyController {
 
         try {
             RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
-            RealEstateManager manager = promotionService.promoteToManager(user, agency);
+            PromotionCommand<RealEstateManager> command = user.getPromotionToManagerCommand(agency);
+            RealEstateManager manager = command.execute(promotionService);
             return new UserAgencyRoleDTO(manager);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());

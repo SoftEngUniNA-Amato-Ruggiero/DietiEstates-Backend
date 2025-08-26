@@ -8,8 +8,8 @@ import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
-import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -46,7 +46,7 @@ class RealEstateAgentControllerTest {
     @MockitoBean
     TokenService tokenService;
     @MockitoBean
-    UserPromotionService promotionService;
+    PromotionServiceImpl promotionService;
 
     RealEstateAgency agency;
     RealEstateManager manager;
@@ -68,9 +68,9 @@ class RealEstateAgentControllerTest {
     @Test
     void createAgent() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
-        Mockito.when(promotionService.promoteToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
-                .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
 
+        Mockito.when(promotionService.promoteUserToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
+                .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
 
         UserDTO req = new UserDTO(user);
         ObjectMapper objectMapper = new ObjectMapper();

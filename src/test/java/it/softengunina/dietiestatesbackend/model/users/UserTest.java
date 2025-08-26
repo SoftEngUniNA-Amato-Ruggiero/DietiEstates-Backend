@@ -1,23 +1,23 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
     User user;
-    RealEstateAgent agent;
-    RealEstateManager manager;
     RealEstateAgency agency;
+    PromotionServiceImpl strategyService;
 
     @BeforeEach
     void setUp() {
-        agency = new RealEstateAgency("testIban", "testAgency");
+        strategyService = Mockito.mock(PromotionServiceImpl.class);
         user = new User("testUser", "testSub1");
-        agent = new RealEstateAgent("testAgent", "testSub2", agency);
-        manager = new RealEstateManager("testManager", "testSub3", agency);
+        agency = new RealEstateAgency("testIban", "testAgency");
     }
 
     @Test
@@ -26,22 +26,17 @@ class UserTest {
     }
 
     @Test
-    void getRoleAgent() {
-        assertEquals("RealEstateAgent", agent.getRole());
-    }
-
-    @Test
-    void getRoleManager() {
-        assertEquals("RealEstateManager", manager.getRole());
-    }
-
-    @Test
     void getAgencyUser() {
         assertNull(user.getAgency());
     }
 
     @Test
-    void getAgencyAgent() {
-        assertEquals(agency, agent.getAgency());
+    void getPromotionToAgentCommand() {
+        assertNotNull(user.getPromotionToAgentCommand(agency));
+    }
+
+    @Test
+    void getPromotionToManagerCommand() {
+        assertNotNull(user.getPromotionToManagerCommand(agency));
     }
 }

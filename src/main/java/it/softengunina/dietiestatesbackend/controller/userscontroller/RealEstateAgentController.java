@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
+import it.softengunina.dietiestatesbackend.commands.PromotionCommand;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
@@ -7,8 +8,8 @@ import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
-import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +23,12 @@ public class RealEstateAgentController {
     private final UserRepository<User> userRepository;
     private final RealEstateManagerRepository managerRepository;
     private final TokenService tokenService;
-    private final UserPromotionService promotionService;
+    private final PromotionServiceImpl promotionService;
 
     RealEstateAgentController(UserRepository<User> userRepository,
                               RealEstateManagerRepository managerRepository,
-                              TokenService tokenService, UserPromotionService promotionService) {
+                              TokenService tokenService,
+                              PromotionServiceImpl promotionService) {
         this.userRepository = userRepository;
         this.managerRepository = managerRepository;
         this.tokenService = tokenService;
@@ -44,7 +46,8 @@ public class RealEstateAgentController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         try {
-            RealEstateAgent agent = promotionService.promoteToAgent(user, manager.getAgency());
+            PromotionCommand<RealEstateAgent> command = user.getPromotionToAgentCommand(manager.getAgency());
+            RealEstateAgent agent = command.execute(promotionService);
             return new UserAgencyRoleDTO(agent);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
