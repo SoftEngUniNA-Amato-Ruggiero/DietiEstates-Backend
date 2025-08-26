@@ -42,4 +42,12 @@ public class User {
     public String getRole() {
         return this.getClass().getSimpleName();
     }
+
+    public boolean canBePromotedToManagerOfAgency(RealEstateAgency agency) {
+        return true;
+    }
+
+    public boolean canBePromotedToAgentOfAgency(RealEstateAgency agency) {
+        return true;
+    }
 }

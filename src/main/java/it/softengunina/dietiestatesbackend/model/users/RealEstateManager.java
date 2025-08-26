@@ -13,4 +13,9 @@ public class RealEstateManager extends RealEstateAgent {
     public RealEstateManager(@NonNull String username, @NonNull String cognitoSub, @NonNull RealEstateAgency agency) {
         super(username, cognitoSub, agency);
     }
+
+    @Override
+    public boolean canBePromotedToManagerOfAgency(RealEstateAgency agency) {
+        return false;
+    }
 }

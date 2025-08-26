@@ -24,4 +24,14 @@ public class RealEstateAgent extends User {
         super(username, cognitoSub);
         this.agency = agency;
     }
+
+    @Override
+    public boolean canBePromotedToManagerOfAgency(RealEstateAgency agency) {
+        return agency.equals(this.agency);
+    }
+
+    @Override
+    public boolean canBePromotedToAgentOfAgency(RealEstateAgency agency) {
+        return false;
+    }
 }
