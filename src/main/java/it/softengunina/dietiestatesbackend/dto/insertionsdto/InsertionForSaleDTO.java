@@ -11,10 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InsertionForSaleDTO extends InsertionDTO {
-    private Double price;
-
     public InsertionForSaleDTO(InsertionForSale insertion) {
         super(insertion);
-        this.price = insertion.getPrice();
     }
 }

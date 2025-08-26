@@ -42,4 +42,12 @@ public abstract class Insertion {
         this.details = details;
         this.uploader = uploader;
     }
+
+    public Double getPrice() {
+        return null;
+    }
+
+    public Double getRent() {
+        return null;
+    }
 }
