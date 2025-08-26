@@ -1,7 +1,6 @@
-package it.softengunina.dietiestatesbackend.model.users.commands;
+package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.exceptions.PromotionFailedException;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.services.PromotionService;
 
 public interface PromotionToManagerCommand {

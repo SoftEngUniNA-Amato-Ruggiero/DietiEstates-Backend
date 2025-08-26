@@ -1,9 +1,5 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
-import it.softengunina.dietiestatesbackend.model.users.commands.PromoteUserToAgentCommand;
-import it.softengunina.dietiestatesbackend.model.users.commands.PromoteUserToManagerToManagerCommand;
-import it.softengunina.dietiestatesbackend.model.users.commands.PromotionToAgentCommand;
-import it.softengunina.dietiestatesbackend.model.users.commands.PromotionToManagerCommand;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

@@ -1,9 +1,7 @@
-package it.softengunina.dietiestatesbackend.model.users.commands;
+package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.exceptions.PromotionFailedException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.services.PromotionService;
 
 public record PromoteUserToAgentCommand(User user, RealEstateAgency agency) implements PromotionToAgentCommand {

@@ -1,5 +1,4 @@
 package it.softengunina.dietiestatesbackend.model.users;
-import it.softengunina.dietiestatesbackend.model.users.commands.PromotionToManagerCommand;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import lombok.*;

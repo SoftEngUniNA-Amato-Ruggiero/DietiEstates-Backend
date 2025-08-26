@@ -1,8 +1,5 @@
 package it.softengunina.dietiestatesbackend.model.users;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import it.softengunina.dietiestatesbackend.model.users.commands.PromoteAgentToManagerToManagerCommand;
-import it.softengunina.dietiestatesbackend.model.users.commands.PromotionToAgentCommand;
-import it.softengunina.dietiestatesbackend.model.users.commands.PromotionToManagerCommand;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
