@@ -6,7 +6,7 @@ import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.services.PromotionService;
 
-public record PromoteUserToAgentCommand(User user, RealEstateAgency agency) implements PromotionCommand<RealEstateAgent> {
+public record PromoteUserToAgentCommand(User user, RealEstateAgency agency) implements PromotionToAgentCommand {
 
     public RealEstateAgent execute(PromotionService service) throws PromotionFailedException {
         return service.promoteUserToAgent(user, agency);

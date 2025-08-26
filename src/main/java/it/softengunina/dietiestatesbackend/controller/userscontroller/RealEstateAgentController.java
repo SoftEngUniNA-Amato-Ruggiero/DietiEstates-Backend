@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
-import it.softengunina.dietiestatesbackend.commands.PromotionCommand;
+import it.softengunina.dietiestatesbackend.commands.PromotionToAgentCommand;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
@@ -46,7 +46,7 @@ public class RealEstateAgentController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         try {
-            PromotionCommand<RealEstateAgent> command = user.getPromotionToAgentCommand(manager.getAgency());
+            PromotionToAgentCommand command = user.getPromotionToAgentCommand(manager.getAgency());
             RealEstateAgent agent = command.execute(promotionService);
             return new UserAgencyRoleDTO(agent);
         } catch (IllegalArgumentException e) {

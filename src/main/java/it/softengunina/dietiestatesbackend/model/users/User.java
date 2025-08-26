@@ -1,8 +1,9 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.commands.PromoteUserToAgentCommand;
-import it.softengunina.dietiestatesbackend.commands.PromoteUserToManagerCommand;
-import it.softengunina.dietiestatesbackend.commands.PromotionCommand;
+import it.softengunina.dietiestatesbackend.commands.PromoteUserToManagerToManagerCommand;
+import it.softengunina.dietiestatesbackend.commands.PromotionToAgentCommand;
+import it.softengunina.dietiestatesbackend.commands.PromotionToManagerCommand;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -46,11 +47,11 @@ public class User {
         return this.getClass().getSimpleName();
     }
 
-    public PromotionCommand<RealEstateAgent> getPromotionToAgentCommand(RealEstateAgency agency) {
+    public PromotionToAgentCommand getPromotionToAgentCommand(RealEstateAgency agency) {
         return new PromoteUserToAgentCommand(this, agency);
     }
 
-    public PromotionCommand<RealEstateManager> getPromotionToManagerCommand(RealEstateAgency agency) {
-        return new PromoteUserToManagerCommand(this, agency);
+    public PromotionToManagerCommand getPromotionToManagerCommand(RealEstateAgency agency) {
+        return new PromoteUserToManagerToManagerCommand(this, agency);
     }
 }
