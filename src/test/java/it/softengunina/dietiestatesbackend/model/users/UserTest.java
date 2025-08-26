@@ -1,8 +1,6 @@
-package it.softengunina.dietiestatesbackend.model;
+package it.softengunina.dietiestatesbackend.model.users;
 
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

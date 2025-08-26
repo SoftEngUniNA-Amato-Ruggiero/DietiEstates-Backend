@@ -1,11 +1,12 @@
-package it.softengunina.dietiestatesbackend.controller;
+package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.UserAgencyRoleDTO;
-import it.softengunina.dietiestatesbackend.dto.UserDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.User;
-import it.softengunina.dietiestatesbackend.repository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.repository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,17 +17,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
-@RequestMapping("/managers")
-public class RealEstateManagerController {
+@RequestMapping("/agents")
+public class RealEstateAgentController {
     private final UserRepository<User> userRepository;
     private final RealEstateManagerRepository managerRepository;
     private final TokenService tokenService;
     private final UserPromotionService promotionService;
 
-    RealEstateManagerController(UserRepository<User> userRepository,
-                                RealEstateManagerRepository managerRepository,
-                                TokenService tokenService,
-                                UserPromotionService promotionService) {
+    RealEstateAgentController(UserRepository<User> userRepository,
+                              RealEstateManagerRepository managerRepository,
+                              TokenService tokenService, UserPromotionService promotionService) {
         this.userRepository = userRepository;
         this.managerRepository = managerRepository;
         this.tokenService = tokenService;
@@ -36,7 +36,7 @@ public class RealEstateManagerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public UserAgencyRoleDTO createManager(@RequestBody UserDTO req) {
+    public UserAgencyRoleDTO createAgent(@RequestBody UserDTO req) {
         RealEstateManager manager = managerRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
@@ -44,8 +44,8 @@ public class RealEstateManagerController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         try {
-            RealEstateManager promotedManager = promotionService.promoteToManager(user, manager.getAgency());
-            return new UserAgencyRoleDTO(promotedManager);
+            RealEstateAgent agent = promotionService.promoteToAgent(user, manager.getAgency());
+            return new UserAgencyRoleDTO(agent);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (Exception e) {

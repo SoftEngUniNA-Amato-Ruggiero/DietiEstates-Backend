@@ -1,5 +1,6 @@
-package it.softengunina.dietiestatesbackend.dto;
+package it.softengunina.dietiestatesbackend.dto.usersdto;
 
+import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.User;
 import jakarta.validation.Valid;

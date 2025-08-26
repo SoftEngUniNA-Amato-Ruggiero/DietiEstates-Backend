@@ -1,8 +1,9 @@
-package it.softengunina.dietiestatesbackend.repository;
+package it.softengunina.dietiestatesbackend.repository.usersrepository;
 
 import it.softengunina.dietiestatesbackend.model.*;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

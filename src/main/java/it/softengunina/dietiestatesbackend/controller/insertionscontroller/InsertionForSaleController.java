@@ -1,0 +1,39 @@
+package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
+
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionForSaleDTO;
+import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
+import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForSaleRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
+import it.softengunina.dietiestatesbackend.services.TokenService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+@RestController
+@RequestMapping("/insertions/for-sale")
+public class InsertionForSaleController {
+    private final InsertionForSaleRepository insertionForSaleRepository;
+    private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
+    private final TokenService tokenService;
+
+    public InsertionForSaleController(InsertionForSaleRepository insertionForSaleRepository,
+                                      RealEstateAgentRepository<RealEstateAgent> agentRepository,
+                                      TokenService tokenService) {
+        this.insertionForSaleRepository = insertionForSaleRepository;
+        this.agentRepository = agentRepository;
+        this.tokenService = tokenService;
+    }
+
+    @PostMapping
+    public InsertionForSaleDTO createInsertion(@RequestBody InsertionForSaleDTO req) {
+        RealEstateAgent uploader = agentRepository.findByCognitoSub(tokenService.getCognitoSub())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not an agent"));
+
+        InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(req.getAddress(), req.getDetails(), uploader, req.getPrice()));
+        return new InsertionForSaleDTO(insertion);
+    }
+}

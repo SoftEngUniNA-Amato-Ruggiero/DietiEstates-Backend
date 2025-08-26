@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.repository;
+package it.softengunina.dietiestatesbackend.repository.usersrepository;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;

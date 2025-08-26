@@ -1,15 +1,15 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
-import it.softengunina.dietiestatesbackend.dto.UserAgencyRoleDTO;
-import it.softengunina.dietiestatesbackend.dto.UserDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
-import it.softengunina.dietiestatesbackend.repository.RealEstateAgentRepository;
-import it.softengunina.dietiestatesbackend.repository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import lombok.extern.slf4j.Slf4j;

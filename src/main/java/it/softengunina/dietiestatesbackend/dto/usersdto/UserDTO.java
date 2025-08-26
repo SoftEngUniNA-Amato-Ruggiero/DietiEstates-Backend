@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.dto;
+package it.softengunina.dietiestatesbackend.dto.usersdto;
 
 import it.softengunina.dietiestatesbackend.model.users.User;
 import jakarta.validation.constraints.*;

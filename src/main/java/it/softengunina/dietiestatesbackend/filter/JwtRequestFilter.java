@@ -2,7 +2,7 @@ package it.softengunina.dietiestatesbackend.filter;
 
 import it.softengunina.dietiestatesbackend.exceptions.AuthenticationNotFoundException;
 import it.softengunina.dietiestatesbackend.model.users.User;
-import it.softengunina.dietiestatesbackend.repository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

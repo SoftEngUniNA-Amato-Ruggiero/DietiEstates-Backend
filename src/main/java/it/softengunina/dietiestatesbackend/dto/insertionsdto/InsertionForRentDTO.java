@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.dto;
+package it.softengunina.dietiestatesbackend.dto.insertionsdto;
 
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForRent;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
-package it.softengunina.dietiestatesbackend.controller;
+package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
 import it.softengunina.dietiestatesbackend.model.users.User;
-import it.softengunina.dietiestatesbackend.repository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

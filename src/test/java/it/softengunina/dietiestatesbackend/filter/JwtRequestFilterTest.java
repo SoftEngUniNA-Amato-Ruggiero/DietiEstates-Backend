@@ -8,7 +8,7 @@ import it.softengunina.dietiestatesbackend.exceptions.AuthenticationNotFoundExce
 import it.softengunina.dietiestatesbackend.exceptions.MissingClaimException;
 import it.softengunina.dietiestatesbackend.exceptions.JwtNotFoundException;
 import it.softengunina.dietiestatesbackend.model.users.User;
-import it.softengunina.dietiestatesbackend.repository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

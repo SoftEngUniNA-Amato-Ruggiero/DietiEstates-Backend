@@ -1,12 +1,12 @@
-package it.softengunina.dietiestatesbackend.controller;
+package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.softengunina.dietiestatesbackend.dto.UserDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.User;
-import it.softengunina.dietiestatesbackend.repository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.repository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;

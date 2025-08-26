@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.repository;
+package it.softengunina.dietiestatesbackend.repository.usersrepository;
 
 import it.softengunina.dietiestatesbackend.model.users.User;
 import org.springframework.context.annotation.Primary;

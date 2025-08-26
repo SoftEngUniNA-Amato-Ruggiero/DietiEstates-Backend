@@ -1,5 +1,6 @@
-package it.softengunina.dietiestatesbackend.dto;
+package it.softengunina.dietiestatesbackend.dto.insertionsdto;
 
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.Address;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails;

@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.repository;
+package it.softengunina.dietiestatesbackend.repository.usersrepository;
 
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import org.springframework.data.jpa.repository.Modifying;
