@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.commands;
+package it.softengunina.dietiestatesbackend.model.users.commands;
 
 import it.softengunina.dietiestatesbackend.exceptions.PromotionFailedException;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;

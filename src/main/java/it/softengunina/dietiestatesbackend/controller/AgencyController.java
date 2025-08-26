@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller;
 
-import it.softengunina.dietiestatesbackend.commands.PromotionToManagerCommand;
+import it.softengunina.dietiestatesbackend.model.users.commands.PromotionToManagerCommand;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
