@@ -64,8 +64,10 @@ class TokenServiceTest {
 
     @Test
     void getCognitoSub_returnsCognitoSub() {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(jwt);
         when(jwt.getSubject()).thenReturn("cognitoSub");
-        assertEquals("cognitoSub", tokenService.getCognitoSub(jwt));
+        assertEquals("cognitoSub", tokenService.getCognitoSub());
     }
 
     @Test
