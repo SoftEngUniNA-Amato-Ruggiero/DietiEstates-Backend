@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.dto.insertionsdto;
 
-import it.softengunina.dietiestatesbackend.model.insertions.InsertionForRent;
+import it.softengunina.dietiestatesbackend.model.insertions.InsertionWithRent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +10,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class InsertionForRentDTO extends InsertionDTO {
+public class InsertionWithRentDTO extends InsertionDTO {
     private Double rent;
 
-    public InsertionForRentDTO(InsertionForRent insertion) {
+    public InsertionWithRentDTO(InsertionWithRent insertion) {
         super(insertion);
         this.rent = insertion.getRent();
     }

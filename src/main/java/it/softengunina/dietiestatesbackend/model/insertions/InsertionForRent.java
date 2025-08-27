@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class InsertionForRent extends Insertion {
+public class InsertionForRent extends BaseInsertion implements InsertionWithRent {
     @Getter
     @Setter
     private Double rent;

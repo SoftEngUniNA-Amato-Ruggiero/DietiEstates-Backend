@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.dto.insertionsdto;
 
+import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.Address;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
@@ -18,6 +19,7 @@ public class InsertionDTO {
     private Address address;
     private InsertionDetails details;
     private UserDTO uploader;
+    private RealEstateAgencyDTO agency;
 
     protected InsertionDTO(Insertion insertion) {
         this.id = insertion.getId();

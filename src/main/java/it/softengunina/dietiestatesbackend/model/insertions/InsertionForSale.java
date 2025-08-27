@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class InsertionForSale extends Insertion {
+public class InsertionForSale extends BaseInsertion implements InsertionWithPrice {
     @Getter
     @Setter
     private Double price;

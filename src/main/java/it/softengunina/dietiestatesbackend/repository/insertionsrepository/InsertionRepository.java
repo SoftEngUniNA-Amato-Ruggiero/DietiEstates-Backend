@@ -1,12 +1,12 @@
 package it.softengunina.dietiestatesbackend.repository.insertionsrepository;
 
-import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
+import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface InsertionRepository<T extends Insertion> extends JpaRepository<T, Long> {
+public interface InsertionRepository<T extends BaseInsertion> extends JpaRepository<T, Long> {
     @Query("SELECT i FROM #{#entityName} i WHERE i.address.city = :city")
     Page<T> findByCity(String city, Pageable pageable);
 

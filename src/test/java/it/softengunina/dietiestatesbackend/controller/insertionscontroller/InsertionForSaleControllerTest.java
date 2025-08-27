@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionForSaleDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.insertions.Address;
@@ -54,7 +54,7 @@ class InsertionForSaleControllerTest {
 
     RealEstateAgency testAgency;
     RealEstateAgent testAgent;
-    InsertionForSaleDTO testReq;
+    InsertionWithPriceDTO testReq;
 
     @BeforeEach
     void setUp() {
@@ -65,7 +65,7 @@ class InsertionForSaleControllerTest {
 
         testAgency = new RealEstateAgency("testIban", "testAgency");
         testAgent = new RealEstateAgent("testUsername", "testSub", testAgency);
-        testReq = new InsertionForSaleDTO();
+        testReq = new InsertionWithPriceDTO();
         testReq.setAddress(address);
         testReq.setDetails(details);
         testReq.setPrice(price);

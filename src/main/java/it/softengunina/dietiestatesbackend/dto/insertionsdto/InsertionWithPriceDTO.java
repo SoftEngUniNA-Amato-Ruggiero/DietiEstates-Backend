@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.dto.insertionsdto;
 
-import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
+import it.softengunina.dietiestatesbackend.model.insertions.InsertionWithPrice;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +10,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class InsertionForSaleDTO extends InsertionDTO {
+public class InsertionWithPriceDTO extends InsertionDTO {
     private Double price;
 
-    public InsertionForSaleDTO(InsertionForSale insertion) {
+    public InsertionWithPriceDTO(InsertionWithPrice insertion) {
         super(insertion);
         this.price = insertion.getPrice();
     }

@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
+import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
@@ -37,10 +37,10 @@ class InsertionControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    InsertionRepository<Insertion> insertionRepository;
+    InsertionRepository<BaseInsertion> insertionRepository;
 
     Long insertionId = 1L;
-    Insertion insertion;
+    BaseInsertion insertion;
 
     Long uploaderId = 2L;
     RealEstateAgent uploader;

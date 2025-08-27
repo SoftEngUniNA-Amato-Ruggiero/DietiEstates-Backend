@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionForSaleDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForSaleRepository;
@@ -27,11 +27,11 @@ public class InsertionForSaleController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public InsertionForSaleDTO createInsertion(@RequestBody InsertionForSaleDTO req) {
+    public InsertionWithPriceDTO createInsertion(@RequestBody InsertionWithPriceDTO req) {
         RealEstateAgent uploader = agentRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not an agent"));
 
         InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(req.getAddress(), req.getDetails(), uploader, req.getPrice()));
-        return new InsertionForSaleDTO(insertion);
+        return new InsertionWithPriceDTO(insertion);
     }
 }

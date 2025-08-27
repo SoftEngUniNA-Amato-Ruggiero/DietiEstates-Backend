@@ -2,7 +2,7 @@ package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTOFactory;
-import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
+import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/insertions")
 public class InsertionController {
-    private final InsertionRepository<Insertion> insertionRepository;
+    private final InsertionRepository<BaseInsertion> insertionRepository;
 
-    public InsertionController(InsertionRepository<Insertion> insertionRepository) {
+    public InsertionController(InsertionRepository<BaseInsertion> insertionRepository) {
         this.insertionRepository = insertionRepository;
     }
 
@@ -24,7 +24,7 @@ public class InsertionController {
 
     @GetMapping("/{id}")
     public InsertionDTO getInsertionById(@PathVariable Long id) {
-        Insertion insertion = insertionRepository.findById(id)
+        BaseInsertion insertion = insertionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Insertion not found"));
         return InsertionDTOFactory.createInsertionDTO(insertion);
     }
