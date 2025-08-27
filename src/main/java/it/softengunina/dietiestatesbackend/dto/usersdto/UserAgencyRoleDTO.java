@@ -3,6 +3,7 @@ package it.softengunina.dietiestatesbackend.dto.usersdto;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -36,5 +37,12 @@ public class UserAgencyRoleDTO {
         }
 
         this.role = user.getRole();
+    }
+
+    public UserAgencyRoleDTO(UserWithAgency user) {
+        this.user = new UserDTO(user.getId(), user.getUsername());
+        this.agency = new RealEstateAgencyDTO(user.getAgency());
+        this.role = user.getRole();
+
     }
 }

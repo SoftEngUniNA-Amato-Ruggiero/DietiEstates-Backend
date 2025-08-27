@@ -46,11 +46,11 @@ public class User {
         return this.getClass().getSimpleName();
     }
 
-    public Function<RealEstateAgency, RealEstateAgent> getPromotionToAgentFunction(PromotionService service) {
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToAgentFunction(PromotionService service) {
         return agency -> service.promoteUserToAgent(this, agency);
     }
 
-    public Function<RealEstateAgency, RealEstateManager> getPromotionToManagerFunction(PromotionService service) {
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(PromotionService service) {
         return agency -> service.promoteUserToManager(this, agency);
     }
 }

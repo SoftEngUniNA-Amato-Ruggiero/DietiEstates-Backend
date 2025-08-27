@@ -14,7 +14,7 @@ import java.util.function.Function;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)
 @ToString
-public class RealEstateAgent extends User {
+public class RealEstateAgent extends User implements UserWithAgency {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agency_id")
     @JsonBackReference
@@ -29,12 +29,17 @@ public class RealEstateAgent extends User {
     }
 
     @Override
-    public Function<RealEstateAgency, RealEstateAgent> getPromotionToAgentFunction(PromotionService service) {
+    public boolean isManager() {
+        return false;
+    }
+
+    @Override
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToAgentFunction(PromotionService service) {
         throw new IllegalArgumentException("User cannot be promoted to agent.");
     }
 
     @Override
-    public Function<RealEstateAgency, RealEstateManager> getPromotionToManagerFunction(PromotionService service) {
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(PromotionService service) {
         return inputAgency -> {
             if (inputAgency.equals(this.agency)) {
                 return service.promoteAgentToManager(this);

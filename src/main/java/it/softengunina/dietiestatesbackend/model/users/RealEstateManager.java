@@ -18,7 +18,12 @@ public class RealEstateManager extends RealEstateAgent {
     }
 
     @Override
-    public Function<RealEstateAgency, RealEstateManager> getPromotionToManagerFunction(PromotionService service) {
+    public boolean isManager() {
+        return true;
+    }
+
+    @Override
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(PromotionService service) {
         throw new IllegalArgumentException("User cannot be promoted to manager.");
     }
 }

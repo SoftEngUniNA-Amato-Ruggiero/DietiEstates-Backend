@@ -33,24 +33,28 @@ class UserTest {
     @Test
     void getPromotionToAgentFunction() {
         Mockito.when(promotionService.promoteUserToAgent(user, agency)).thenReturn(new RealEstateAgent(user.getUsername(), user.getCognitoSub(), agency));
-        RealEstateAgent agent = user.getPromotionToAgentFunction(promotionService).apply(agency);
+        UserWithAgency agent = user.getPromotionToAgentFunction(promotionService).apply(agency);
         assertAll(
                 () -> assertNotNull(agent),
                 () -> assertEquals(user.getUsername(), agent.getUsername()),
                 () -> assertEquals(user.getCognitoSub(), agent.getCognitoSub()),
-                () -> assertEquals(agency, agent.getAgency())
+                () -> assertEquals(agency, agent.getAgency()),
+                () -> assertEquals("RealEstateAgent", agent.getRole()),
+                () -> assertFalse(agent.isManager())
         );
     }
 
     @Test
     void getPromotionToManagerFunction() {
         Mockito.when(promotionService.promoteUserToManager(user, agency)).thenReturn(new RealEstateManager(user.getUsername(), user.getCognitoSub(), agency));
-        RealEstateManager manager = user.getPromotionToManagerFunction(promotionService).apply(agency);
+        UserWithAgency manager = user.getPromotionToManagerFunction(promotionService).apply(agency);
         assertAll(
                 () -> assertNotNull(manager),
                 () -> assertEquals(user.getUsername(), manager.getUsername()),
                 () -> assertEquals(user.getCognitoSub(), manager.getCognitoSub()),
-                () -> assertEquals(agency, manager.getAgency())
+                () -> assertEquals(agency, manager.getAgency()),
+                () -> assertEquals("RealEstateManager", manager.getRole()),
+                () -> assertTrue(manager.isManager())
         );
     }
 }

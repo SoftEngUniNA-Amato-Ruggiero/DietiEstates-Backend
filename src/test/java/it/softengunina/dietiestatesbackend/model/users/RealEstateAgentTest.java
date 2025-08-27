@@ -40,12 +40,14 @@ class RealEstateAgentTest {
     @Test
     void getPromotionToManagerFunction() {
         Mockito.when(promotionService.promoteAgentToManager(agent)).thenReturn(new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agency));
-        RealEstateManager manager = agent.getPromotionToManagerFunction(promotionService).apply(agency);
+        UserWithAgency manager = agent.getPromotionToManagerFunction(promotionService).apply(agency);
         assertAll(
                 () -> assertNotNull(manager),
                 () -> assertEquals(agent.getUsername(), manager.getUsername()),
                 () -> assertEquals(agent.getCognitoSub(), manager.getCognitoSub()),
-                () -> assertEquals(agent.getAgency(), manager.getAgency())
+                () -> assertEquals(agent.getAgency(), manager.getAgency()),
+                () -> assertEquals("RealEstateManager", manager.getRole()),
+                () -> assertTrue(manager.isManager())
         );
     }
 
@@ -54,7 +56,7 @@ class RealEstateAgentTest {
         Mockito.when(promotionService.promoteAgentToManager(agent)).thenReturn(new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agency));
         RealEstateAgency differentAgency = new RealEstateAgency("differentIban", "differentAgency");
 
-        Function<RealEstateAgency, RealEstateManager> promotionFunction = agent.getPromotionToManagerFunction(promotionService);
+        Function<RealEstateAgency, UserWithAgency> promotionFunction = agent.getPromotionToManagerFunction(promotionService);
         assertThrows(IllegalArgumentException.class, () -> promotionFunction.apply(differentAgency));
     }
 }
