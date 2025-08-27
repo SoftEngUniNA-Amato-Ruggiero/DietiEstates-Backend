@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class InsertionWithRentDTO extends InsertionDTO {
+public class InsertionWithRentDTO extends BaseInsertionDTO {
     private Double rent;
 
     public InsertionWithRentDTO(InsertionWithRent insertion) {

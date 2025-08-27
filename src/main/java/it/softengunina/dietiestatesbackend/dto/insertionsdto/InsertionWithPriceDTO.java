@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class InsertionWithPriceDTO extends InsertionDTO {
+public class InsertionWithPriceDTO extends BaseInsertionDTO {
     private Double price;
 
     public InsertionWithPriceDTO(InsertionWithPrice insertion) {

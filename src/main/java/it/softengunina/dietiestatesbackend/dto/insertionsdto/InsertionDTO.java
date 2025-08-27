@@ -1,30 +1,13 @@
 package it.softengunina.dietiestatesbackend.dto.insertionsdto;
 
-import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
-import it.softengunina.dietiestatesbackend.model.insertions.Address;
-import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
-import it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public interface InsertionDTO {
+    Long getId();
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public abstract class InsertionDTO {
-    private Long id;
-    private Address address;
-    private InsertionDetails details;
-    private UserDTO uploader;
-    private RealEstateAgencyDTO agency;
+    it.softengunina.dietiestatesbackend.model.insertions.Address getAddress();
 
-    protected InsertionDTO(Insertion insertion) {
-        this.id = insertion.getId();
-        this.address = insertion.getAddress();
-        this.details = insertion.getDetails();
-        this.uploader = new UserDTO(insertion.getUploader());
-    }
+    it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails getDetails();
+
+    it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO getUploader();
+
+    it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO getAgency();
 }
