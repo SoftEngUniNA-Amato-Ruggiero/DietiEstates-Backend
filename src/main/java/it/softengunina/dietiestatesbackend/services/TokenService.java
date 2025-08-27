@@ -5,6 +5,7 @@ import it.softengunina.dietiestatesbackend.exceptions.MissingClaimException;
 import it.softengunina.dietiestatesbackend.exceptions.JwtNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TokenService {
     public Jwt getJwt() {
-        Authentication authentication = getAuthentication();
-        return getJwt(authentication);
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = getAuthenticationFromSecurityContext(securityContext);
+        return getJwtFromAuthentication(authentication);
     }
 
     public String getCognitoSub(Jwt jwt) {
@@ -38,15 +40,15 @@ public class TokenService {
         return email;
     }
 
-    private Authentication getAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private Authentication getAuthenticationFromSecurityContext(SecurityContext securityContext) {
+        Authentication authentication = securityContext.getAuthentication();
         if (authentication == null) {
             throw new AuthenticationNotFoundException("No Authentication found in SecurityContext.");
         }
         return authentication;
     }
 
-    private Jwt getJwt(Authentication authentication) {
+    private Jwt getJwtFromAuthentication(Authentication authentication) {
         if (authentication.getPrincipal() instanceof Jwt jwt) {
             return jwt;
         } else {
