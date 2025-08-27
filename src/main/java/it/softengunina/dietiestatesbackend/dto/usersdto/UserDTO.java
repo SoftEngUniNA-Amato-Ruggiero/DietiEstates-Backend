@@ -14,8 +14,11 @@ public class UserDTO {
     @NotBlank
     private String username;
 
+    private String role;
+
     public UserDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
+        this.role = user.getRole();
     }
 }

@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -37,7 +37,7 @@ public class RealEstateAgentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public UserAgencyRoleDTO createAgent(@RequestBody UserDTO req) {
+    public UserWithAgencyDTO createAgent(@RequestBody UserDTO req) {
         RealEstateManager manager = managerRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
@@ -46,7 +46,7 @@ public class RealEstateAgentController {
 
         try {
             UserWithAgency agent = user.getPromotionToAgentFunction(promotionService).apply(manager.getAgency());
-            return new UserAgencyRoleDTO(agent);
+            return new UserWithAgencyDTO(agent);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (Exception e) {

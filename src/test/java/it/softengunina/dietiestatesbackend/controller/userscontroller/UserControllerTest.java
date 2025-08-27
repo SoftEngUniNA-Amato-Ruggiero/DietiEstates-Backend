@@ -1,6 +1,8 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
+import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class BaseUserControllerTest {
+class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
 
@@ -30,11 +32,15 @@ class BaseUserControllerTest {
     TokenService tokenService;
 
     BaseUser user;
+    RealEstateAgent agent;
+    RealEstateAgency agency;
     Long userId = 1L;
 
     @BeforeEach
     void setUp() {
+        agency = new RealEstateAgency("TestIban", "TestAgencyName");
         user = new BaseUser("testUsername", "testCognitoSub");
+        agent = new RealEstateAgent("agentUsername", "agentCognitoSub", agency);
 
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
@@ -43,6 +49,8 @@ class BaseUserControllerTest {
         Mockito.when(userRepository.findByUsername("wrongUsername")).thenReturn(Optional.empty());
         Mockito.when(userRepository.findByCognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
         Mockito.when(userRepository.findById(2L)).thenReturn(Optional.empty());
+
+        Mockito.when(userRepository.findByCognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
     }
 
     @Test
@@ -61,13 +69,30 @@ class BaseUserControllerTest {
     }
 
     @Test
-    void getRole() throws Exception {
+    void getRole_User() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
 
         mockMvc.perform(get("/users/role"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.agency").isEmpty())
+                .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.role").value(user.getRole()));
+    }
+
+    @Test
+    void getRole_Agent() throws Exception {
+        Mockito.when(tokenService.getCognitoSub()).thenReturn(agent.getCognitoSub());
+
+        mockMvc.perform(get("/users/role"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(agent.getUsername()))
+                .andExpect(jsonPath("$.role").value(agent.getRole()));
+    }
+
+    @Test
+    void getRole_NotFound() throws Exception {
+        Mockito.when(tokenService.getCognitoSub()).thenReturn("wrongCognitoSub");
+
+        mockMvc.perform(get("/users/role"))
+                .andExpect(status().isNotFound());
     }
 }

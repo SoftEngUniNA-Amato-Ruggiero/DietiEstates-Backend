@@ -1,9 +1,6 @@
 package it.softengunina.dietiestatesbackend.repository.usersrepository;
 
-import it.softengunina.dietiestatesbackend.model.*;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
-import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,24 +9,20 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-class BaseUserRepositoryTest {
+class UserRepositoryTest {
     @Autowired
     UserRepository<BaseUser> repository;
-    @Autowired
-    RealEstateAgencyRepository agencyRepository;
 
     BaseUser testUser;
-    RealEstateAgency testAgency;
 
     @BeforeEach
     void setUp() {
-        testAgency = agencyRepository.save(new RealEstateAgency("testIban", "testAgency"));
-        testUser = repository.save(new RealEstateAgent("email@test.com", "testsub", testAgency));
+        testUser = repository.save(new BaseUser("userIban", "usersub"));
     }
 
     @Test
     void findByUsername() {
-        BaseUser user = repository.findByUsername("email@test.com").orElse(null);
+        BaseUser user = repository.findByUsername(testUser.getUsername()).orElse(null);
         assertAll(
                 () -> assertNotNull(user),
                 () -> assertEquals(testUser, user)
@@ -38,7 +31,7 @@ class BaseUserRepositoryTest {
 
     @Test
     void findByCognitoSub() {
-        BaseUser user = repository.findByCognitoSub("testsub").orElse(null);
+        BaseUser user = repository.findByCognitoSub(testUser.getCognitoSub()).orElse(null);
         assertAll(
                 () -> assertNotNull(user),
                 () -> assertEquals(testUser, user)
@@ -47,11 +40,11 @@ class BaseUserRepositoryTest {
 
     @Test
     void existsByUsername() {
-        assertTrue(repository.existsByUsername("email@test.com"));
+        assertTrue(repository.existsByUsername(testUser.getUsername()));
     }
 
     @Test
     void existsByCognitoSub() {
-        assertTrue(repository.existsByCognitoSub("testsub"));
+        assertTrue(repository.existsByCognitoSub(testUser.getCognitoSub()));
     }
 }

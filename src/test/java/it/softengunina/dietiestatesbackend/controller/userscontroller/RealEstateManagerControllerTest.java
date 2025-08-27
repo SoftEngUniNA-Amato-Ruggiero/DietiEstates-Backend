@@ -73,6 +73,6 @@ class RealEstateManagerControllerTest {
                 .andExpect(jsonPath("$.user.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
-                .andExpect(jsonPath("$.role").value("RealEstateManager"));
+                .andExpect(jsonPath("$.user.role").value("RealEstateManager"));
     }
 }

@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
@@ -66,14 +66,14 @@ public class AgencyController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public UserAgencyRoleDTO createAgency(@RequestBody RealEstateAgencyDTO req) {
+    public UserWithAgencyDTO createAgency(@RequestBody RealEstateAgencyDTO req) {
         BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
 
         try {
             RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
             UserWithAgency manager = user.getPromotionToManagerFunction(promotionService).apply(agency);
-            return new UserAgencyRoleDTO(manager);
+            return new UserWithAgencyDTO(manager);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (Exception e) {

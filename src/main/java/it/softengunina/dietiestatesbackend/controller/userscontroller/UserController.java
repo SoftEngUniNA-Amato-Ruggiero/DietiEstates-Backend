@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
+import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.User;
@@ -38,9 +38,22 @@ public class UserController {
     }
 
     @GetMapping("/role")
-    public UserAgencyRoleDTO getRole() {
+    public UserDTO getRole() {
         User user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return new UserAgencyRoleDTO(user);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return new UserDTO(user);
+    }
+
+    @GetMapping("/agency")
+    public RealEstateAgencyDTO getAgency() {
+        String cognitoSub = tokenService.getCognitoSub();
+        BaseUser baseUser = userRepository.findByCognitoSub(cognitoSub)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        if (baseUser.getAgency() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not associated with any agency");
+        }
+
+        return new RealEstateAgencyDTO(baseUser.getAgency());
     }
 }
