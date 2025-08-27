@@ -18,7 +18,6 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
             .cors(Customizer.withDefaults())
-            .csrf(AbstractHttpConfigurer::disable)
             .headers( headers -> headers
                     // For H2 console
                     .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin
