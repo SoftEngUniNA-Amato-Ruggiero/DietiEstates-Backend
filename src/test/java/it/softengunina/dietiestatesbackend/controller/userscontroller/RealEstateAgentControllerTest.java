@@ -5,7 +5,7 @@ import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
@@ -40,7 +40,7 @@ class RealEstateAgentControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    UserRepository<User> userRepository;
+    UserRepository<BaseUser> userRepository;
     @MockitoBean
     RealEstateManagerRepository managerRepository;
     @MockitoBean
@@ -50,13 +50,13 @@ class RealEstateAgentControllerTest {
 
     RealEstateAgency agency;
     RealEstateManager manager;
-    User user;
+    BaseUser user;
 
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("agencyIban", "agencyName");
         manager = new RealEstateManager("managerName", "managerSub", agency);
-        user = new User("userName", "userSub");
+        user = new BaseUser("userName", "userSub");
 
         Mockito.when(managerRepository.findByCognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
         Mockito.when(managerRepository.findByCognitoSub("wrongSub")).thenReturn(Optional.empty());

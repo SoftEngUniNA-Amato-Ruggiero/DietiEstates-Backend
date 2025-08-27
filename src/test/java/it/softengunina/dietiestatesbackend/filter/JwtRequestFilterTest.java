@@ -7,7 +7,7 @@ import ch.qos.logback.core.read.ListAppender;
 import it.softengunina.dietiestatesbackend.exceptions.AuthenticationNotFoundException;
 import it.softengunina.dietiestatesbackend.exceptions.MissingClaimException;
 import it.softengunina.dietiestatesbackend.exceptions.JwtNotFoundException;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import jakarta.servlet.FilterChain;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 class JwtRequestFilterTest {
     @Mock
-    UserRepository<User> userRepository;
+    UserRepository<BaseUser> userRepository;
     @Mock
     TokenService tokenService;
 
@@ -79,7 +79,7 @@ class JwtRequestFilterTest {
     void doFilterInternal_saveNewUser() throws ServletException, IOException {
         when(tokenService.getJwt()).thenReturn(jwt);
         when(userRepository.findByCognitoSub(testSub)).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(userRepository.save(any(BaseUser.class))).thenAnswer(i -> i.getArguments()[0]);
 
         filter.doFilterInternal(request, response, chain);
 
@@ -96,7 +96,7 @@ class JwtRequestFilterTest {
     @Test
     void doFilterInternal_userFound() throws ServletException, IOException {
         when(tokenService.getJwt()).thenReturn(jwt);
-        when(userRepository.findByCognitoSub(testSub)).thenReturn(Optional.of(new User(testEmail, testSub)));
+        when(userRepository.findByCognitoSub(testSub)).thenReturn(Optional.of(new BaseUser(testEmail, testSub)));
 
         filter.doFilterInternal(request, response, chain);
 

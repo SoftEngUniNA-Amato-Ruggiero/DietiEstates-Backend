@@ -2,7 +2,7 @@ package it.softengunina.dietiestatesbackend.dto.usersdto;
 
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -26,7 +26,7 @@ public class UserAgencyRoleDTO {
     @NotNull
     private String role;
 
-    public UserAgencyRoleDTO(User user) {
+    public UserAgencyRoleDTO(BaseUser user) {
         this.user = new UserDTO(user);
 
         RealEstateAgency userAgency = user.getAgency();

@@ -8,21 +8,21 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserTest {
-    User user;
+class BaseUserTest {
+    BaseUser user;
     RealEstateAgency agency;
     PromotionService promotionService;
 
     @BeforeEach
     void setUp() {
         promotionService = Mockito.mock(PromotionService.class);
-        user = new User("testUser", "testSub1");
+        user = new BaseUser("testUser", "testSub1");
         agency = new RealEstateAgency("testIban", "testAgency");
     }
 
     @Test
     void getRoleUser() {
-        assertEquals("User", user.getRole());
+        assertEquals("BaseUser", user.getRole());
     }
 
     @Test

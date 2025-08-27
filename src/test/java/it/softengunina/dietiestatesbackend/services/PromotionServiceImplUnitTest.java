@@ -3,7 +3,7 @@ package it.softengunina.dietiestatesbackend.services;
 import it.softengunina.dietiestatesbackend.exceptions.PromotionFailedException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ class PromotionServiceImplUnitTest {
     RealEstateManagerRepository managerRepository;
 
     @Mock
-    User user;
+    BaseUser user;
     @Mock
     RealEstateAgent agent;
     @Mock

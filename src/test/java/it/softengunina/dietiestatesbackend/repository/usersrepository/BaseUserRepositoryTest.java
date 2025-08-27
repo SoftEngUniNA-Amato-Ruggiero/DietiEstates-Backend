@@ -2,7 +2,7 @@ package it.softengunina.dietiestatesbackend.repository.usersrepository;
 
 import it.softengunina.dietiestatesbackend.model.*;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-class UserRepositoryTest {
+class BaseUserRepositoryTest {
     @Autowired
-    UserRepository<User> repository;
+    UserRepository<BaseUser> repository;
     @Autowired
     RealEstateAgencyRepository agencyRepository;
 
-    User testUser;
+    BaseUser testUser;
     RealEstateAgency testAgency;
 
     @BeforeEach
@@ -29,7 +29,7 @@ class UserRepositoryTest {
 
     @Test
     void findByUsername() {
-        User user = repository.findByUsername("email@test.com").orElse(null);
+        BaseUser user = repository.findByUsername("email@test.com").orElse(null);
         assertAll(
                 () -> assertNotNull(user),
                 () -> assertEquals(testUser, user)
@@ -38,7 +38,7 @@ class UserRepositoryTest {
 
     @Test
     void findByCognitoSub() {
-        User user = repository.findByCognitoSub("testsub").orElse(null);
+        BaseUser user = repository.findByCognitoSub("testsub").orElse(null);
         assertAll(
                 () -> assertNotNull(user),
                 () -> assertEquals(testUser, user)

@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,21 +28,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         )
 )
 @AutoConfigureMockMvc(addFilters = false)
-class UserControllerTest {
+class BaseUserControllerTest {
     @Autowired
     MockMvc mockMvc;
 
     @MockitoBean
-    UserRepository<User> userRepository;
+    UserRepository<BaseUser> userRepository;
     @MockitoBean
     TokenService tokenService;
 
-    User user;
+    BaseUser user;
     Long userId = 1L;
 
     @BeforeEach
     void setUp() {
-        user = new User("testUsername", "testCognitoSub");
+        user = new BaseUser("testUsername", "testCognitoSub");
 
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));

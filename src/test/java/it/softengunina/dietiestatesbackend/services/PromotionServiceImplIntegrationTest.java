@@ -3,7 +3,7 @@ package it.softengunina.dietiestatesbackend.services;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
@@ -28,29 +28,29 @@ class PromotionServiceImplIntegrationTest {
     @Autowired
     RealEstateManagerRepository realEstateManagerRepository;
     @Autowired
-    UserRepository<User> userRepository;
+    UserRepository<BaseUser> userRepository;
     @Autowired
     PromotionServiceImpl promotionService;
 
     RealEstateAgency agency;
     RealEstateManager manager;
     RealEstateAgent agent;
-    User user;
+    BaseUser user;
 
     RealEstateAgency agencyNotInDb;
     RealEstateAgent agentNotInDb;
-    User userNotInDb;
+    BaseUser userNotInDb;
 
     @BeforeEach
     void setUp() {
         agency = agencyRepository.saveAndFlush(new RealEstateAgency("agencyIban", "agencyName"));
         manager = realEstateManagerRepository.saveAndFlush(new RealEstateManager("managerUsername", "managerSub", agency));
         agent = agentRepository.saveAndFlush(new RealEstateAgent("agentUsername", "agentSub", agency));
-        user = userRepository.saveAndFlush(new User("userUsername", "userSub"));
+        user = userRepository.saveAndFlush(new BaseUser("userUsername", "userSub"));
 
         agencyNotInDb = new RealEstateAgency("notInDbIban", "notInDbAgency");
         agentNotInDb = new RealEstateAgent("notInDbAgent", "notInDbAgentSub", agency);
-        userNotInDb = new User("notInDbUser", "notInDbUserSub");
+        userNotInDb = new BaseUser("notInDbUser", "notInDbUserSub");
     }
 
     /** Black box R-WECT tests for promoteUserToAgent:

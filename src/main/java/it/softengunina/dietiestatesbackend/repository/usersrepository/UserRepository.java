@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.repository.usersrepository;
 
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 @Primary
-public interface UserRepository<T extends User> extends JpaRepository<T,Long> {
+public interface UserRepository<T extends BaseUser> extends JpaRepository<T,Long> {
     @Query("SELECT u FROM #{#entityName} u WHERE u.username = :username")
     Optional<T> findByUsername(String username);
 

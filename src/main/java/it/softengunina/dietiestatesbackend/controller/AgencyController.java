@@ -5,7 +5,7 @@ import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
@@ -25,13 +25,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/agencies")
 public class AgencyController {
     private final RealEstateAgencyRepository agencyRepository;
-    private final UserRepository<User> userRepository;
+    private final UserRepository<BaseUser> userRepository;
     private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
     private final TokenService tokenService;
     private final PromotionServiceImpl promotionService;
 
     AgencyController(RealEstateAgencyRepository agencyRepository,
-                     UserRepository<User> userRepository,
+                     UserRepository<BaseUser> userRepository,
                      RealEstateAgentRepository<RealEstateAgent> agentRepository,
                      TokenService tokenService,
                      PromotionServiceImpl promotionService) {
@@ -67,7 +67,7 @@ public class AgencyController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public UserAgencyRoleDTO createAgency(@RequestBody RealEstateAgencyDTO req) {
-        User user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
+        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
 
         try {

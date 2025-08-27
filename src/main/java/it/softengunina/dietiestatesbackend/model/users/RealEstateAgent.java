@@ -14,7 +14,7 @@ import java.util.function.Function;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)
 @ToString
-public class RealEstateAgent extends User implements UserWithAgency {
+public class RealEstateAgent extends BaseUser implements UserWithAgency {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agency_id")
     @JsonBackReference

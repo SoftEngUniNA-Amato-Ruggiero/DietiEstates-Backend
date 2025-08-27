@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.filter;
 
 import it.softengunina.dietiestatesbackend.exceptions.AuthenticationNotFoundException;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import jakarta.servlet.FilterChain;
@@ -19,10 +19,10 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
-    UserRepository<User> userRepository;
+    UserRepository<BaseUser> userRepository;
     TokenService tokenService;
 
-    public JwtRequestFilter(UserRepository<User> userRepository, TokenService tokenService) {
+    public JwtRequestFilter(UserRepository<BaseUser> userRepository, TokenService tokenService) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
     }
@@ -41,7 +41,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String username = tokenService.getEmail(jwt);
 
             if (userRepository.findByCognitoSub(cognitoSub).isEmpty()) {
-                User user = userRepository.save(new User(username, cognitoSub));
+                BaseUser user = userRepository.save(new BaseUser(username, cognitoSub));
                 log.info("New user saved: {}", user.getUsername());
             }
         } catch (AuthenticationNotFoundException e) {

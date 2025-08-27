@@ -5,7 +5,7 @@ import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
@@ -48,7 +48,7 @@ class AgencyControllerTest {
     @MockitoBean
     RealEstateAgencyRepository agencyRepository;
     @MockitoBean
-    UserRepository<User> userRepository;
+    UserRepository<BaseUser> userRepository;
     @MockitoBean
     RealEstateAgentRepository<RealEstateAgent> agentRepository;
     @MockitoBean
@@ -60,14 +60,14 @@ class AgencyControllerTest {
     RealEstateAgency agency;
     RealEstateManager manager;
     RealEstateAgent agent;
-    User user;
+    BaseUser user;
 
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("testIban", "testAgency");
         manager = new RealEstateManager("managerEmail", "managerSub", new RealEstateAgency("differentIban", "differentAgency"));
         agent = new RealEstateAgent("agentEmail", "agentSub", agency);
-        user = new User("testEmail", "testSub");
+        user = new BaseUser("testEmail", "testSub");
 
         Mockito.when(agencyRepository.findAll(Mockito.any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(agency)));

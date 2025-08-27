@@ -2,10 +2,7 @@ package it.softengunina.dietiestatesbackend.services;
 
 import it.softengunina.dietiestatesbackend.exceptions.PromotionFailedException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
-import it.softengunina.dietiestatesbackend.model.users.User;
-import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
+import it.softengunina.dietiestatesbackend.model.users.*;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import org.springframework.context.annotation.Lazy;

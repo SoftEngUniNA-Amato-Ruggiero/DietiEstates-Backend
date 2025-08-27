@@ -2,7 +2,7 @@ package it.softengunina.dietiestatesbackend.repository.usersrepository;
 
 import it.softengunina.dietiestatesbackend.model.*;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,15 +20,15 @@ class RealEstateAgentRepositoryTest {
     @Autowired
     RealEstateAgentRepository<RealEstateAgent> agentRepository;
     @Autowired
-    UserRepository<User> userRepository;
+    UserRepository<BaseUser> userRepository;
 
     RealEstateAgent testAgent;
     RealEstateAgency testAgency;
-    User existingUser;
+    BaseUser existingUser;
 
     @BeforeEach
     void setUp() {
-        existingUser = userRepository.save(new User("existing@email.com", "existingSub"));
+        existingUser = userRepository.save(new BaseUser("existing@email.com", "existingSub"));
         testAgency = agencyRepository.save(new RealEstateAgency("testIban", "testAgency"));
         testAgent = agentRepository.save(new RealEstateAgent("email@test.com", "testSub", testAgency));
     }
