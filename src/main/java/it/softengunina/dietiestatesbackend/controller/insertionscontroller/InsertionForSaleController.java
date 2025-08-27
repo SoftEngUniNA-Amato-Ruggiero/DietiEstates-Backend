@@ -33,6 +33,6 @@ public class InsertionForSaleController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not an agent"));
 
         InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(req.getAddress(), req.getDetails(), uploader, req.getPrice()));
-        return insertion.toDTO();
+        return insertion.getDTOFactory().build();
     }
 }

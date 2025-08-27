@@ -2,7 +2,6 @@ package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
-import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,13 +18,13 @@ public class InsertionController {
 
     @GetMapping
     public Page<InsertionDTO> getInsertions(Pageable pageable) {
-        return insertionRepository.findAll(pageable).map(Insertion::toDTO);
+        return insertionRepository.findAll(pageable).map(i -> i.getDTOFactory().build());
     }
 
     @GetMapping("/{id}")
     public InsertionDTO getInsertionById(@PathVariable Long id) {
         BaseInsertion insertion = insertionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Insertion not found"));
-        return insertion.toDTO();
+        return insertion.getDTOFactory().build();
     }
 }

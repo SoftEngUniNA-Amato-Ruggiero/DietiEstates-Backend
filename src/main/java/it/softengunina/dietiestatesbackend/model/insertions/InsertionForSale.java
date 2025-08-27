@@ -1,10 +1,11 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceDTO;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
+import it.softengunina.dietiestatesbackend.factory.InsertionDTOFactory;
+import it.softengunina.dietiestatesbackend.factory.InsertionWithPriceDTOFactory;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.*;
 
 @Entity
@@ -23,7 +24,8 @@ public class InsertionForSale extends BaseInsertion implements InsertionWithPric
     }
 
     @Override
-    public InsertionDTO toDTO() {
-        return new InsertionWithPriceDTO(this);
+    @Transient
+    public InsertionDTOFactory getDTOFactory() {
+        return new InsertionWithPriceDTOFactory(this);
     }
 }
