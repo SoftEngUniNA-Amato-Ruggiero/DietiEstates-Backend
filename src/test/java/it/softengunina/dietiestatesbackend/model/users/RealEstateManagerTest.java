@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
+import it.softengunina.dietiestatesbackend.exceptions.ImpossiblePromotionException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,6 @@ class RealEstateManagerTest {
 
     @Test
     void getPromotionToManagerFunction() {
-        assertThrows(IllegalArgumentException.class, () -> manager.getPromotionToManagerFunction(promotionService));
+        assertThrows(ImpossiblePromotionException.class, () -> manager.getPromotionToManagerFunction(promotionService));
     }
 }

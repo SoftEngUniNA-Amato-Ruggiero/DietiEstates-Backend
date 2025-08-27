@@ -1,4 +1,5 @@
 package it.softengunina.dietiestatesbackend.model.users;
+import it.softengunina.dietiestatesbackend.exceptions.ImpossiblePromotionException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import jakarta.persistence.*;
@@ -24,6 +25,6 @@ public class RealEstateManager extends RealEstateAgent {
 
     @Override
     public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(UserPromotionService service) {
-        throw new IllegalArgumentException("User cannot be promoted to manager.");
+        throw new ImpossiblePromotionException("User cannot be promoted to manager.");
     }
 }
