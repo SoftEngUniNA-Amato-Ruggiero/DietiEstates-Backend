@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @Rollback
-class PromotionServiceImplIntegrationTest {
+class UserPromotionServiceImplIntegrationTest {
     @Autowired
     RealEstateAgencyRepository agencyRepository;
     @Autowired
@@ -30,7 +30,7 @@ class PromotionServiceImplIntegrationTest {
     @Autowired
     UserRepository<BaseUser> userRepository;
     @Autowired
-    PromotionServiceImpl promotionService;
+    UserPromotionServiceImpl promotionService;
 
     RealEstateAgency agency;
     RealEstateManager manager;

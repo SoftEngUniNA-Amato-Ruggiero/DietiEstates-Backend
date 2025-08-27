@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.services.PromotionService;
+import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -48,11 +48,11 @@ public class BaseUser implements User {
         return this.getClass().getSimpleName();
     }
 
-    public Function<RealEstateAgency, UserWithAgency> getPromotionToAgentFunction(PromotionService service) {
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToAgentFunction(UserPromotionService service) {
         return agency -> service.promoteUserToAgent(this, agency);
     }
 
-    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(PromotionService service) {
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(UserPromotionService service) {
         return agency -> service.promoteUserToManager(this, agency);
     }
 }

@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.services.PromotionService;
+import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -34,12 +34,12 @@ public class RealEstateAgent extends BaseUser implements UserWithAgency {
     }
 
     @Override
-    public Function<RealEstateAgency, UserWithAgency> getPromotionToAgentFunction(PromotionService service) {
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToAgentFunction(UserPromotionService service) {
         throw new IllegalArgumentException("User cannot be promoted to agent.");
     }
 
     @Override
-    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(PromotionService service) {
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(UserPromotionService service) {
         return inputAgency -> {
             if (inputAgency.equals(this.agency)) {
                 return service.promoteAgentToManager(this);

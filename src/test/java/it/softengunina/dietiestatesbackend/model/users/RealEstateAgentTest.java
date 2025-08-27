@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.services.PromotionService;
+import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class RealEstateAgentTest {
     RealEstateAgent agent;
     RealEstateAgency agency;
-    PromotionService promotionService;
+    UserPromotionService promotionService;
 
     @BeforeEach
     void setUp() {
-        promotionService = Mockito.mock(PromotionService.class);
+        promotionService = Mockito.mock(UserPromotionService.class);
         agency = new RealEstateAgency("testIban", "testAgency");
         agent = new RealEstateAgent("testAgent", "testSub2", agency);
     }

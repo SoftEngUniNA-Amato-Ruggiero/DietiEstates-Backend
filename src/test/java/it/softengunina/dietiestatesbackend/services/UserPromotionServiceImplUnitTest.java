@@ -16,11 +16,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PromotionServiceImplUnitTest {
-    PromotionServiceImpl promotionService;
+class UserPromotionServiceImplUnitTest {
+    UserPromotionServiceImpl promotionService;
 
     @Mock
-    PromotionServiceImpl self;
+    UserPromotionServiceImpl self;
     @Mock
     RealEstateAgentRepository<RealEstateAgent> agentRepository;
     @Mock
@@ -41,7 +41,7 @@ class PromotionServiceImplUnitTest {
     @BeforeEach
     void setUp() {
         mocks = MockitoAnnotations.openMocks(this);
-        promotionService = new PromotionServiceImpl(self, agentRepository, managerRepository);
+        promotionService = new UserPromotionServiceImpl(self, agentRepository, managerRepository);
 
         Mockito.when(user.getId()).thenReturn(userId);
         Mockito.when(agent.getId()).thenReturn(agentId);

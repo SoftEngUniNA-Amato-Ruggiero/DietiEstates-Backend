@@ -8,7 +8,7 @@ import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
+import it.softengunina.dietiestatesbackend.services.UserPromotionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -37,7 +37,7 @@ class RealEstateManagerControllerTest {
     @MockitoBean
     TokenService tokenService;
     @MockitoBean
-    PromotionServiceImpl promotionStrategy;
+    UserPromotionServiceImpl promotionStrategy;
 
     RealEstateAgency agency;
     RealEstateManager manager;

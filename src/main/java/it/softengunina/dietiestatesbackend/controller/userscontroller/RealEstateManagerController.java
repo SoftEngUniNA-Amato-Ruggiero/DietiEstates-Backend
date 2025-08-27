@@ -8,7 +8,7 @@ import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
+import it.softengunina.dietiestatesbackend.services.UserPromotionServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +22,12 @@ public class RealEstateManagerController {
     private final UserRepository<BaseUser> userRepository;
     private final RealEstateManagerRepository managerRepository;
     private final TokenService tokenService;
-    private final PromotionServiceImpl promotionService;
+    private final UserPromotionServiceImpl promotionService;
 
     RealEstateManagerController(UserRepository<BaseUser> userRepository,
                                 RealEstateManagerRepository managerRepository,
                                 TokenService tokenService,
-                                PromotionServiceImpl promotionService) {
+                                UserPromotionServiceImpl promotionService) {
         this.userRepository = userRepository;
         this.managerRepository = managerRepository;
         this.tokenService = tokenService;

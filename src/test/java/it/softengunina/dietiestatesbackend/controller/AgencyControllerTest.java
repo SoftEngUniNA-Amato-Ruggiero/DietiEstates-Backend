@@ -10,7 +10,7 @@ import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
+import it.softengunina.dietiestatesbackend.services.UserPromotionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -46,7 +46,7 @@ class AgencyControllerTest {
     @MockitoBean
     TokenService tokenService;
     @MockitoBean
-    PromotionServiceImpl promotionStrategy;
+    UserPromotionServiceImpl promotionStrategy;
 
     Long agencyId = 1L;
     RealEstateAgency agency;

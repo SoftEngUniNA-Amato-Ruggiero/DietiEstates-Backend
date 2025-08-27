@@ -11,7 +11,7 @@ import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.services.PromotionServiceImpl;
+import it.softengunina.dietiestatesbackend.services.UserPromotionServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,13 +28,13 @@ public class AgencyController {
     private final UserRepository<BaseUser> userRepository;
     private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
     private final TokenService tokenService;
-    private final PromotionServiceImpl promotionService;
+    private final UserPromotionServiceImpl promotionService;
 
     AgencyController(RealEstateAgencyRepository agencyRepository,
                      UserRepository<BaseUser> userRepository,
                      RealEstateAgentRepository<RealEstateAgent> agentRepository,
                      TokenService tokenService,
-                     PromotionServiceImpl promotionService) {
+                     UserPromotionServiceImpl promotionService) {
         this.agencyRepository = agencyRepository;
         this.userRepository = userRepository;
         this.agentRepository = agentRepository;

@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PromotionServiceImpl implements PromotionService {
-    private final PromotionServiceImpl self;
+public class UserPromotionServiceImpl implements UserPromotionService {
+    private final UserPromotionServiceImpl self;
     private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
     private final RealEstateManagerRepository managerRepository;
 
-    public PromotionServiceImpl(@Lazy PromotionServiceImpl self,
-                                RealEstateAgentRepository<RealEstateAgent> agentRepository,
-                                RealEstateManagerRepository managerRepository) {
+    public UserPromotionServiceImpl(@Lazy UserPromotionServiceImpl self,
+                                    RealEstateAgentRepository<RealEstateAgent> agentRepository,
+                                    RealEstateManagerRepository managerRepository) {
         this.self = self;
         this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;

@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.model.users;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.services.PromotionService;
+import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,7 +23,7 @@ public class RealEstateManager extends RealEstateAgent {
     }
 
     @Override
-    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(PromotionService service) {
+    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(UserPromotionService service) {
         throw new IllegalArgumentException("User cannot be promoted to manager.");
     }
 }
