@@ -13,8 +13,7 @@ import java.util.Set;
 @ToString
 @EqualsAndHashCode
 public class InsertionDetails {
-    private short floor;
+    private Short floor;
     private boolean hasElevator;
     private Set<String> tags;
-
 }

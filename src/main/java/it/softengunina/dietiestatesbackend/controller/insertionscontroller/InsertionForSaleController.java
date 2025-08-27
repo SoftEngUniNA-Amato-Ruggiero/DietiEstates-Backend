@@ -7,10 +7,7 @@ import it.softengunina.dietiestatesbackend.repository.insertionsrepository.Inser
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -29,6 +26,7 @@ public class InsertionForSaleController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public InsertionForSaleDTO createInsertion(@RequestBody InsertionForSaleDTO req) {
         RealEstateAgent uploader = agentRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not an agent"));

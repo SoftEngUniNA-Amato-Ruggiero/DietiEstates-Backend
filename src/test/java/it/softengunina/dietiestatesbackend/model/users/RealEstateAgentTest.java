@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.function.Function;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RealEstateAgentTest {
@@ -45,5 +47,14 @@ class RealEstateAgentTest {
                 () -> assertEquals(agent.getCognitoSub(), manager.getCognitoSub()),
                 () -> assertEquals(agent.getAgency(), manager.getAgency())
         );
+    }
+
+    @Test
+    void getPromotionToManagerFunction_whenDifferentAgency() {
+        Mockito.when(promotionService.promoteAgentToManager(agent)).thenReturn(new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agency));
+        RealEstateAgency differentAgency = new RealEstateAgency("differentIban", "differentAgency");
+
+        Function<RealEstateAgency, RealEstateManager> promotionFunction = agent.getPromotionToManagerFunction(promotionService);
+        assertThrows(IllegalArgumentException.class, () -> promotionFunction.apply(differentAgency));
     }
 }

@@ -12,7 +12,7 @@ import lombok.*;
 @EqualsAndHashCode
 public class Address {
     private String street;
-    private int houseNumber;
+    private Short houseNumber;
     private String city;
-    private int postalCode;
+    private String postalCode;
 }
