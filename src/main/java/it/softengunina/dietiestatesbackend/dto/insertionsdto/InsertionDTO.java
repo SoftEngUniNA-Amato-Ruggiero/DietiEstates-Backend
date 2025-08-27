@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class InsertionDTO {
+public abstract class InsertionDTO {
     private Long id;
     private Address address;
     private InsertionDetails details;

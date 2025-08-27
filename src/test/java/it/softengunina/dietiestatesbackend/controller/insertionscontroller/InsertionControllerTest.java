@@ -1,57 +1,64 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
-import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
+import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.insertions.*;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
+import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
+import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForRentRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Collections;
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = InsertionController.class)
+@SpringBootTest
+@Transactional
+@Rollback
 @AutoConfigureMockMvc(addFilters = false)
 class InsertionControllerTest {
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    InsertionForRentRepository repository;
+    @Autowired
+    RealEstateAgentRepository<RealEstateAgent> agentRepository;
+    @Autowired
+    RealEstateAgencyRepository agencyRepository;
 
-    @MockitoBean
-    InsertionRepository<BaseInsertion> insertionRepository;
+    @Mock
+    Address address;
+    @Mock
+    InsertionDetails details;
 
-    Long insertionId = 1L;
-    BaseInsertion insertion;
+    AutoCloseable mocks;
 
-    Long uploaderId = 2L;
+    RealEstateAgency agency;
     RealEstateAgent uploader;
+    InsertionForRent insertion;
 
     @BeforeEach
     void setUp() {
-        insertion = Mockito.mock(InsertionForSale.class);
-        uploader = Mockito.mock(RealEstateAgent.class);
+        mocks = MockitoAnnotations.openMocks(this);
 
-        Mockito.when(insertion.getId()).thenReturn(insertionId);
-        Mockito.when(insertion.getPrice()).thenReturn(100000.0);
-        Mockito.when(insertion.getUploader()).thenReturn(uploader);
-        Mockito.when(uploader.getId()).thenReturn(uploaderId);
+        agency = agencyRepository.save(new RealEstateAgency("testIban", "testAgency"));
+        uploader = agentRepository.save(new RealEstateAgent("agent", "sub", agency));
+        insertion = repository.save(new InsertionForRent(address, details, uploader, 800.0));
+    }
 
-        Mockito.when(insertionRepository.findById(insertionId)).thenReturn(Optional.of(insertion));
-        Mockito.when(insertionRepository.findById(2L)).thenReturn(Optional.empty());
-
-        Mockito.when(insertionRepository.findAll(Mockito.any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(insertion)));
+    @AfterEach
+    void tearDown() throws Exception {
+        mocks.close();
     }
 
     @Test
@@ -64,7 +71,7 @@ class InsertionControllerTest {
 
     @Test
     void getInsertionById() throws Exception {
-        mockMvc.perform(get("/insertions/" + insertionId))
+        mockMvc.perform(get("/insertions/" + insertion.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(insertion.getId()));
     }
