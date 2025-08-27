@@ -3,6 +3,7 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserAgencyRoleDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,21 +25,21 @@ public class UserController {
 
     @GetMapping
     public UserDTO getUserByUsername(@RequestParam String username) {
-        BaseUser user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return new UserDTO(user);
     }
 
     @GetMapping("/{id}")
     public UserDTO getUserById(@PathVariable Long id) {
-        BaseUser user = userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return new UserDTO(user);
     }
 
     @GetMapping("/role")
     public UserAgencyRoleDTO getRole() {
-        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
+        User user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         return new UserAgencyRoleDTO(user);
     }

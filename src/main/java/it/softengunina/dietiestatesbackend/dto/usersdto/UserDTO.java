@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.dto.usersdto;
 
-import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.model.users.User;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -14,7 +14,7 @@ public class UserDTO {
     @NotBlank
     private String username;
 
-    public UserDTO(BaseUser user) {
+    public UserDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
     }

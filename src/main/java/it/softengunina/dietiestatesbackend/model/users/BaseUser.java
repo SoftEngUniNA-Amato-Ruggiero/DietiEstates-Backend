@@ -38,10 +38,12 @@ public class BaseUser implements User {
         this.cognitoSub = cognitoSub;
     }
 
+    @Override
     public RealEstateAgency getAgency() {
         return null;
     }
 
+    @Override
     public String getRole() {
         return this.getClass().getSimpleName();
     }
