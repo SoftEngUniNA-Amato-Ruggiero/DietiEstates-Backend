@@ -5,6 +5,7 @@ import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import org.springframework.context.annotation.Lazy;
@@ -34,7 +35,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Transactional
-    public RealEstateManager promoteAgentToManager(RealEstateAgent agent) {
+    public RealEstateManager promoteAgentToManager(UserWithAgency agent) {
         managerRepository.insertManager(agent.getId());
         managerRepository.flush();
         return managerRepository.findById(agent.getId())

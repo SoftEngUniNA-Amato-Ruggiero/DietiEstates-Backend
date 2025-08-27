@@ -1,12 +1,11 @@
 package it.softengunina.dietiestatesbackend.services;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 
 public interface PromotionService {
-    RealEstateAgent promoteUserToAgent(User user, RealEstateAgency agency);
-    RealEstateManager promoteAgentToManager(RealEstateAgent agent);
-    RealEstateManager promoteUserToManager(User user, RealEstateAgency agency);
+    UserWithAgency promoteUserToAgent(User user, RealEstateAgency agency);
+    UserWithAgency promoteAgentToManager(UserWithAgency agent);
+    UserWithAgency promoteUserToManager(User user, RealEstateAgency agency);
 }
