@@ -1,8 +1,8 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.factory.InsertionDTOFactory;
-import it.softengunina.dietiestatesbackend.factory.InsertionWithPriceDTOFactory;
+import it.softengunina.dietiestatesbackend.factory.insertiondtofactory.InsertionDTOFactory;
+import it.softengunina.dietiestatesbackend.factory.insertiondtofactory.InsertionWithPriceDTOFactory;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;

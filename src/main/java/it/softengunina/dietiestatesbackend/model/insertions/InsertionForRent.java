@@ -1,8 +1,8 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.factory.InsertionDTOFactory;
-import it.softengunina.dietiestatesbackend.factory.InsertionWithRentDTOFactory;
+import it.softengunina.dietiestatesbackend.factory.insertiondtofactory.InsertionDTOFactory;
+import it.softengunina.dietiestatesbackend.factory.insertiondtofactory.InsertionWithRentDTOFactory;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;

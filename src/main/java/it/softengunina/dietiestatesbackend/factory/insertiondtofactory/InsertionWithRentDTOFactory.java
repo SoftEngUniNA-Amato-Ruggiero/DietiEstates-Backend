@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.factory;
+package it.softengunina.dietiestatesbackend.factory.insertiondtofactory;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithRentDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionWithRent;
