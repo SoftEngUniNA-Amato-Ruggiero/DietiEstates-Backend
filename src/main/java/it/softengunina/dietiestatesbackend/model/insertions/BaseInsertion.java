@@ -31,7 +31,7 @@ public abstract class BaseInsertion implements Insertion {
     @Setter
     private InsertionDetails details;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "uploader_id", nullable = false)
     @JsonBackReference
     @NotNull
@@ -39,7 +39,7 @@ public abstract class BaseInsertion implements Insertion {
     @Setter
     private RealEstateAgent uploader;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agency_id", nullable = false)
     @JsonBackReference
     @NotNull

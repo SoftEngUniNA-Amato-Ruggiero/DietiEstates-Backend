@@ -15,7 +15,7 @@ import java.util.function.Function;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class RealEstateAgent extends BaseUser implements UserWithAgency {
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agency_id")
     @JsonBackReference
     @NotNull
