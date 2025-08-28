@@ -1,13 +1,14 @@
 package it.softengunina.dietiestatesbackend.dto.insertionsdto;
 
+import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
+import it.softengunina.dietiestatesbackend.model.insertions.Address;
+import it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails;
+
 public interface InsertionDTO {
     Long getId();
-
-    it.softengunina.dietiestatesbackend.model.insertions.Address getAddress();
-
-    it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails getDetails();
-
-    it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO getUploader();
-
-    it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO getAgency();
+    Address getAddress();
+    InsertionDetails getDetails();
+    UserDTO getUploader();
+    RealEstateAgencyDTO getAgency();
 }
