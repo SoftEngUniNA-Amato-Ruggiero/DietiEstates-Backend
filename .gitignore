@@ -38,3 +38,6 @@ build/
 ### H2 database files ###
 **.trace.db
 **.mv.db
+
+### Secrets ###
+/secrets/postgres-passwd.txt
