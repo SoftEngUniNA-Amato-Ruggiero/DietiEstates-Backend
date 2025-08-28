@@ -23,7 +23,7 @@ public class SecurityConfiguration {
                     )
             )
             .authorizeHttpRequests(authz -> authz
-                    .requestMatchers("/h2-console/**", "v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                    .requestMatchers("/h2-console/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                     .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
