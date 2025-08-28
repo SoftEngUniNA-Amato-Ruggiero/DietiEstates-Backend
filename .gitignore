@@ -35,9 +35,6 @@ build/
 ### Environment ###
 .env
 
-### qodana ###
-qodana.yaml
-
 ### H2 database files ###
 **.trace.db
 **.mv.db
