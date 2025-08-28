@@ -32,7 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
+### Environment ###
 .env
-testdb.mv.db
-testdb.trace.db
+
+### qodana ###
+qodana.yaml
+
+### H2 database files ###
+**.trace.db
 **.mv.db
