@@ -7,12 +7,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface RealEstateManagerRepository extends RealEstateAgentRepository<RealEstateManager> {
+    /** Promotes the RealEstateAgent with the given id to a RealEstateManager by inserting a row in the real_estate_managers table.
+     * The usage of this method is discouraged, prefer using UserPromotionStrategy instead.
+     * @param id the id of the agent to promote
+     */
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query(value="INSERT INTO real_estate_managers (id) VALUES (:id)", nativeQuery=true)
     void insertManager(@Param("id") Long id);
 
     /** Demotes the RealEstateManager with the given id to a RealEstateAgent without deleting the RealEstateAgent from the database.
+     * The usage of this method is discouraged, prefer using UserDemotionStrategy instead.
      * @param id the id of the manager to demote
      */
     @Transactional

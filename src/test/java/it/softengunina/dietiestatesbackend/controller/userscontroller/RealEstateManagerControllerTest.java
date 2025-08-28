@@ -3,12 +3,13 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.services.UserPromotionServiceImpl;
+import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -37,7 +38,7 @@ class RealEstateManagerControllerTest {
     @MockitoBean
     TokenService tokenService;
     @MockitoBean
-    UserPromotionServiceImpl promotionStrategy;
+    UserPromotionStrategyImpl promotionStrategy;
 
     RealEstateAgency agency;
     RealEstateManager manager;
@@ -60,8 +61,14 @@ class RealEstateManagerControllerTest {
     void createManager() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
 
-        Mockito.when(promotionStrategy.promoteUserToManager(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
-                .thenAnswer(invocation -> new RealEstateManager(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
+        Mockito.when(promotionStrategy.promoteUserToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
+                .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
+
+        Mockito.when(promotionStrategy.promoteAgentToManager(Mockito.any(RealEstateAgent.class)))
+                .thenAnswer(invocation -> {
+                    RealEstateAgent agent = invocation.getArgument(0);
+                    return new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agent.getAgency());
+                });
 
         UserDTO req = new UserDTO(user);
         ObjectMapper objectMapper = new ObjectMapper();

@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.services;
+package it.softengunina.dietiestatesbackend.strategy;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @Rollback
-class UserDemotionServiceImplTest {
+class UserDemotionStrategyImplTest {
     @Autowired
     RealEstateAgencyRepository agencyRepository;
     @Autowired
@@ -30,7 +30,7 @@ class UserDemotionServiceImplTest {
     @Autowired
     UserRepository<BaseUser> userRepository;
     @Autowired
-    UserDemotionServiceImpl demotionService;
+    UserDemotionStrategyImpl demotionService;
 
     RealEstateAgency agency;
     RealEstateManager manager;
@@ -65,20 +65,6 @@ class UserDemotionServiceImplTest {
                 () -> assertEquals(agent.getUsername(), demotedUser.getUsername()),
                 () -> assertEquals(agent.getCognitoSub(), demotedUser.getCognitoSub()),
                 () -> assertNotEquals(agent.getAgency(), demotedUser.getAgency()),
-                () -> assertNull(demotedUser.getAgency()),
-                () -> assertFalse(managerRepository.findById(demotedUser.getId()).isPresent()),
-                () -> assertFalse(agentRepository.findById(demotedUser.getId()).isPresent()),
-                () -> assertTrue(userRepository.findById(demotedUser.getId()).isPresent())
-        );
-    }
-
-    @Test
-    void demoteManagerToUser() {
-        BaseUser demotedUser = demotionService.demoteManagerToUser(manager);
-        assertAll(
-                () -> assertEquals(manager.getUsername(), demotedUser.getUsername()),
-                () -> assertEquals(manager.getCognitoSub(), demotedUser.getCognitoSub()),
-                () -> assertNotEquals(manager.getAgency(), demotedUser.getAgency()),
                 () -> assertNull(demotedUser.getAgency()),
                 () -> assertFalse(managerRepository.findById(demotedUser.getId()).isPresent()),
                 () -> assertFalse(agentRepository.findById(demotedUser.getId()).isPresent()),

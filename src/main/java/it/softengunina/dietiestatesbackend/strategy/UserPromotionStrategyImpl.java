@@ -1,24 +1,20 @@
-package it.softengunina.dietiestatesbackend.services;
+package it.softengunina.dietiestatesbackend.strategy;
 
 import it.softengunina.dietiestatesbackend.exceptions.PromotionFailedException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.*;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserPromotionServiceImpl implements UserPromotionService {
-    private final UserPromotionServiceImpl self;
+public class UserPromotionStrategyImpl implements UserPromotionStrategy {
     private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
     private final RealEstateManagerRepository managerRepository;
 
-    public UserPromotionServiceImpl(@Lazy UserPromotionServiceImpl self,
-                                    RealEstateAgentRepository<RealEstateAgent> agentRepository,
-                                    RealEstateManagerRepository managerRepository) {
-        this.self = self;
+    public UserPromotionStrategyImpl(RealEstateAgentRepository<RealEstateAgent> agentRepository,
+                                     RealEstateManagerRepository managerRepository) {
         this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
     }
@@ -39,12 +35,5 @@ public class UserPromotionServiceImpl implements UserPromotionService {
         managerRepository.flush();
         return managerRepository.findById(agent.getId())
                 .orElseThrow(() -> new PromotionFailedException("Manager was not saved to the database"));
-    }
-
-    @Override
-    @Transactional
-    public RealEstateManager promoteUserToManager(User user, RealEstateAgency agency) {
-        RealEstateAgent agent = self.promoteUserToAgent(user, agency);
-        return self.promoteAgentToManager(agent);
     }
 }

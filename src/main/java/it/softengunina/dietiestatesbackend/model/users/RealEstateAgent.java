@@ -2,7 +2,7 @@ package it.softengunina.dietiestatesbackend.model.users;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import it.softengunina.dietiestatesbackend.exceptions.ImpossiblePromotionException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.services.UserPromotionService;
+import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -35,18 +35,16 @@ public class RealEstateAgent extends BaseUser implements UserWithAgency {
     }
 
     @Override
-    public Function<RealEstateAgency, UserWithAgency> getPromotionToAgentFunction(UserPromotionService service) {
+    public Function<UserPromotionStrategy, UserWithAgency> getPromotionToAgentFunction(RealEstateAgency inputAgency) {
         throw new ImpossiblePromotionException("User cannot be promoted to agent.");
     }
 
     @Override
-    public Function<RealEstateAgency, UserWithAgency> getPromotionToManagerFunction(UserPromotionService service) {
-        return inputAgency -> {
-            if (inputAgency.equals(this.agency)) {
-                return service.promoteAgentToManager(this);
-            } else {
-                throw new ImpossiblePromotionException("User belongs to another agency");
-            }
-        };
+    public Function<UserPromotionStrategy, UserWithAgency> getPromotionToManagerFunction(RealEstateAgency inputAgency) {
+        if (inputAgency.equals(this.agency)) {
+            return service -> service.promoteAgentToManager(this);
+        } else {
+            throw new ImpossiblePromotionException("User belongs to another agency");
+        }
     }
 }

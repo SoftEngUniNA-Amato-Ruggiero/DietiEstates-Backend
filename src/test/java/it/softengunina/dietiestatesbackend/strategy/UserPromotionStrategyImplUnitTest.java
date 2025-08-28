@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.services;
+package it.softengunina.dietiestatesbackend.strategy;
 
 import it.softengunina.dietiestatesbackend.exceptions.PromotionFailedException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
@@ -16,11 +16,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserPromotionServiceImplUnitTest {
-    UserPromotionServiceImpl promotionService;
+class UserPromotionStrategyImplUnitTest {
+    UserPromotionStrategyImpl promotionService;
 
-    @Mock
-    UserPromotionServiceImpl self;
     @Mock
     RealEstateAgentRepository<RealEstateAgent> agentRepository;
     @Mock
@@ -41,7 +39,7 @@ class UserPromotionServiceImplUnitTest {
     @BeforeEach
     void setUp() {
         mocks = MockitoAnnotations.openMocks(this);
-        promotionService = new UserPromotionServiceImpl(self, agentRepository, managerRepository);
+        promotionService = new UserPromotionStrategyImpl(agentRepository, managerRepository);
 
         Mockito.when(user.getId()).thenReturn(userId);
         Mockito.when(agent.getId()).thenReturn(agentId);

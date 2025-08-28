@@ -10,7 +10,7 @@ import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.services.UserPromotionServiceImpl;
+import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -46,7 +46,7 @@ class AgencyControllerTest {
     @MockitoBean
     TokenService tokenService;
     @MockitoBean
-    UserPromotionServiceImpl promotionStrategy;
+    UserPromotionStrategyImpl promotionStrategy;
 
     Long agencyId = 1L;
     RealEstateAgency agency;
@@ -77,9 +77,14 @@ class AgencyControllerTest {
         Mockito.when(agencyRepository.saveAndFlush(Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Mockito.when(promotionStrategy.promoteUserToManager(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
-                .thenAnswer(invocation -> new RealEstateManager(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
+        Mockito.when(promotionStrategy.promoteUserToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
+                .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
 
+        Mockito.when(promotionStrategy.promoteAgentToManager(Mockito.any(RealEstateAgent.class)))
+                .thenAnswer(invocation -> {
+                    RealEstateAgent passedAgent = invocation.getArgument(0);
+                    return new RealEstateManager(passedAgent.getUsername(), passedAgent.getCognitoSub(), passedAgent.getAgency());
+                });
     }
 
     @Test

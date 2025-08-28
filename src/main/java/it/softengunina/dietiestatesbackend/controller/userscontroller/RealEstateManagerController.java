@@ -8,7 +8,7 @@ import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.services.UserPromotionServiceImpl;
+import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +22,12 @@ public class RealEstateManagerController {
     private final UserRepository<BaseUser> userRepository;
     private final RealEstateManagerRepository managerRepository;
     private final TokenService tokenService;
-    private final UserPromotionServiceImpl promotionService;
+    private final UserPromotionStrategyImpl promotionService;
 
     RealEstateManagerController(UserRepository<BaseUser> userRepository,
                                 RealEstateManagerRepository managerRepository,
                                 TokenService tokenService,
-                                UserPromotionServiceImpl promotionService) {
+                                UserPromotionStrategyImpl promotionService) {
         this.userRepository = userRepository;
         this.managerRepository = managerRepository;
         this.tokenService = tokenService;
@@ -45,7 +45,7 @@ public class RealEstateManagerController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         try {
-            UserWithAgency promotedManager = user.getPromotionToManagerFunction(promotionService).apply(manager.getAgency());
+            UserWithAgency promotedManager = user.getPromotionToManagerFunction(manager.getAgency()).apply(promotionService);
             return new UserWithAgencyDTO(promotedManager);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());

@@ -2,23 +2,21 @@ package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.exceptions.ImpossiblePromotionException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.services.UserPromotionService;
+import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RealEstateAgentTest {
     RealEstateAgent agent;
     RealEstateAgency agency;
-    UserPromotionService promotionService;
+    UserPromotionStrategy promotionService;
 
     @BeforeEach
     void setUp() {
-        promotionService = Mockito.mock(UserPromotionService.class);
+        promotionService = Mockito.mock(UserPromotionStrategy.class);
         agency = new RealEstateAgency("testIban", "testAgency");
         agent = new RealEstateAgent("testAgent", "testSub2", agency);
     }
@@ -35,13 +33,13 @@ class RealEstateAgentTest {
 
     @Test
     void getPromotionToAgentFunction() {
-        assertThrows(ImpossiblePromotionException.class, () -> agent.getPromotionToAgentFunction(promotionService));
+        assertThrows(ImpossiblePromotionException.class, () -> agent.getPromotionToAgentFunction(agency));
     }
 
     @Test
     void getPromotionToManagerFunction() {
         Mockito.when(promotionService.promoteAgentToManager(agent)).thenReturn(new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agency));
-        UserWithAgency manager = agent.getPromotionToManagerFunction(promotionService).apply(agency);
+        UserWithAgency manager = agent.getPromotionToManagerFunction(agency).apply(promotionService);
         assertAll(
                 () -> assertNotNull(manager),
                 () -> assertEquals(agent.getUsername(), manager.getUsername()),
@@ -57,7 +55,6 @@ class RealEstateAgentTest {
         Mockito.when(promotionService.promoteAgentToManager(agent)).thenReturn(new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agency));
         RealEstateAgency differentAgency = new RealEstateAgency("differentIban", "differentAgency");
 
-        Function<RealEstateAgency, UserWithAgency> promotionFunction = agent.getPromotionToManagerFunction(promotionService);
-        assertThrows(ImpossiblePromotionException.class, () -> promotionFunction.apply(differentAgency));
+        assertThrows(ImpossiblePromotionException.class, () -> agent.getPromotionToManagerFunction(differentAgency));
     }
 }

@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.services;
+package it.softengunina.dietiestatesbackend.strategy;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @Rollback
-class UserPromotionServiceImplIntegrationTest {
+class UserPromotionStrategyImplIntegrationTest {
     @Autowired
     RealEstateAgencyRepository agencyRepository;
     @Autowired
@@ -30,7 +30,7 @@ class UserPromotionServiceImplIntegrationTest {
     @Autowired
     UserRepository<BaseUser> userRepository;
     @Autowired
-    UserPromotionServiceImpl promotionService;
+    UserPromotionStrategyImpl promotionService;
 
     RealEstateAgency agency;
     RealEstateManager manager;
@@ -132,19 +132,5 @@ class UserPromotionServiceImplIntegrationTest {
     @Test
     void promoteAgentToManager_agentIsNull() {
         assertThrows(RuntimeException.class, () -> promotionService.promoteAgentToManager(null));
-    }
-
-    /** No need to test promoteUserToManager separately, as it is composed of the other two methods.
-     * Just a simple integration test to check that everything works as expected.
-     */
-
-    @Test
-    void promoteUserToManager() {
-        RealEstateManager promotedManager = promotionService.promoteUserToManager(user, agency);
-        assertAll(
-                () -> assertNotNull(promotedManager),
-                () -> assertEquals(user.getId(), promotedManager.getId()),
-                () -> assertEquals(agency.getId(), promotedManager.getAgency().getId())
-        );
     }
 }
