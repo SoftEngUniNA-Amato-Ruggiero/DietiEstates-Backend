@@ -1,6 +1,8 @@
 spring:
   application:
     name: DietiEstatesBackend
+  config:
+    import: "optional:configtree:/run/secrets/"
 
   datasource:
     url: jdbc:h2:mem:${DB_NAME:dietiestatesdb}

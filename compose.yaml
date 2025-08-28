@@ -1,4 +1,20 @@
 services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: dietiestatesdb
+      DB_USER: admin
+    secrets:
+      - DB_PASSWORD
+
   db:
     image: postgres:17
     restart: always
@@ -11,13 +27,13 @@ services:
         target: /dev/shm
         tmpfs:
           size: 134217728 # 128*2^20 bytes = 128Mb
-    secrets:
-        - postgres-passwd
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-passwd
+      POSTGRES_DB: dietiestatesdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD_FILE: /run/secrets/DB_PASSWORD
       PGDATA: /var/lib/postgresql/17/docker
+    secrets:
+      - DB_PASSWORD
 
   adminer:
     image: adminer:latest
@@ -29,5 +45,5 @@ volumes:
   pgdata:
 
 secrets:
-  postgres-passwd:
+  DB_PASSWORD:
     file: ./secrets/postgres-passwd.txt

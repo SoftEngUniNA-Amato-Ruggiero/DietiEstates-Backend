@@ -7,10 +7,11 @@
 - Development profile (default)
   - Uses an in-memory H2 database
 - Production profile (`prod`)
-  - Uses a PostgreSQL database. Ensure PostgreSQL is running and accessible on `localhost:5432`.
+  - Uses a PostgreSQL database.
 
 ## Configure environment variables
-- Rename the file `.env.example` to `.env` and set the required environment variables.
+- Rename the file `.env.example` to `.env` and set the `DB_PASSWORD` environment variable. The others are optional.
+  - The database connection will default to url `localhost:5432` with username `admin` and database name `dietiestatesdb`.
 
 ## On Windows
 - Build
@@ -47,11 +48,9 @@
 - Docker Compose
 
 ## Configure environment variables
-- Rename the file `./secrets/postgres-passwd.txt.example` to `./secrets/postgres-passwd.txt` and set the PostgreSQL password.
-- Rename the file `.env.example` to `.env` and set the required environment variables. Make sure the `DB_PASSWORD` variable matches the password set in `./secrets/postgres-passwd.txt`.
+- Rename the file `./secrets/postgres-passwd.txt.example` to `./secrets/postgres-passwd.txt` and set the database password.
 
-## Build and Run (production profile only)
-- Production profile
+## Build and Run
 ```bash
 docker-compose up --build
 ```

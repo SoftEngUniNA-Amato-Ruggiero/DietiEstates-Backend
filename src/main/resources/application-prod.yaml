@@ -1,9 +1,11 @@
 spring:
   application:
     name: DietiEstatesBackend
+  config:
+    import: "optional:configtree:/run/secrets/"
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/${DB_NAME:dietiestatesdb}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:dietiestatesdb}
     driver-class-name: org.postgresql.Driver
     username: ${DB_USER:admin}
     password: ${DB_PASSWORD}
