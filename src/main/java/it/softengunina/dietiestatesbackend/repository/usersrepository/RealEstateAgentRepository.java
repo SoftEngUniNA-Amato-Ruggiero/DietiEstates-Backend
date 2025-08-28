@@ -18,4 +18,14 @@ public interface RealEstateAgentRepository<T extends RealEstateAgent>  extends U
     @Modifying(clearAutomatically = true)
     @Query(value="INSERT INTO real_estate_agents (id, agency_id) VALUES (:id, :agencyId)", nativeQuery=true)
     void insertAgent(@Param("id") Long id, @Param("agencyId") Long agencyId);
+
+    /** Demotes the RealEstateAgent with the given id to a BaseUser without deleting the BaseUser from the database.
+     * NEVER use this with the id of a RealEstateManager, or it will result in a DataIntegrityViolationException.
+     * To demote a RealEstateManager to a BaseUser, call RealEstateManagerRepository.demoteManager before this method.
+     * @param id the id of the agent to demote
+     */
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query(value="DELETE FROM real_estate_agents WHERE id = :id", nativeQuery=true)
+    void demoteAgent(@Param("id") Long id);
 }

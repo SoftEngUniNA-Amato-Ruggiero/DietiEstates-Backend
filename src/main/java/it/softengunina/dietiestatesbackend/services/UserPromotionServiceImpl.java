@@ -23,6 +23,7 @@ public class UserPromotionServiceImpl implements UserPromotionService {
         this.managerRepository = managerRepository;
     }
 
+    @Override
     @Transactional
     public RealEstateAgent promoteUserToAgent(User user, RealEstateAgency agency) {
         agentRepository.insertAgent(user.getId(), agency.getId());
@@ -31,6 +32,7 @@ public class UserPromotionServiceImpl implements UserPromotionService {
                 .orElseThrow(() -> new PromotionFailedException("Agent was not saved to the database"));
     }
 
+    @Override
     @Transactional
     public RealEstateManager promoteAgentToManager(UserWithAgency agent) {
         managerRepository.insertManager(agent.getId());
@@ -39,6 +41,7 @@ public class UserPromotionServiceImpl implements UserPromotionService {
                 .orElseThrow(() -> new PromotionFailedException("Manager was not saved to the database"));
     }
 
+    @Override
     @Transactional
     public RealEstateManager promoteUserToManager(User user, RealEstateAgency agency) {
         RealEstateAgent agent = self.promoteUserToAgent(user, agency);

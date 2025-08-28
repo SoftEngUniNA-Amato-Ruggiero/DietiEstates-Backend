@@ -11,4 +11,12 @@ public interface RealEstateManagerRepository extends RealEstateAgentRepository<R
     @Modifying(clearAutomatically = true)
     @Query(value="INSERT INTO real_estate_managers (id) VALUES (:id)", nativeQuery=true)
     void insertManager(@Param("id") Long id);
+
+    /** Demotes the RealEstateManager with the given id to a RealEstateAgent without deleting the RealEstateAgent from the database.
+     * @param id the id of the manager to demote
+     */
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query(value="DELETE FROM real_estate_managers WHERE id = :id", nativeQuery=true)
+    void demoteManager(@Param("id") Long id);
 }
