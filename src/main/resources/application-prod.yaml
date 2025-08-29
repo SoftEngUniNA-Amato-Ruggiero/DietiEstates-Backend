@@ -28,6 +28,11 @@ server:
   servlet:
     context-path: /api
 
+frontend:
+  url: http://localhost:4200
+
 springdoc:
+  api-docs:
+    path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
