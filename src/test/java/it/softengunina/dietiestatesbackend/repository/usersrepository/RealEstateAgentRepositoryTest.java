@@ -35,9 +35,9 @@ class RealEstateAgentRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        existingUser = userRepository.save(new BaseUser("existing@email.com", "existingSub"));
+        existingUser = userRepository.save(new BaseUser("user@email.com", "userSub"));
         testAgency = agencyRepository.save(new RealEstateAgency("testIban", "testAgency"));
-        testAgent = agentRepository.save(new RealEstateAgent("email@test.com", "testSub", testAgency));
+        testAgent = agentRepository.save(new RealEstateAgent("agent@email.com", "agentSub", testAgency));
         testManager = managerRepository.save(new RealEstateManager("manager@email.com", "managerSub", testAgency));
     }
 

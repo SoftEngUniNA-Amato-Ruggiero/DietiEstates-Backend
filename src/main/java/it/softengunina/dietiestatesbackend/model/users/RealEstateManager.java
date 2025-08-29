@@ -14,17 +14,14 @@ import java.util.function.Function;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class RealEstateManager extends RealEstateAgent {
-    public RealEstateManager(@NonNull String username, @NonNull String cognitoSub, @NonNull RealEstateAgency agency) {
+    public RealEstateManager(@NonNull String username,
+                             @NonNull String cognitoSub,
+                             @NonNull RealEstateAgency agency) {
         super(username, cognitoSub, agency);
     }
 
     @Override
-    public boolean isManager() {
-        return true;
-    }
-
-    @Override
-    public Function<UserPromotionStrategy, UserWithAgency> getPromotionToManagerFunction(RealEstateAgency agency) {
+    public Function<UserPromotionStrategy, UserWithAgency> getPromotionToManagerFunction(@NonNull RealEstateAgency agency) {
         throw new ImpossiblePromotionException("User cannot be promoted to manager.");
     }
 }

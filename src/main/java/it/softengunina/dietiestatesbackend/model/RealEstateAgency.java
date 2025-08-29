@@ -2,7 +2,6 @@ package it.softengunina.dietiestatesbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -15,16 +14,14 @@ public class RealEstateAgency{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
-    @Setter
+    @Setter(AccessLevel.PROTECTED)
     private Long id;
 
-    @NotBlank
     @Column(unique = true, nullable = false)
     @Getter
     @Setter
     private String iban;
 
-    @NotBlank
     @Getter
     @Setter
     private String name;

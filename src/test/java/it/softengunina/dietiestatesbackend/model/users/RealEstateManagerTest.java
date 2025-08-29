@@ -2,23 +2,19 @@ package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.exceptions.ImpossiblePromotionException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RealEstateManagerTest {
     RealEstateManager manager;
     RealEstateAgency agency;
-    UserPromotionStrategy promotionService;
 
     @BeforeEach
     void setUp() {
-        promotionService = Mockito.mock(UserPromotionStrategy.class);
         agency = new RealEstateAgency("testIban", "testAgency");
-        manager = new RealEstateManager("testManager", "testSub3", agency);
+        manager = new RealEstateManager("testManager", "testSub", agency);
     }
 
     @Test

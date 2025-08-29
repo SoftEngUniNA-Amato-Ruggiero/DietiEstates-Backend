@@ -12,13 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class RealEstateAgentTest {
     RealEstateAgent agent;
     RealEstateAgency agency;
-    UserPromotionStrategy promotionService;
 
     @BeforeEach
     void setUp() {
-        promotionService = Mockito.mock(UserPromotionStrategy.class);
         agency = new RealEstateAgency("testIban", "testAgency");
-        agent = new RealEstateAgent("testAgent", "testSub2", agency);
+        agent = new RealEstateAgent("testAgent", "testSub", agency);
     }
 
     @Test
@@ -33,28 +31,31 @@ class RealEstateAgentTest {
 
     @Test
     void getPromotionToAgentFunction() {
-        assertThrows(ImpossiblePromotionException.class, () -> agent.getPromotionToAgentFunction(agency));
+        RealEstateAgency agentAgency = agent.getAgency();
+        assertThrows(ImpossiblePromotionException.class, () -> agent.getPromotionToAgentFunction(agentAgency));
     }
 
     @Test
     void getPromotionToManagerFunction() {
-        Mockito.when(promotionService.promoteAgentToManager(agent)).thenReturn(new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agency));
-        UserWithAgency manager = agent.getPromotionToManagerFunction(agency).apply(promotionService);
+        UserPromotionStrategy promotionService = Mockito.mock(UserPromotionStrategy.class);
+        Mockito.when(promotionService.promoteAgentToManager(agent)).thenReturn(new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agent.getAgency()));
+
+        UserWithAgency manager = agent.getPromotionToManagerFunction(agent.getAgency()).apply(promotionService);
         assertAll(
                 () -> assertNotNull(manager),
                 () -> assertEquals(agent.getUsername(), manager.getUsername()),
                 () -> assertEquals(agent.getCognitoSub(), manager.getCognitoSub()),
                 () -> assertEquals(agent.getAgency(), manager.getAgency()),
-                () -> assertEquals("RealEstateManager", manager.getRole()),
-                () -> assertTrue(manager.isManager())
+                () -> assertEquals("RealEstateManager", manager.getRole())
         );
     }
 
     @Test
     void getPromotionToManagerFunction_whenDifferentAgency() {
-        Mockito.when(promotionService.promoteAgentToManager(agent)).thenReturn(new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agency));
-        RealEstateAgency differentAgency = new RealEstateAgency("differentIban", "differentAgency");
+        UserPromotionStrategy promotionService = Mockito.mock(UserPromotionStrategy.class);
+        Mockito.when(promotionService.promoteAgentToManager(agent)).thenReturn(new RealEstateManager(agent.getUsername(), agent.getCognitoSub(), agent.getAgency()));
 
+        RealEstateAgency differentAgency = new RealEstateAgency("differentIban", "differentAgency");
         assertThrows(ImpossiblePromotionException.class, () -> agent.getPromotionToManagerFunction(differentAgency));
     }
 }

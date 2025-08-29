@@ -64,8 +64,6 @@ class UserDemotionStrategyImplTest {
         assertAll(
                 () -> assertEquals(agent.getUsername(), demotedUser.getUsername()),
                 () -> assertEquals(agent.getCognitoSub(), demotedUser.getCognitoSub()),
-                () -> assertNotEquals(agent.getAgency(), demotedUser.getAgency()),
-                () -> assertNull(demotedUser.getAgency()),
                 () -> assertFalse(managerRepository.findById(demotedUser.getId()).isPresent()),
                 () -> assertFalse(agentRepository.findById(demotedUser.getId()).isPresent()),
                 () -> assertTrue(userRepository.findById(demotedUser.getId()).isPresent())

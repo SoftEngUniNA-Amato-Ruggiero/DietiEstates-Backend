@@ -1,5 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
+import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+
 public interface UserWithAgency extends User {
-    boolean isManager();
+    RealEstateAgency getAgency();
 }

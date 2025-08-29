@@ -5,6 +5,7 @@ import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.*;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class UserPromotionStrategyImpl implements UserPromotionStrategy {
 
     @Override
     @Transactional
-    public RealEstateAgent promoteUserToAgent(User user, RealEstateAgency agency) {
+    public RealEstateAgent promoteUserToAgent(@NonNull User user, @NonNull RealEstateAgency agency) {
         agentRepository.insertAgent(user.getId(), agency.getId());
         agentRepository.flush();
         return agentRepository.findById(user.getId())
@@ -30,7 +31,7 @@ public class UserPromotionStrategyImpl implements UserPromotionStrategy {
 
     @Override
     @Transactional
-    public RealEstateManager promoteAgentToManager(UserWithAgency agent) {
+    public RealEstateManager promoteAgentToManager(@NonNull UserWithAgency agent) {
         managerRepository.insertManager(agent.getId());
         managerRepository.flush();
         return managerRepository.findById(agent.getId())

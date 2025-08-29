@@ -12,6 +12,7 @@ import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstate
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,7 +67,7 @@ public class AgencyController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public UserWithAgencyDTO createAgency(@RequestBody RealEstateAgencyDTO req) {
+    public UserWithAgencyDTO createAgency(@Valid @RequestBody RealEstateAgencyDTO req) {
         BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
 

@@ -3,6 +3,7 @@ package it.softengunina.dietiestatesbackend.controller;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,10 +28,13 @@ class MeControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    TokenService tokenService;
+    UserRepository<BaseUser> userRepository;
 
     @MockitoBean
-    UserRepository<BaseUser> userRepository;
+    RealEstateAgentRepository<RealEstateAgent> agentRepository;
+
+    @MockitoBean
+    TokenService tokenService;
 
     BaseUser user;
     RealEstateAgent agent;
@@ -47,6 +51,8 @@ class MeControllerTest {
         Mockito.when(userRepository.findByCognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
 
         Mockito.when(userRepository.findByCognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
+
+        Mockito.when(agentRepository.findByCognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
     }
 
     @Test

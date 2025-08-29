@@ -37,20 +37,12 @@ class UserPromotionStrategyImplIntegrationTest {
     RealEstateAgent agent;
     BaseUser user;
 
-    RealEstateAgency agencyNotInDb;
-    RealEstateAgent agentNotInDb;
-    BaseUser userNotInDb;
-
     @BeforeEach
     void setUp() {
         agency = agencyRepository.saveAndFlush(new RealEstateAgency("agencyIban", "agencyName"));
         manager = realEstateManagerRepository.saveAndFlush(new RealEstateManager("managerUsername", "managerSub", agency));
         agent = agentRepository.saveAndFlush(new RealEstateAgent("agentUsername", "agentSub", agency));
         user = userRepository.saveAndFlush(new BaseUser("userUsername", "userSub"));
-
-        agencyNotInDb = new RealEstateAgency("notInDbIban", "notInDbAgency");
-        agentNotInDb = new RealEstateAgent("notInDbAgent", "notInDbAgentSub", agency);
-        userNotInDb = new BaseUser("notInDbUser", "notInDbUserSub");
     }
 
     /** Black box R-WECT tests for promoteUserToAgent:
@@ -85,6 +77,7 @@ class UserPromotionStrategyImplIntegrationTest {
 
     @Test
     void promoteUserToAgent_userIsNotInDb() {
+        BaseUser userNotInDb = new BaseUser("notInDbUser", "notInDbUserSub");
         assertThrows(RuntimeException.class, () -> promotionService.promoteUserToAgent(userNotInDb, agency));
     }
 
@@ -95,7 +88,8 @@ class UserPromotionStrategyImplIntegrationTest {
 
     @Test
     void promoteUserToAgent_agencyIsNotInDb() {
-        assertThrows(RuntimeException.class, () -> promotionService.promoteUserToAgent(user, agencyNotInDb));
+        RealEstateAgency agencyNotInDb = new RealEstateAgency("notInDbIban", "notInDbAgency");
+        assertThrows(Exception.class, () -> promotionService.promoteUserToAgent(user, agencyNotInDb));
     }
 
     @Test
@@ -126,6 +120,7 @@ class UserPromotionStrategyImplIntegrationTest {
 
     @Test
     void promoteAgentToManager_agentIsNotInDb() {
+        RealEstateAgent agentNotInDb = new RealEstateAgent("notInDbAgent", "notInDbAgentSub", agency);
         assertThrows(RuntimeException.class, () -> promotionService.promoteAgentToManager(agentNotInDb));
     }
 

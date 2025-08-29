@@ -6,6 +6,7 @@ import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public class UserDemotionStrategyImpl implements UserDemotionStrategy {
 
     @Override
     @Transactional
-    public RealEstateAgent demoteManagerToAgent(UserWithAgency manager) {
+    public RealEstateAgent demoteManagerToAgent(@NonNull UserWithAgency manager) {
         managerRepository.demoteManager(manager.getId());
         managerRepository.flush();
         return agentRepository.findById(manager.getId())
@@ -34,7 +35,7 @@ public class UserDemotionStrategyImpl implements UserDemotionStrategy {
 
     @Override
     @Transactional
-    public BaseUser demoteAgentToUser(UserWithAgency agent) {
+    public BaseUser demoteAgentToUser(@NonNull UserWithAgency agent) {
         agentRepository.demoteAgent(agent.getId());
         agentRepository.flush();
         return userRepository.findById(agent.getId())
