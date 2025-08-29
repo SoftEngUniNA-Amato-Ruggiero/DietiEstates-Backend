@@ -18,6 +18,12 @@ import java.util.List;
 public class SecurityConfiguration {
     @Value("${frontend.url}")
     private String frontendUrl;
+    @Value("${springdoc.api-docs.path}")
+    private String apiDocsPath;
+    @Value("${springdoc.swagger-ui.path}")
+    private String swaggerPath;
+    @Value("${spring.h2.console.path}")
+    private String h2ConsolePath;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,7 +36,7 @@ public class SecurityConfiguration {
                     )
             )
             .authorizeHttpRequests(authz -> authz
-                    .requestMatchers("/h2-console/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                    .requestMatchers(h2ConsolePath+"/**", apiDocsPath+"/**", swaggerPath+"/**").permitAll()
                     .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
