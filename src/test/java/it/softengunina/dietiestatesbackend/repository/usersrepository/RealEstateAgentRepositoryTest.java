@@ -24,7 +24,7 @@ class RealEstateAgentRepositoryTest {
     @Autowired
     RealEstateAgentRepository<RealEstateAgent> agentRepository;
     @Autowired
-    UserRepository<BaseUser> userRepository;
+    BaseUserRepository<BaseUser> userRepository;
     @Autowired
     RealEstateManagerRepository managerRepository;
 

@@ -2,7 +2,7 @@ package it.softengunina.dietiestatesbackend.services;
 
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.User;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class UserSyncService {
-    UserRepository<BaseUser> userRepository;
+    BaseUserRepository<BaseUser> userRepository;
     TokenService tokenService;
 
-    public UserSyncService(UserRepository<BaseUser> userRepository, TokenService tokenService) {
+    public UserSyncService(BaseUserRepository<BaseUser> userRepository, TokenService tokenService) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
     }

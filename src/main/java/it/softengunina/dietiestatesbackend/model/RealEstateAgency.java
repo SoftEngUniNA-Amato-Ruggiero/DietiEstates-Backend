@@ -22,6 +22,7 @@ public class RealEstateAgency{
     @Setter
     private String iban;
 
+    @Column(nullable = false)
     @Getter
     @Setter
     private String name;

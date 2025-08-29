@@ -7,7 +7,7 @@ import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.User;
 import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +18,11 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/me")
 public class MeController {
-    private final UserRepository<BaseUser> userRepository;
+    private final BaseUserRepository<BaseUser> userRepository;
     private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
     private final TokenService tokenService;
 
-    MeController(UserRepository<BaseUser> userRepository,
+    MeController(BaseUserRepository<BaseUser> userRepository,
                  RealEstateAgentRepository<RealEstateAgent> agentRepository,
                  TokenService tokenService) {
         this.userRepository = userRepository;

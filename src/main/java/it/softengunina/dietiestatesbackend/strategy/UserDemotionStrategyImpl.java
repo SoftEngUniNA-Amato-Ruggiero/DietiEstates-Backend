@@ -5,18 +5,18 @@ import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserDemotionStrategyImpl implements UserDemotionStrategy {
-    UserRepository<BaseUser> userRepository;
+    BaseUserRepository<BaseUser> userRepository;
     RealEstateAgentRepository<RealEstateAgent> agentRepository;
     RealEstateManagerRepository managerRepository;
 
-    public UserDemotionStrategyImpl(UserRepository<BaseUser> userRepository,
+    public UserDemotionStrategyImpl(BaseUserRepository<BaseUser> userRepository,
                                     RealEstateAgentRepository<RealEstateAgent> agentRepository,
                                     RealEstateManagerRepository managerRepository) {
         this.userRepository = userRepository;

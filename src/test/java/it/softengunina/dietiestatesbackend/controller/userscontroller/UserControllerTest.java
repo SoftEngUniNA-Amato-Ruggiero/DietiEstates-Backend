@@ -3,7 +3,7 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,7 +26,7 @@ class UserControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    UserRepository<BaseUser> userRepository;
+    BaseUserRepository<BaseUser> userRepository;
 
     BaseUser user;
     RealEstateAgent agent;

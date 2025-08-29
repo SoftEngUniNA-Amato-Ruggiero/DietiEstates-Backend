@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 @Primary
-public interface UserRepository<T extends BaseUser> extends JpaRepository<T, Long> {
+public interface BaseUserRepository<T extends BaseUser> extends JpaRepository<T, Long> {
     @Query("SELECT u FROM #{#entityName} u WHERE u.username = :username")
     Optional<T> findByUsername(String username);
 

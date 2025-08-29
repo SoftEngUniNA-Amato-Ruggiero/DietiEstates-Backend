@@ -8,7 +8,7 @@ import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +40,7 @@ class AgencyControllerTest {
     @MockitoBean
     RealEstateAgencyRepository agencyRepository;
     @MockitoBean
-    UserRepository<BaseUser> userRepository;
+    BaseUserRepository<BaseUser> userRepository;
     @MockitoBean
     RealEstateAgentRepository<RealEstateAgent> agentRepository;
     @MockitoBean

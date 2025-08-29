@@ -9,9 +9,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-class UserRepositoryTest {
+class BaseUserRepositoryTest {
     @Autowired
-    UserRepository<BaseUser> repository;
+    BaseUserRepository<BaseUser> repository;
 
     BaseUser testUser;
 

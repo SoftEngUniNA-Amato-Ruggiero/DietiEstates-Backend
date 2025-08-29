@@ -9,7 +9,7 @@ import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
 import jakarta.validation.Valid;
@@ -26,13 +26,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/agencies")
 public class AgencyController {
     private final RealEstateAgencyRepository agencyRepository;
-    private final UserRepository<BaseUser> userRepository;
+    private final BaseUserRepository<BaseUser> userRepository;
     private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
     private final TokenService tokenService;
     private final UserPromotionStrategyImpl promotionService;
 
     AgencyController(RealEstateAgencyRepository agencyRepository,
-                     UserRepository<BaseUser> userRepository,
+                     BaseUserRepository<BaseUser> userRepository,
                      RealEstateAgentRepository<RealEstateAgent> agentRepository,
                      TokenService tokenService,
                      UserPromotionStrategyImpl promotionService) {

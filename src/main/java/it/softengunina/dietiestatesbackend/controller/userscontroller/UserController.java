@@ -3,7 +3,7 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.User;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +13,9 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final UserRepository<BaseUser> userRepository;
+    private final BaseUserRepository<BaseUser> userRepository;
 
-    UserController(UserRepository<BaseUser> userRepository) {
+    UserController(BaseUserRepository<BaseUser> userRepository) {
         this.userRepository = userRepository;
     }
 

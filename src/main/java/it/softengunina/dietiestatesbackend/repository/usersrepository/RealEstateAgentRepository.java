@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 
-public interface RealEstateAgentRepository<T extends RealEstateAgent>  extends UserRepository<T> {
+public interface RealEstateAgentRepository<T extends RealEstateAgent>  extends BaseUserRepository<T> {
     @Query("SELECT a FROM RealEstateAgent a WHERE a.agency = :agency")
     Page<T> findByAgency(RealEstateAgency agency, Pageable pageable);
 
