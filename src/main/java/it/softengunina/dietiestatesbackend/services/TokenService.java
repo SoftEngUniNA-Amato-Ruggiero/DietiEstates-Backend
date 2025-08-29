@@ -10,6 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for extracting and validating JWT tokens from the security context.
+ */
 @Service
 @Slf4j
 public class TokenService {

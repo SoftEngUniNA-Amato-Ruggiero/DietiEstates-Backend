@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Controller for managing real estate manager-related operations.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/managers")

@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Controller for managing real estate agent-related operations.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/agents")
@@ -35,6 +38,10 @@ public class RealEstateAgentController {
         this.promotionService = promotionService;
     }
 
+    /**
+     * Creates a new real estate agent for the manager's agency.
+     * Access is restricted to users with a manager role.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional

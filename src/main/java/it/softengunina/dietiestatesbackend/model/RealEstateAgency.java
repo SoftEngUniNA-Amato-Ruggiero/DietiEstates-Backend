@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entity representing a real estate agency.
+ * Includes fields for ID, IBAN, and name.
+ * It can be managed by multiple real estate managers.
+ */
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "real_estate_agencies")
@@ -11,6 +16,10 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class RealEstateAgency{
+    /**
+     * Primary key for the real estate agency.
+     * Auto-generated value.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter

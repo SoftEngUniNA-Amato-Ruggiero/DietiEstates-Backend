@@ -8,6 +8,10 @@ import jakarta.persistence.Table;
 import lombok.*;
 import jakarta.persistence.Transient;
 
+/**
+ * This class represents a real estate insertion for rent.
+ * It extends the Insertion interface and includes a rent attribute.
+ */
 @Entity
 @Table(name = "insertions_for_rent")
 @NoArgsConstructor
@@ -18,6 +22,13 @@ public class InsertionForRent extends BaseInsertion implements InsertionWithRent
     @Setter
     private Double rent;
 
+    /**
+     * Constructor for InsertionForRent.
+     * @param address it is the address of the insertion
+     * @param details it contains all the details of the insertion
+     * @param uploader it is the real estate agent who uploaded the insertion
+     * @param rent it is the specified attribute for this type of insertion
+     */
     public InsertionForRent(Address address, InsertionDetails details, RealEstateAgent uploader, double rent) {
         super(address, details, uploader);
         this.rent = rent;

@@ -5,6 +5,11 @@ import lombok.*;
 
 import java.util.Set;
 
+/**
+ * This class represent the details of a real estate insertion.
+ * It includes attributes such as floor, presence of elevator, and tags.
+ * It is marked as @Embeddable to indicate that it can be embedded in other entities.
+ */
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor

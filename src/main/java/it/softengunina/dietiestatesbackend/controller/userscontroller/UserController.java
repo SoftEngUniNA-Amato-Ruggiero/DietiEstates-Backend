@@ -9,6 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Controller for managing user-related operations.
+ * Provides endpoints to retrieve user information by username or ID.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/users")

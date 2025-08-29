@@ -21,6 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Controller for managing real estate agencies and their agents.
+ * Provides endpoints to create, retrieve, and list agencies and their associated agents.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/agencies")
