@@ -1,6 +1,8 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     ports:
       - "8081:8081"
@@ -41,8 +43,19 @@ services:
     ports:
       - "8080:8080"
 
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile.site
+    restart: always
+    ports:
+      - "8082:80"
+    volumes:
+        - site:/usr/share/nginx/html:ro
+
 volumes:
   pgdata:
+  site:
 
 secrets:
   DB_PASSWORD:
