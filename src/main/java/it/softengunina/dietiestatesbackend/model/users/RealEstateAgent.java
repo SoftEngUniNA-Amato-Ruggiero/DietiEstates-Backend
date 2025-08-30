@@ -1,51 +1,48 @@
 package it.softengunina.dietiestatesbackend.model.users;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import it.softengunina.dietiestatesbackend.exceptions.ImpossiblePromotionException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategy;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.function.Function;
-
 @Entity
 @Table(name = "real_estate_agents")
-@PrimaryKeyJoinColumn(name = "id")
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @ToString
-public class RealEstateAgent extends BaseUser implements UserWithAgency {
-    /** With CascadeType.REMOVE, when the RealEstateAgency is deleted, all its RealEstateAgents are deleted too
-     * But so are the BaseUsers corresponding to the RealEstateAgents, because of how the ORM works
-     * So when an agency is deleted, the agents will be considered new users on their next login
-     * And they will be assigned a new id
-     * So we will need to not use CascadeType.REMOVE and handle the deletion of an agency manually (running the demoteToUser method)
-     */
+public class RealEstateAgent implements UserWithAgency {
+    @Id
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
+    private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
+    @JoinColumn(name = "id", nullable = false)
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
+    private BaseUser user;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "agency_id", nullable = false)
     @JsonBackReference
     @Getter
-    @Setter
-    protected RealEstateAgency agency;
+    @Setter(AccessLevel.PROTECTED)
+    private RealEstateAgency agency;
 
-    public RealEstateAgent(@NonNull String username,
-                           @NonNull String cognitoSub,
+    public RealEstateAgent(@NonNull BaseUser user,
                            @NonNull RealEstateAgency agency) {
-        super(username, cognitoSub);
+        this.user = user;
         this.agency = agency;
     }
 
     @Override
-    public Function<UserPromotionStrategy, UserWithAgency> getPromotionToAgentFunction(@NonNull RealEstateAgency inputAgency) {
-        throw new ImpossiblePromotionException("User cannot be promoted to agent.");
+    public String getUsername() {
+        return user.getUsername();
     }
 
     @Override
-    public Function<UserPromotionStrategy, UserWithAgency> getPromotionToManagerFunction(@NonNull RealEstateAgency inputAgency) {
-        if (inputAgency.equals(this.agency)) {
-            return service -> service.promoteAgentToManager(this);
-        } else {
-            throw new ImpossiblePromotionException("User belongs to another agency");
-        }
+    public String getCognitoSub() {
+        return user.getCognitoSub();
     }
 }

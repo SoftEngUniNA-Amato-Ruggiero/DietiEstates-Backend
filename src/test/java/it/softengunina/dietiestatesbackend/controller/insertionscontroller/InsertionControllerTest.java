@@ -2,6 +2,7 @@ package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.insertions.*;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForRentRepository;
@@ -32,7 +33,7 @@ class InsertionControllerTest {
     @Autowired
     InsertionForRentRepository repository;
     @Autowired
-    RealEstateAgentRepository<RealEstateAgent> agentRepository;
+    RealEstateAgentRepository agentRepository;
     @Autowired
     RealEstateAgencyRepository agencyRepository;
 
@@ -52,7 +53,7 @@ class InsertionControllerTest {
         mocks = MockitoAnnotations.openMocks(this);
 
         agency = agencyRepository.save(new RealEstateAgency("testIban", "testAgency"));
-        uploader = agentRepository.save(new RealEstateAgent("agent", "sub", agency));
+        uploader = agentRepository.save(new RealEstateAgent(new BaseUser("agent", "sub"), agency));
         insertion = repository.save(new InsertionForRent(address, details, uploader, 800.0));
     }
 

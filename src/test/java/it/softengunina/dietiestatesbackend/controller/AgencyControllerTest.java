@@ -9,8 +9,8 @@ import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -40,55 +40,34 @@ class AgencyControllerTest {
     @MockitoBean
     RealEstateAgencyRepository agencyRepository;
     @MockitoBean
-    BaseUserRepository<BaseUser> userRepository;
+    BaseUserRepository userRepository;
     @MockitoBean
-    RealEstateAgentRepository<RealEstateAgent> agentRepository;
+    RealEstateAgentRepository agentRepository;
+    @MockitoBean
+    RealEstateManagerRepository managerRepository;
     @MockitoBean
     TokenService tokenService;
-    @MockitoBean
-    UserPromotionStrategyImpl promotionStrategy;
 
-    Long agencyId = 1L;
+    Long agencyId;
     RealEstateAgency agency;
-    RealEstateManager manager;
-    RealEstateAgent agent;
     BaseUser user;
+    RealEstateAgent agent;
+    RealEstateManager managerOfDifferentAgency;
 
     @BeforeEach
     void setUp() {
+        agencyId = 1L;
         agency = new RealEstateAgency("testIban", "testAgency");
-        manager = new RealEstateManager("managerEmail", "managerSub", new RealEstateAgency("differentIban", "differentAgency"));
-        agent = new RealEstateAgent("agentEmail", "agentSub", agency);
         user = new BaseUser("testEmail", "testSub");
-
-        Mockito.when(agencyRepository.findAll(Mockito.any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(agency)));
-
-        Mockito.when(agencyRepository.findById(agencyId)).thenReturn(Optional.of(agency));
-        Mockito.when(agencyRepository.findById(9L)).thenReturn(Optional.empty());
-
-        Mockito.when(agentRepository.findByAgency(Mockito.eq(agency), Mockito.any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(agent)));
-
-        Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findByCognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
-        Mockito.when(userRepository.findByCognitoSub("wrongSub")).thenReturn(Optional.empty());
-
-        Mockito.when(agencyRepository.saveAndFlush(Mockito.any(RealEstateAgency.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        Mockito.when(promotionStrategy.promoteUserToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
-                .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
-
-        Mockito.when(promotionStrategy.promoteAgentToManager(Mockito.any(RealEstateAgent.class)))
-                .thenAnswer(invocation -> {
-                    RealEstateAgent passedAgent = invocation.getArgument(0);
-                    return new RealEstateManager(passedAgent.getUsername(), passedAgent.getCognitoSub(), passedAgent.getAgency());
-                });
+        agent = new RealEstateAgent(new BaseUser("agentEmail", "agentSub"), agency);
+        managerOfDifferentAgency = new RealEstateManager(new BaseUser("managerEmail", "managerSub"), new RealEstateAgency("differentIban", "differentAgency"));
     }
 
     @Test
     void getAgencies() throws Exception {
+        Mockito.when(agencyRepository.findAll(Mockito.any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(agency)));
+
         mockMvc.perform(get("/agencies"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].name").value(agency.getName()))
@@ -97,6 +76,8 @@ class AgencyControllerTest {
 
     @Test
     void getAgencyById() throws Exception {
+        Mockito.when(agencyRepository.findById(agencyId)).thenReturn(Optional.of(agency));
+
         mockMvc.perform(get("/agencies/" + agencyId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(agency.getName()))
@@ -105,12 +86,18 @@ class AgencyControllerTest {
 
     @Test
     void getAgencyById_NotFound() throws Exception {
+        Mockito.when(agencyRepository.findById(2L)).thenReturn(Optional.empty());
+
         mockMvc.perform(get("/agencies/" + 2L))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getAgentsByAgencyId() throws Exception {
+        Mockito.when(agencyRepository.findById(agencyId)).thenReturn(Optional.of(agency));
+        Mockito.when(agentRepository.findByAgency(Mockito.eq(agency), Mockito.any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(agent)));
+
         mockMvc.perform(get("/agencies/" + agencyId + "/agents"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].username").value(agent.getUsername()));
@@ -119,8 +106,15 @@ class AgencyControllerTest {
     @Test
     void createAgency() throws Exception {
         RealEstateAgencyDTO req = new RealEstateAgencyDTO(null, "requestIban", "requestAgency");
-        Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
         ObjectMapper objectMapper = new ObjectMapper();
+
+        Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
+        Mockito.when(agentRepository.findByUser_CognitoSub(user.getCognitoSub())).thenReturn(Optional.empty());
+        Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
+        Mockito.when(agencyRepository.saveAndFlush(Mockito.any(RealEstateAgency.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(managerRepository.save(Mockito.any(RealEstateManager.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         mockMvc.perform(post("/agencies")
                 .contentType("application/json")
@@ -131,12 +125,14 @@ class AgencyControllerTest {
     @Test
     void createAgency_whenUserIsAlreadyAgent() throws Exception {
         RealEstateAgencyDTO req = new RealEstateAgencyDTO(null, "requestIban", "requestAgency");
-        Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
         ObjectMapper objectMapper = new ObjectMapper();
+
+        Mockito.when(tokenService.getCognitoSub()).thenReturn(managerOfDifferentAgency.getCognitoSub());
+        Mockito.when(agentRepository.findByUser_CognitoSub(managerOfDifferentAgency.getCognitoSub())).thenReturn(Optional.of(managerOfDifferentAgency));
 
         mockMvc.perform(post("/agencies")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isConflict());
+                .andExpect(status().isUnauthorized());
     }
 }

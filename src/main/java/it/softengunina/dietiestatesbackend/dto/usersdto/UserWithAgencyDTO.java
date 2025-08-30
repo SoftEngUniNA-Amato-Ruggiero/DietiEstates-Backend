@@ -18,8 +18,11 @@ public class UserWithAgencyDTO {
     @Valid
     private RealEstateAgencyDTO agency;
 
+    private String role;
+
     public UserWithAgencyDTO(UserWithAgency user) {
         this.user = new UserDTO(user);
         this.agency = new RealEstateAgencyDTO(user.getAgency());
+        this.role = user.getClass().getSimpleName();
     }
 }

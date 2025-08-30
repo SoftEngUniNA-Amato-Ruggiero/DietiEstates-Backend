@@ -19,7 +19,7 @@ class UserSyncServiceTest {
     AutoCloseable mocks;
 
     @Mock
-    BaseUserRepository<BaseUser> userRepository;
+    BaseUserRepository userRepository;
     @Mock
     TokenService tokenService;
 

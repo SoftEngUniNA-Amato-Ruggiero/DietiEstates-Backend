@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class UserSyncService {
-    BaseUserRepository<BaseUser> userRepository;
+    BaseUserRepository userRepository;
     TokenService tokenService;
 
-    public UserSyncService(BaseUserRepository<BaseUser> userRepository, TokenService tokenService) {
+    public UserSyncService(BaseUserRepository userRepository, TokenService tokenService) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
     }

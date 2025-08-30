@@ -6,12 +6,12 @@ import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
-import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,21 +26,21 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/agencies")
 public class AgencyController {
     private final RealEstateAgencyRepository agencyRepository;
-    private final BaseUserRepository<BaseUser> userRepository;
-    private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
+    private final BaseUserRepository userRepository;
+    private final RealEstateAgentRepository agentRepository;
+    private final RealEstateManagerRepository managerRepository;
     private final TokenService tokenService;
-    private final UserPromotionStrategyImpl promotionService;
 
     AgencyController(RealEstateAgencyRepository agencyRepository,
-                     BaseUserRepository<BaseUser> userRepository,
-                     RealEstateAgentRepository<RealEstateAgent> agentRepository,
-                     TokenService tokenService,
-                     UserPromotionStrategyImpl promotionService) {
+                     BaseUserRepository userRepository,
+                     RealEstateAgentRepository agentRepository,
+                     RealEstateManagerRepository managerRepository,
+                     TokenService tokenService) {
         this.agencyRepository = agencyRepository;
         this.userRepository = userRepository;
         this.agentRepository = agentRepository;
+        this.managerRepository = managerRepository;
         this.tokenService = tokenService;
-        this.promotionService = promotionService;
     }
 
     @GetMapping
@@ -68,17 +68,20 @@ public class AgencyController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public UserWithAgencyDTO createAgency(@Valid @RequestBody RealEstateAgencyDTO req) {
-        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+        BaseUser user = findUserNotAffiliatedWithAnAgency(tokenService.getCognitoSub());
 
-        try {
-            RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
-            UserWithAgency manager = user.getPromotionToManagerFunction(agency).apply(promotionService);
-            return new UserWithAgencyDTO(manager);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Agency or manager not created");
+        RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getName(), req.getIban()));
+        RealEstateManager manager = managerRepository.save(new RealEstateManager(user, agency));
+
+        return new UserWithAgencyDTO(manager);
+    }
+
+    private BaseUser findUserNotAffiliatedWithAnAgency(String cognitoSub) {
+        if (agentRepository.findByUser_CognitoSub(cognitoSub).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are already affiliated with an agency");
         }
+
+        return userRepository.findByCognitoSub(cognitoSub)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "We could not find you in our database"));
     }
 }
