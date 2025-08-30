@@ -8,16 +8,12 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 
 
 /**
- * The main class for the Dieti Estates Backend application.
+ * Dieti Estates Backend application provides REST APIs for browsing and uploading insertions of Real Estates properties.
  */
 @SpringBootApplication
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class DietiEstatesBackendApplication {
 
-    /**
-     * Starting point of the application.
-     * @param args command line arguments
-     */
     public static void main(String[] args) {
         SpringApplication.run(DietiEstatesBackendApplication.class, args);
     }

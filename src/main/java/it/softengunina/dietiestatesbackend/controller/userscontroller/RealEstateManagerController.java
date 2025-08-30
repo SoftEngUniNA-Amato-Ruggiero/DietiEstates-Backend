@@ -2,13 +2,14 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
-import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -21,29 +22,42 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/managers")
 public class RealEstateManagerController {
-    private final BaseUserRepository userRepository;
+    private final RealEstateAgentRepository agentRepository;
     private final RealEstateManagerRepository managerRepository;
     private final TokenService tokenService;
 
-    RealEstateManagerController(BaseUserRepository userRepository,
+    RealEstateManagerController(RealEstateAgentRepository agentRepository,
                                 RealEstateManagerRepository managerRepository,
                                 TokenService tokenService) {
-        this.userRepository = userRepository;
+        this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
         this.tokenService = tokenService;
     }
 
+    /**
+     * Promotes an existing agent to a manager within the same agency.
+     * @param req The user DTO containing the username of the agent to be promoted.
+     * @return The promoted manager's DTO including agency information.
+     * @throws ResponseStatusException if the requester is not a manager, if the agent is not found,
+     *                                 or if the agent is already a manager.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public UserWithAgencyDTO createManager(@Valid @RequestBody UserDTO req) {
-        RealEstateManager manager = managerRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
-        BaseUser user = userRepository.findByUsername(req.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        try {
+            RealEstateManager manager = managerRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
-        RealEstateManager promoted = managerRepository.save(new RealEstateManager(user, manager.getAgency()));
-        return new UserWithAgencyDTO(promoted);
+            RealEstateAgent agent = agentRepository.findByUser_Username(req.getUsername())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not affiliated with your agency"));
+
+            RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent.getUser(), manager.getAgency()));
+            return new UserWithAgencyDTO(promoted);
+
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Agent is already a manager for your agency");
+        }
     }
 }

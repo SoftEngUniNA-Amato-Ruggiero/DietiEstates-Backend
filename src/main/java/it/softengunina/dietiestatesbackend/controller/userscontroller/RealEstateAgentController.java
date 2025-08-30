@@ -2,13 +2,14 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
+import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.services.UserNotAffiliatedWithAgencyService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,49 +19,52 @@ import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Controller for managing real estate agent-related operations.
+ * Provides an endpoint to create a new agent for the requesting manager's agency.
  */
 @Slf4j
 @RestController
 @RequestMapping("/agents")
 public class RealEstateAgentController {
-    private final BaseUserRepository userRepository;
     private final RealEstateAgentRepository agentRepository;
     private final RealEstateManagerRepository managerRepository;
+    private final UserNotAffiliatedWithAgencyService userNotAffiliatedWithAgencyService;
     private final TokenService tokenService;
 
-    RealEstateAgentController(BaseUserRepository userRepository,
-                              RealEstateAgentRepository agentRepository,
+    RealEstateAgentController(RealEstateAgentRepository agentRepository,
                               RealEstateManagerRepository managerRepository,
+                              UserNotAffiliatedWithAgencyService userNotAffiliatedWithAgencyService,
                               TokenService tokenService) {
-        this.userRepository = userRepository;
         this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
+        this.userNotAffiliatedWithAgencyService = userNotAffiliatedWithAgencyService;
         this.tokenService = tokenService;
     }
 
     /**
      * Creates a new real estate agent for the manager's agency.
      * Access is restricted to users with a manager role.
+     * @param req The UserDTO containing the username of the new agent.
+     * @return The UserWithAgencyDTO for the newly created agent's data along with agency information.
+     * @throws ResponseStatusException with status 403 if the requesting user is not a manager.
+     * @throws ResponseStatusException with status 400 if the requested user is already affiliated with an agency.
+     * @throws ResponseStatusException with status 404 if the requested user is not found.
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public UserWithAgencyDTO createAgent(@Valid @RequestBody UserDTO req) {
-        RealEstateManager manager = managerRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
+        try {
+            RealEstateManager manager = managerRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
-        BaseUser user = findUserNotAffiliatedWithAnAgency(req.getUsername());
+            BaseUser user = userNotAffiliatedWithAgencyService.findByUsername(req.getUsername())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        RealEstateAgent agent = agentRepository.save(new RealEstateAgent(user, manager.getAgency()));
-        return new UserWithAgencyDTO(agent);
-    }
+            RealEstateAgent agent = agentRepository.save(new RealEstateAgent(user, manager.getAgency()));
+            return new UserWithAgencyDTO(agent);
 
-    private BaseUser findUserNotAffiliatedWithAnAgency(String username) {
-        if (agentRepository.findByUser_Username(username).isPresent()) {
+        } catch (UserIsAlreadyAffiliatedWithAgencyException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user is already affiliated with an agency");
         }
-
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }

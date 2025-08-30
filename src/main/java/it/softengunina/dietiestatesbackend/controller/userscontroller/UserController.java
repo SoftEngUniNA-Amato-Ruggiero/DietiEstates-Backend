@@ -22,6 +22,13 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Endpoint to retrieve user information by username.
+     *
+     * @param username The username of the user to retrieve.
+     * @return UserDTO containing user details.
+     * @throws ResponseStatusException if the user is not found.
+     */
     @GetMapping
     public UserDTO getUserByUsername(@RequestParam String username) {
         User user = userRepository.findByUsername(username)
@@ -29,6 +36,13 @@ public class UserController {
         return new UserDTO(user);
     }
 
+    /**
+     * Endpoint to retrieve user information by user ID.
+     *
+     * @param id The ID of the user to retrieve.
+     * @return UserDTO containing user details.
+     * @throws ResponseStatusException if the user is not found.
+     */
     @GetMapping("/{id}")
     public UserDTO getUserById(@PathVariable Long id) {
         User user = userRepository.findById(id)

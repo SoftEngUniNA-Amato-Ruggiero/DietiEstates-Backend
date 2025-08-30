@@ -8,8 +8,8 @@ import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.services.UserNotAffiliatedWithAgencyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -32,7 +32,7 @@ class RealEstateAgentControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    BaseUserRepository userRepository;
+    UserNotAffiliatedWithAgencyService userNotAffiliatedWithAgencyService;
     @MockitoBean
     RealEstateAgentRepository agentRepository;
     @MockitoBean
@@ -49,20 +49,17 @@ class RealEstateAgentControllerTest {
         agency = new RealEstateAgency("agencyIban", "agencyName");
         manager = new RealEstateManager(new BaseUser("managerName", "managerSub"), agency);
         user = new BaseUser("userName", "userSub");
-
-        Mockito.when(agentRepository.save(Mockito.any(RealEstateAgent.class))).thenAnswer(i -> i.getArguments()[0]);
     }
 
     @Test
     void createAgent() throws Exception {
-        Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
-        Mockito.when(managerRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
-
-        Mockito.when(agentRepository.findByUser_Username(user.getUsername())).thenReturn(Optional.empty());
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
-
         UserDTO req = new UserDTO(user);
         ObjectMapper objectMapper = new ObjectMapper();
+
+        Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
+        Mockito.when(managerRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
+        Mockito.when(userNotAffiliatedWithAgencyService.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(agentRepository.save(Mockito.any(RealEstateAgent.class))).thenAnswer(i -> i.getArguments()[0]);
 
         mockMvc.perform(post("/agents")
                         .contentType("application/json")

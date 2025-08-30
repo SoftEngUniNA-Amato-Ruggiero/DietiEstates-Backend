@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Entity representing a real estate agency.
- * Includes fields for ID, IBAN, and name.
- * It can be managed by multiple real estate managers.
+ * Class for a Real Estate Agency that has been registered to the system.
  */
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
@@ -16,10 +14,6 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class RealEstateAgency{
-    /**
-     * Primary key for the real estate agency.
-     * Auto-generated value.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter

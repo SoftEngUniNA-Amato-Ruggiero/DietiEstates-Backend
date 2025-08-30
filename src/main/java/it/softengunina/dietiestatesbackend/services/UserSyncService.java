@@ -11,6 +11,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service to synchronize users to the local database upon successful authentication.
+ * Listens for authentication success events and ensures that users are created in the local database if they do not already exist.
+ */
 @Service
 @Slf4j
 public class UserSyncService {
@@ -22,6 +26,12 @@ public class UserSyncService {
         this.tokenService = tokenService;
     }
 
+    /**
+     * Handles successful authentication events.
+     * If the authentication is via a valid JWT, it synchronizes the user to the local database.
+     *
+     * @param event The authentication success event.
+     */
     @EventListener
     @Async
     public void handleAuthentication(AuthenticationSuccessEvent event) {

@@ -4,6 +4,9 @@ import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Class for a user who works for a Real Estate Agency.
+ */
 @Entity
 @Table(name = "real_estate_agents")
 @Inheritance(strategy = InheritanceType.JOINED)

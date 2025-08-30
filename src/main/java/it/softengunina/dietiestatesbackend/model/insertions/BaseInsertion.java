@@ -8,9 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 /**
- * This abstract class represents a base real estate insertion.
- * It implements the Insertion interface and includes common attributes
- * such as id, address, details, uploader (real estate agent), and associated agency of the uploader.
+ * Abstract class for a generic type of insertion about real estates, uploaded by a Real Estate Agent.
  */
 @Entity
 @Table(name = "insertions")
@@ -20,10 +18,6 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public abstract class BaseInsertion implements Insertion {
-    /**
-     * The unique identifier for the insertion.
-     * It is automatically generated.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter

@@ -3,6 +3,9 @@ package it.softengunina.dietiestatesbackend.model.users;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Class for a User that has made an authenticated request to the system.
+ */
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)

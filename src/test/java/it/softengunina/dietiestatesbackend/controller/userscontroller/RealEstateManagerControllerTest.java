@@ -3,10 +3,11 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class RealEstateManagerControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    BaseUserRepository userRepository;
+    RealEstateAgentRepository agentRepository;
     @MockitoBean
     RealEstateManagerRepository managerRepository;
     @MockitoBean
@@ -38,36 +39,30 @@ class RealEstateManagerControllerTest {
 
     RealEstateAgency agency;
     RealEstateManager manager;
-    BaseUser user;
+    RealEstateAgent agent;
 
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("agencyIban", "agencyName");
         manager = new RealEstateManager(new BaseUser("managerName", "managerSub"), agency);
-        user = new BaseUser("userName", "userSub");
-
-        Mockito.when(managerRepository.save(Mockito.any(RealEstateManager.class))).thenAnswer(i -> i.getArgument(0));
-
-
-        Mockito.when(managerRepository.findByUser_CognitoSub("wrongSub")).thenReturn(Optional.empty());
-        Mockito.when(userRepository.findByUsername("wrongUsername")).thenReturn(Optional.empty());
-
+        agent = new RealEstateAgent(new BaseUser("userName", "userSub"), agency);
     }
 
     @Test
     void createManager() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        UserDTO req = new UserDTO(user);
+        UserDTO req = new UserDTO(agent);
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
         Mockito.when(managerRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(agentRepository.findByUser_Username(agent.getUsername())).thenReturn(Optional.of(agent));
+        Mockito.when(managerRepository.save(Mockito.any(RealEstateManager.class))).thenAnswer(i -> i.getArgument(0));
 
         mockMvc.perform(post("/managers")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.user.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.user.username").value(agent.getUsername()))
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
                 .andExpect(jsonPath("$.role").value("RealEstateManager"));

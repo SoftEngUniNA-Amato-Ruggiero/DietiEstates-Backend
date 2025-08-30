@@ -2,15 +2,16 @@ package it.softengunina.dietiestatesbackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
+import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.services.UserNotAffiliatedWithAgencyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -40,11 +41,11 @@ class AgencyControllerTest {
     @MockitoBean
     RealEstateAgencyRepository agencyRepository;
     @MockitoBean
-    BaseUserRepository userRepository;
-    @MockitoBean
     RealEstateAgentRepository agentRepository;
     @MockitoBean
     RealEstateManagerRepository managerRepository;
+    @MockitoBean
+    UserNotAffiliatedWithAgencyService userFinderService;
     @MockitoBean
     TokenService tokenService;
 
@@ -109,8 +110,7 @@ class AgencyControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
-        Mockito.when(agentRepository.findByUser_CognitoSub(user.getCognitoSub())).thenReturn(Optional.empty());
-        Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
+        Mockito.when(userFinderService.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
         Mockito.when(agencyRepository.saveAndFlush(Mockito.any(RealEstateAgency.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         Mockito.when(managerRepository.save(Mockito.any(RealEstateManager.class)))
@@ -128,7 +128,8 @@ class AgencyControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(managerOfDifferentAgency.getCognitoSub());
-        Mockito.when(agentRepository.findByUser_CognitoSub(managerOfDifferentAgency.getCognitoSub())).thenReturn(Optional.of(managerOfDifferentAgency));
+        Mockito.when(userFinderService.findByCognitoSub(managerOfDifferentAgency.getCognitoSub()))
+                        .thenThrow(new UserIsAlreadyAffiliatedWithAgencyException(""));
 
         mockMvc.perform(post("/agencies")
                         .contentType("application/json")

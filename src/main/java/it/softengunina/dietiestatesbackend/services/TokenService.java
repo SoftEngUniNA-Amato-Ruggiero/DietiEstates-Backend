@@ -16,12 +16,26 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class TokenService {
+    /**
+     * Retrieves the JWT token from the current security context.
+     *
+     * @return the JWT token
+     * @throws AuthenticationNotFoundException if no authentication is found in the security context
+     * @throws JwtNotFoundException            if the authentication object is not a JWT
+     */
     public Jwt getJwt() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = getAuthenticationFromSecurityContext(securityContext);
         return getJwtFromAuthentication(authentication);
     }
 
+    /**
+     * Extracts the Cognito subject (sub) claim from the given JWT token.
+     *
+     * @param jwt the JWT token
+     * @return the Cognito subject
+     * @throws MissingClaimException if the sub claim is missing or empty
+     */
     public String getCognitoSub(Jwt jwt) {
         String cognitoSub = jwt.getSubject();
         if (cognitoSub == null || cognitoSub.isEmpty()) {
@@ -30,11 +44,26 @@ public class TokenService {
         return cognitoSub;
     }
 
+    /**
+     * Extracts the Cognito subject (sub) claim from the JWT token in the current security context.
+     *
+     * @return the Cognito subject
+     * @throws AuthenticationNotFoundException if no authentication is found in the security context
+     * @throws JwtNotFoundException            if the authentication object is not a JWT
+     * @throws MissingClaimException           if the sub claim is missing or empty
+     */
     public String getCognitoSub() {
         Jwt jwt = getJwt();
         return getCognitoSub(jwt);
     }
 
+    /**
+     * Extracts the email claim from the given JWT token.
+     *
+     * @param jwt the JWT token
+     * @return the email
+     * @throws MissingClaimException if the email claim is missing or empty
+     */
     public String getEmail(Jwt jwt) {
         String email = jwt.getClaimAsString("email");
         if (email == null || email.isEmpty()) {
