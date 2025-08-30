@@ -36,6 +36,7 @@ public class RealEstateManagerController {
 
     /**
      * Promotes an existing agent to a manager within the same agency.
+     * Access is restricted to users with a manager role.
      * @param req The user DTO containing the username of the agent to be promoted.
      * @return The promoted manager's DTO including agency information.
      * @throws ResponseStatusException if the requester is not a manager, if the agent is not found,

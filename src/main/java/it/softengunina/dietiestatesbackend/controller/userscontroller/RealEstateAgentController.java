@@ -41,7 +41,7 @@ public class RealEstateAgentController {
     }
 
     /**
-     * Creates a new real estate agent for the manager's agency.
+     * Promotes an existing user to a new real estate agent for the requesting manager's agency.
      * Access is restricted to users with a manager role.
      * @param req The UserDTO containing the username of the new agent.
      * @return The UserWithAgencyDTO for the newly created agent's data along with agency information.

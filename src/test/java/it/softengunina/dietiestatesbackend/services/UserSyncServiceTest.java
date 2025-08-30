@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -35,13 +36,7 @@ class UserSyncServiceTest {
 
     @BeforeEach
     void setUp() {
-        mocks = org.mockito.MockitoAnnotations.openMocks(this);
-        Mockito.when(event.getAuthentication()).thenReturn(authenticationToken);
-        Mockito.when(authenticationToken.getToken()).thenReturn(jwt);
-
-        Mockito.when(userRepository.findByCognitoSub(sub)).thenReturn(Optional.empty());
-        Mockito.when(userRepository.save(Mockito.any(BaseUser.class))).thenAnswer(i -> i.getArguments()[0]);
-
+        mocks = MockitoAnnotations.openMocks(this);
         userSyncService = new UserSyncService(userRepository, tokenService);
     }
 
@@ -52,8 +47,16 @@ class UserSyncServiceTest {
 
     @Test
     void handleAuthentication() {
+        Mockito.when(event.getAuthentication()).thenReturn(authenticationToken);
+
         Mockito.when(tokenService.getCognitoSub(jwt)).thenReturn(sub);
         Mockito.when(tokenService.getEmail(jwt)).thenReturn(username);
+
+        Mockito.when(authenticationToken.getToken()).thenReturn(jwt);
+
+        Mockito.when(userRepository.findByCognitoSub(sub)).thenReturn(Optional.empty());
+        Mockito.when(userRepository.save(Mockito.any(BaseUser.class))).thenAnswer(i -> i.getArguments()[0]);
+
 
         userSyncService.handleAuthentication(event);
 
