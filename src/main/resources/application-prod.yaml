@@ -29,7 +29,7 @@ server:
     context-path: /api
 
 frontend:
-  url: http://localhost:4200
+  url: ${FRONTEND_URL:http://localhost:4200}
 
 springdoc:
   api-docs:
