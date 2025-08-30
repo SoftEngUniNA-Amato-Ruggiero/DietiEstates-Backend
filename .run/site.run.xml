@@ -15,7 +15,7 @@
               <option value="test" />
               <option value="verify" />
               <option value="jacoco:report" />
-              <option value="site" />
+              <option value="site:run" />
             </list>
           </option>
           <option name="multimoduleDir" />
