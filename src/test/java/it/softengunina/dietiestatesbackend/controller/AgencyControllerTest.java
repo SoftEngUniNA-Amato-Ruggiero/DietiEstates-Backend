@@ -101,7 +101,7 @@ class AgencyControllerTest {
 
         mockMvc.perform(get("/agencies/" + agencyId + "/agents"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].username").value(agent.getUsername()));
+                .andExpect(jsonPath("$.content[0].user.username").value(agent.getUsername()));
     }
 
     @Test
