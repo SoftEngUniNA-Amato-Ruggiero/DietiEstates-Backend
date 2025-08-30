@@ -6,6 +6,7 @@ import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.insertions.Address;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForSaleRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
@@ -35,7 +36,7 @@ class InsertionForSaleControllerTest {
     @MockitoBean
     InsertionForSaleRepository insertionForSaleRepository;
     @MockitoBean
-    RealEstateAgentRepository<RealEstateAgent> agentRepository;
+    RealEstateAgentRepository agentRepository;
     @MockitoBean
     TokenService tokenService;
 
@@ -56,14 +57,14 @@ class InsertionForSaleControllerTest {
         price = 100000.0;
 
         testAgency = new RealEstateAgency("testIban", "testAgency");
-        testAgent = new RealEstateAgent("testUsername", "testSub", testAgency);
+        testAgent = new RealEstateAgent(new BaseUser("testUsername", "testSub"), testAgency);
         testReq = new InsertionWithPriceDTO();
         testReq.setAddress(address);
         testReq.setDetails(details);
         testReq.setPrice(price);
         testReq.setUploader(new UserDTO(testAgent));
 
-        Mockito.when(agentRepository.findByCognitoSub(testAgent.getCognitoSub())).thenReturn(Optional.of(testAgent));
+        Mockito.when(agentRepository.findByUser_CognitoSub(testAgent.getCognitoSub())).thenReturn(Optional.of(testAgent));
         Mockito.when(insertionForSaleRepository.save(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
     }
 

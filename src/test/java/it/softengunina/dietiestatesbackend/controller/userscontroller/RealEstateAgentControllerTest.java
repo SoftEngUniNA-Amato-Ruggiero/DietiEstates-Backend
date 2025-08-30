@@ -6,9 +6,9 @@ import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
-import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,13 +32,13 @@ class RealEstateAgentControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    BaseUserRepository<BaseUser> userRepository;
+    BaseUserRepository userRepository;
+    @MockitoBean
+    RealEstateAgentRepository agentRepository;
     @MockitoBean
     RealEstateManagerRepository managerRepository;
     @MockitoBean
     TokenService tokenService;
-    @MockitoBean
-    UserPromotionStrategyImpl promotionService;
 
     RealEstateAgency agency;
     RealEstateManager manager;
@@ -47,22 +47,19 @@ class RealEstateAgentControllerTest {
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("agencyIban", "agencyName");
-        manager = new RealEstateManager("managerName", "managerSub", agency);
+        manager = new RealEstateManager(new BaseUser("managerName", "managerSub"), agency);
         user = new BaseUser("userName", "userSub");
 
-        Mockito.when(managerRepository.findByCognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
-        Mockito.when(managerRepository.findByCognitoSub("wrongSub")).thenReturn(Optional.empty());
-
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findByUsername("wrongUsername")).thenReturn(Optional.empty());
+        Mockito.when(agentRepository.save(Mockito.any(RealEstateAgent.class))).thenAnswer(i -> i.getArguments()[0]);
     }
 
     @Test
     void createAgent() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
+        Mockito.when(managerRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
 
-        Mockito.when(promotionService.promoteUserToAgent(Mockito.eq(user), Mockito.any(RealEstateAgency.class)))
-                .thenAnswer(invocation -> new RealEstateAgent(user.getUsername(), user.getCognitoSub(), invocation.getArgument(1)));
+        Mockito.when(agentRepository.findByUser_Username(user.getUsername())).thenReturn(Optional.empty());
+        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
         UserDTO req = new UserDTO(user);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -74,6 +71,6 @@ class RealEstateAgentControllerTest {
                 .andExpect(jsonPath("$.user.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
-                .andExpect(jsonPath("$.user.role").value("RealEstateAgent"));
+                .andExpect(jsonPath("$.role").value("RealEstateAgent"));
     }
 }

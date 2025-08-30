@@ -4,5 +4,4 @@ public interface User {
     Long getId();
     String getUsername();
     String getCognitoSub();
-    String getRole();
 }

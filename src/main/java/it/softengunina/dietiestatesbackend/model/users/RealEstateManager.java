@@ -1,11 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
-import it.softengunina.dietiestatesbackend.exceptions.ImpossiblePromotionException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategy;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.function.Function;
 
 @Entity
 @Table(name = "real_estate_managers")
@@ -14,14 +10,8 @@ import java.util.function.Function;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class RealEstateManager extends RealEstateAgent {
-    public RealEstateManager(@NonNull String username,
-                             @NonNull String cognitoSub,
+    public RealEstateManager(@NonNull BaseUser user,
                              @NonNull RealEstateAgency agency) {
-        super(username, cognitoSub, agency);
-    }
-
-    @Override
-    public Function<UserPromotionStrategy, UserWithAgency> getPromotionToManagerFunction(@NonNull RealEstateAgency agency) {
-        throw new ImpossiblePromotionException("User cannot be promoted to manager.");
+        super(user, agency);
     }
 }

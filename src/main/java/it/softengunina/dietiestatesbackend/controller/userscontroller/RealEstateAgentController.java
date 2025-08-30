@@ -2,13 +2,13 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
-import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.strategy.UserPromotionStrategyImpl;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,19 +23,19 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/agents")
 public class RealEstateAgentController {
-    private final BaseUserRepository<BaseUser> userRepository;
+    private final BaseUserRepository userRepository;
+    private final RealEstateAgentRepository agentRepository;
     private final RealEstateManagerRepository managerRepository;
     private final TokenService tokenService;
-    private final UserPromotionStrategyImpl promotionService;
 
-    RealEstateAgentController(BaseUserRepository<BaseUser> userRepository,
+    RealEstateAgentController(BaseUserRepository userRepository,
+                              RealEstateAgentRepository agentRepository,
                               RealEstateManagerRepository managerRepository,
-                              TokenService tokenService,
-                              UserPromotionStrategyImpl promotionService) {
+                              TokenService tokenService) {
         this.userRepository = userRepository;
+        this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
         this.tokenService = tokenService;
-        this.promotionService = promotionService;
     }
 
     /**
@@ -46,19 +46,21 @@ public class RealEstateAgentController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public UserWithAgencyDTO createAgent(@Valid @RequestBody UserDTO req) {
-        RealEstateManager manager = managerRepository.findByCognitoSub(tokenService.getCognitoSub())
+        RealEstateManager manager = managerRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
-        BaseUser user = userRepository.findByUsername(req.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        BaseUser user = findUserNotAffiliatedWithAnAgency(req.getUsername());
 
-        try {
-            UserWithAgency agent = user.getPromotionToAgentFunction(manager.getAgency()).apply(promotionService);
-            return new UserWithAgencyDTO(agent);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        RealEstateAgent agent = agentRepository.save(new RealEstateAgent(user, manager.getAgency()));
+        return new UserWithAgencyDTO(agent);
+    }
+
+    private BaseUser findUserNotAffiliatedWithAnAgency(String username) {
+        if (agentRepository.findByUser_Username(username).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user is already affiliated with an agency");
         }
+
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }

@@ -26,7 +26,7 @@ class UserControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    BaseUserRepository<BaseUser> userRepository;
+    BaseUserRepository userRepository;
 
     BaseUser user;
     RealEstateAgent agent;
@@ -37,17 +37,12 @@ class UserControllerTest {
     void setUp() {
         agency = new RealEstateAgency("TestIban", "TestAgencyName");
         user = new BaseUser("testUsername", "testCognitoSub");
-        agent = new RealEstateAgent("agentUsername", "agentCognitoSub", agency);
-
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-
-        Mockito.when(userRepository.findByUsername("wrongUsername")).thenReturn(Optional.empty());
-        Mockito.when(userRepository.findById(2L)).thenReturn(Optional.empty());
+        agent = new RealEstateAgent(new BaseUser("agentUsername", "agentCognitoSub"), agency);
     }
 
     @Test
     void getUserByUsername() throws Exception {
+        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         mockMvc.perform(get("/users")
         .param("username", user.getUsername()))
                 .andExpect(status().isOk())
@@ -56,6 +51,7 @@ class UserControllerTest {
 
     @Test
     void getUserById() throws Exception {
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         mockMvc.perform(get("/users/" + userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()));

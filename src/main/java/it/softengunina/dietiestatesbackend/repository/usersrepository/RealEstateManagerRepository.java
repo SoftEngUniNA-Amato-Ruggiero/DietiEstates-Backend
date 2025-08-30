@@ -1,27 +1,15 @@
 package it.softengunina.dietiestatesbackend.repository.usersrepository;
 
+import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RealEstateManagerRepository extends RealEstateAgentRepository<RealEstateManager> {
-    /** Promotes the RealEstateAgent with the given id to a RealEstateManager by inserting a row in the real_estate_managers table.
-     * The usage of this method is discouraged, prefer using UserPromotionStrategy instead.
-     * @param id the id of the agent to promote
-     */
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    @Query(value="INSERT INTO real_estate_managers (id) VALUES (:id)", nativeQuery=true)
-    void insertManager(@Param("id") Long id);
+import java.util.Optional;
 
-    /** Demotes the RealEstateManager with the given id to a RealEstateAgent without deleting the RealEstateAgent from the database.
-     * The usage of this method is discouraged, prefer using UserDemotionStrategy instead.
-     * @param id the id of the manager to demote
-     */
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    @Query(value="DELETE FROM real_estate_managers WHERE id = :id", nativeQuery=true)
-    void demoteManager(@Param("id") Long id);
+public interface RealEstateManagerRepository extends JpaRepository<RealEstateManager, Long> {
+    Optional<RealEstateManager> findByUser_Username(String username);
+    Optional<RealEstateManager> findByUser_CognitoSub(String cognitoSub);
+    Page<RealEstateManager> findByAgency(RealEstateAgency agency, Pageable pageable);
 }

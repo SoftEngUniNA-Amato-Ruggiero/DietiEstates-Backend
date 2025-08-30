@@ -3,8 +3,8 @@ package it.softengunina.dietiestatesbackend.controller;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,64 +28,28 @@ class MeControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    BaseUserRepository<BaseUser> userRepository;
-
-    @MockitoBean
-    RealEstateAgentRepository<RealEstateAgent> agentRepository;
+    RealEstateAgentRepository agentRepository;
 
     @MockitoBean
     TokenService tokenService;
 
     BaseUser user;
-    RealEstateAgent agent;
     RealEstateAgency agency;
+    RealEstateAgent agent;
+    RealEstateManager manager;
 
     @BeforeEach
     void setUp() {
-        agency = new RealEstateAgency("TestIban", "TestAgencyName");
         user = new BaseUser("testUsername", "testCognitoSub");
-        agent = new RealEstateAgent("agentUsername", "agentCognitoSub", agency);
-
-        Mockito.when(userRepository.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
-
-        Mockito.when(userRepository.findByCognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
-
-        Mockito.when(userRepository.findByCognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
-
-        Mockito.when(agentRepository.findByCognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
+        agency = new RealEstateAgency("TestIban", "TestAgencyName");
+        agent = new RealEstateAgent(new BaseUser("agentUsername", "agentCognitoSub"), agency);
+        manager = new RealEstateManager(new BaseUser("managerUsername", "managerCognitoSub"), agency);
     }
 
     @Test
-    void getRole_User() throws Exception {
+    void getAgency_BaseUser() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
-
-        mockMvc.perform(get("/me/role"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.role").value(user.getRole()));
-    }
-
-    @Test
-    void getRole_Agent() throws Exception {
-        Mockito.when(tokenService.getCognitoSub()).thenReturn(agent.getCognitoSub());
-
-        mockMvc.perform(get("/me/role"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(agent.getUsername()))
-                .andExpect(jsonPath("$.role").value(agent.getRole()));
-    }
-
-    @Test
-    void getRole_UserNotFound() throws Exception {
-        Mockito.when(tokenService.getCognitoSub()).thenReturn("wrongCognitoSub");
-
-        mockMvc.perform(get("/me/role"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void getAgency_User() throws Exception {
-        Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
+        Mockito.when(agentRepository.findByUser_CognitoSub(user.getCognitoSub())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/me/agency"))
                 .andExpect(status().isNotFound());
@@ -94,16 +58,35 @@ class MeControllerTest {
     @Test
     void getAgency_Agent() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(agent.getCognitoSub());
+        Mockito.when(agentRepository.findByUser_CognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
 
         mockMvc.perform(get("/me/agency"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.iban").value(agency.getIban()))
-                .andExpect(jsonPath("$.name").value(agency.getName()));
+                .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
+                .andExpect(jsonPath("$.agency.name").value(agency.getName()))
+                .andExpect(jsonPath("$.user.username").value(agent.getUsername()))
+                .andExpect(jsonPath("$.user.id").value(agent.getId()))
+                .andExpect(jsonPath("$.role").value("RealEstateAgent"));
+    }
+
+    @Test
+    void getAgency_Manager() throws Exception {
+        Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
+        Mockito.when(agentRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
+
+        mockMvc.perform(get("/me/agency"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
+                .andExpect(jsonPath("$.agency.name").value(agency.getName()))
+                .andExpect(jsonPath("$.user.username").value(manager.getUsername()))
+                .andExpect(jsonPath("$.user.id").value(manager.getId()))
+                .andExpect(jsonPath("$.role").value("RealEstateManager"));
     }
 
     @Test
     void getAgency_UserNotFound() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn("wrongCognitoSub");
+        Mockito.when(agentRepository.findByUser_CognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/me/agency"))
                 .andExpect(status().isNotFound());

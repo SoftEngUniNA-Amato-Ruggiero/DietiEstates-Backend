@@ -15,11 +15,11 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/insertions/for-sale")
 public class InsertionForSaleController {
     private final InsertionForSaleRepository insertionForSaleRepository;
-    private final RealEstateAgentRepository<RealEstateAgent> agentRepository;
+    private final RealEstateAgentRepository agentRepository;
     private final TokenService tokenService;
 
     public InsertionForSaleController(InsertionForSaleRepository insertionForSaleRepository,
-                                      RealEstateAgentRepository<RealEstateAgent> agentRepository,
+                                      RealEstateAgentRepository agentRepository,
                                       TokenService tokenService) {
         this.insertionForSaleRepository = insertionForSaleRepository;
         this.agentRepository = agentRepository;
@@ -29,7 +29,7 @@ public class InsertionForSaleController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public InsertionDTO createInsertion(@RequestBody InsertionWithPriceDTO req) {
-        RealEstateAgent uploader = agentRepository.findByCognitoSub(tokenService.getCognitoSub())
+        RealEstateAgent uploader = agentRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not an agent"));
 
         InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(req.getAddress(), req.getDetails(), uploader, req.getPrice()));
