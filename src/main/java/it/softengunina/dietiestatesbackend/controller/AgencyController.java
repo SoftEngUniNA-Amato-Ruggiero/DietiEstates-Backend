@@ -50,8 +50,8 @@ public class AgencyController {
 
     /**
      * Retrieves a paginated list of all real estate agencies.
-     * @param pageable
-     * @return
+     * @param pageable Pagination information.
+     * @return A paginated list of RealEstateAgencyDTOs representing the agencies.
      */
     @GetMapping
     public Page<RealEstateAgencyDTO> getAgencies(Pageable pageable) {
