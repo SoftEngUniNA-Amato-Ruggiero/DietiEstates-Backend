@@ -2,7 +2,6 @@ package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
@@ -80,11 +79,11 @@ public class AgencyController {
      * @throws ResponseStatusException with HttpStatus.NOT_FOUND if the agency does not exist.
      */
     @GetMapping("/{id}/agents")
-    public Page<UserDTO> getAgentsByAgencyId(@PathVariable Long id, Pageable pageable) {
+    public Page<UserWithAgencyDTO> getAgentsByAgencyId(@PathVariable Long id, Pageable pageable) {
         RealEstateAgency agency = agencyRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agency not found"));
         Page<RealEstateAgent> agents = agentRepository.findByAgency(agency, pageable);
-        return agents.map(UserDTO::new);
+        return agents.map(UserWithAgencyDTO::new);
     }
 
     /**
