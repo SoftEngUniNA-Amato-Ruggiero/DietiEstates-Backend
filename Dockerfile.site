@@ -1,0 +1,11 @@
+FROM eclipse-temurin:21-jdk AS test
+COPY ./pom.xml /app/pom.xml
+COPY ./.mvn /app/.mvn
+COPY ./mvnw /app/mvnw
+COPY ./src /app/src
+WORKDIR /app
+RUN ./mvnw clean verify jacoco:report site
+
+FROM nginx:1.29.1-alpine AS docs
+COPY --from=test /app/target/site /usr/share/nginx/html
+EXPOSE 80
