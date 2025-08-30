@@ -4,8 +4,8 @@ COPY ./.mvn /app/.mvn
 COPY ./mvnw /app/mvnw
 COPY ./src /app/src
 WORKDIR /app
-RUN ./mvnw clean verify jacoco:report site
+RUN ./mvnw clean test jacoco:report site
 
-FROM nginx:1.29.1-alpine AS docs
+FROM nginx:1.29.1-alpine
 COPY --from=test /app/target/site /usr/share/nginx/html
 EXPOSE 80
