@@ -29,7 +29,7 @@ public class RealEstateAgent implements UserWithAgency {
     @Setter(AccessLevel.PROTECTED)
     private BaseUser user;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {}) //do nothing to the agency when saving/deleting an agent
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {}) //do nothing to the agency when saving/deleting an agent
     @OnDelete(action = OnDeleteAction.CASCADE) //delete the agent when deleting the agency
     @JoinColumn(name = "agency_id", nullable = false)
     @JsonBackReference
