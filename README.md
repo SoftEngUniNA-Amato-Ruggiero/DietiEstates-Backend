@@ -5,13 +5,13 @@
 
 ## Profiles
 - Development profile (default)
-  - Uses an in-memory H2 database
+  - Uses an in-memory H2 database which defaults to url `h2:mem:`.
 - Production profile (`prod`)
-  - Uses a PostgreSQL database.
+  - Uses a PostgreSQL database which defaults to url `localhost:5432`.
 
 ## Configure environment variables
-- Rename the file `.env.example` to `.env` and set the `DB_PASSWORD` environment variable. The others are optional.
-  - The database connection will default to url `localhost:5432` with username `admin` and database name `dietiestatesdb`.
+- Rename the file `.env.example` to `.env` and set the `DB_PASSWORD` environment variable. Optionally you can set `DB_HOST` and `DB_PORT`.
+- The database connection will  with username `admin` and database name `dietiestatesdb`.
 
 ## On Windows
 - Build
