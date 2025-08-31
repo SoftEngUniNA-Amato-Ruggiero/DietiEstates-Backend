@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
+import it.softengunina.dietiestatesbackend.factory.insertiondtofactory.InsertionWithPriceDTOFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ class InsertionForSaleTest {
     }
 
     @Test
-    void getRent() {
-        assertNull(insertion.getRent());
+    void getDTOFactory() {
+        assertEquals(InsertionWithPriceDTOFactory.class, insertion.getDTOFactory().getClass());
     }
 }

@@ -8,10 +8,15 @@ import it.softengunina.dietiestatesbackend.repository.insertionsrepository.Inser
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Controller for handling requests related to insertions for sale.
+ */
 @RestController
 @RequestMapping("/insertions/for-sale")
 public class InsertionForSaleController {
@@ -27,6 +32,24 @@ public class InsertionForSaleController {
         this.tokenService = tokenService;
     }
 
+    /**
+     * Retrieves a paginated list of all insertions for sale.
+     *
+     * @param pageable Pagination information.
+     * @return A page of insertion DTOs.
+     */
+    @GetMapping
+    public Page<InsertionDTO> getInsertions(Pageable pageable) {
+        return insertionForSaleRepository.findAll(pageable).map(i -> i.getDTOFactory().build());
+    }
+
+    /**
+     * Creates a new insertion for sale.
+     *
+     * @param req The insertion data.
+     * @return The created insertion DTO.
+     * @throws ResponseStatusException if the user is not an agent.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public InsertionDTO createInsertion(@Valid @RequestBody InsertionWithPriceDTO req) {

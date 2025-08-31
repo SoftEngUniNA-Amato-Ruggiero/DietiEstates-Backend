@@ -1,6 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import it.softengunina.dietiestatesbackend.factory.insertiondtofactory.InsertionDTOFactory;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import jakarta.persistence.*;
@@ -47,7 +48,7 @@ public abstract class BaseInsertion implements Insertion {
     @JsonBackReference
     @NotNull
     @Getter
-    @Setter(AccessLevel.PROTECTED)
+    @Setter
     private RealEstateAgency agency;
 
     protected BaseInsertion(@NonNull Address address, InsertionDetails details, @NonNull RealEstateAgent uploader) {
@@ -57,11 +58,11 @@ public abstract class BaseInsertion implements Insertion {
         this.agency = uploader.getAgency();
     }
 
-    public Double getPrice() {
-        return null;
-    }
-
-    public Double getRent() {
-        return null;
-    }
+    /**
+     * Gets the correct DTO Factory for the specific type of insertion,
+     * allowing polymorphic creation of the correct DTOs for the concrete insertion type.
+     *
+     * @return InsertionDTOFactory specific for the type of insertion.
+     */
+    public abstract InsertionDTOFactory getDTOFactory();
 }
