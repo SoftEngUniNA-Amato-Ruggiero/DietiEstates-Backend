@@ -59,7 +59,7 @@ public class RealEstateManagerController {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not affiliated with your agency");
             }
 
-            RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent));
+            RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent.getUser(), agent.getAgency()));
             return new UserWithAgencyDTO(promoted);
 
         } catch (DataIntegrityViolationException e) {
