@@ -40,6 +40,7 @@ public class RealEstateManagerController {
      * @param req The user DTO containing the username of the agent to be promoted.
      * @return The promoted manager's DTO including agency information.
      * @throws ResponseStatusException if the requester is not a manager, if the agent is not found,
+     *                                 if the agent is affiliated with another agency that is not the requesting manager's,
      *                                 or if the agent is already a manager.
      */
     @PostMapping
@@ -52,9 +53,13 @@ public class RealEstateManagerController {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
             RealEstateAgent agent = agentRepository.findByUser_Username(req.getUsername())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not affiliated with your agency"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not an agent"));
 
-            RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent.getUser(), manager.getAgency()));
+            if(!agent.getAgency().equals(manager.getAgency())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not affiliated with your agency");
+            }
+
+            RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent));
             return new UserWithAgencyDTO(promoted);
 
         } catch (DataIntegrityViolationException e) {

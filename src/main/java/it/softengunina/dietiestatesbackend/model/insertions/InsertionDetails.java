@@ -5,9 +5,6 @@ import lombok.*;
 
 import java.util.Set;
 
-/**
- * Class for specific details common to all types of insertions about real estates.
- */
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor

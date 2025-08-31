@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Class for a user who manages a Real Estate Agency.
+ * Class for Real Estate Agents who manage their own Real Estate Agency.
  */
 @Entity
 @Table(name = "real_estate_managers")

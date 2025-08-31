@@ -3,9 +3,6 @@ package it.softengunina.dietiestatesbackend.model.insertions;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 
-/**
- * Class for an address.
- */
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
