@@ -5,7 +5,7 @@ spring:
     import: "optional:configtree:/run/secrets/"
 
   datasource:
-    url: jdbc:h2:mem:${DB_NAME:dietiestatesdb}
+    url: jdbc:h2:file:./${DB_NAME:dietiestatesdb}
     driver-class-name: org.h2.Driver
     username: ${DB_USER:admin}
     password: ${DB_PASSWORD:}
@@ -13,7 +13,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     open-in-view: false
 
   h2:
