@@ -4,7 +4,8 @@ import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
+import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserWithAgencyRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,7 +30,7 @@ class MeControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    RealEstateAgentRepository agentRepository;
+    UserWithAgencyRepository<UserWithAgency> agentRepository;
 
     @MockitoBean
     TokenService tokenService;
@@ -66,7 +68,7 @@ class MeControllerTest {
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.user.username").value(agent.getUsername()))
                 .andExpect(jsonPath("$.user.id").value(agent.getId()))
-                .andExpect(jsonPath("$.role").value("RealEstateAgent"));
+                .andExpect(jsonPath("$.roles").value(hasItem("RealEstateAgent")));
     }
 
     @Test
@@ -80,7 +82,7 @@ class MeControllerTest {
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.user.username").value(manager.getUsername()))
                 .andExpect(jsonPath("$.user.id").value(manager.getId()))
-                .andExpect(jsonPath("$.role").value("RealEstateManager"));
+                .andExpect(jsonPath("$.roles").value(hasItem("RealEstateManager")));
     }
 
     @Test

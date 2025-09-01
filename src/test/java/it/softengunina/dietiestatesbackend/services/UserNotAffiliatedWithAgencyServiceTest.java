@@ -4,8 +4,9 @@ import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWit
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
+import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserWithAgencyRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class UserNotAffiliatedWithAgencyServiceTest {
     @Mock
     BaseUserRepository userRepository;
     @Mock
-    RealEstateAgentRepository agentRepository;
+    UserWithAgencyRepository<UserWithAgency> agentRepository;
 
     AutoCloseable mocks;
 

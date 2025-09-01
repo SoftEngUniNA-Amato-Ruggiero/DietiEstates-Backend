@@ -2,7 +2,7 @@ package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
 import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserWithAgencyRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +17,12 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/me")
 public class MeController {
-    private final RealEstateAgentRepository agentRepository;
+    private final UserWithAgencyRepository<UserWithAgency> repository;
     private final TokenService tokenService;
 
-    MeController(RealEstateAgentRepository agentRepository,
+    MeController(UserWithAgencyRepository<UserWithAgency> repository,
                  TokenService tokenService) {
-        this.agentRepository = agentRepository;
+        this.repository = repository;
         this.tokenService = tokenService;
     }
 
@@ -36,7 +36,7 @@ public class MeController {
     public UserWithAgencyDTO getAgency() {
         String cognitoSub = tokenService.getCognitoSub();
 
-        UserWithAgency userWithAgency = agentRepository.findByUser_CognitoSub(cognitoSub)
+        UserWithAgency userWithAgency = repository.findByUser_CognitoSub(cognitoSub)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not affiliated with any agency"));
 
         return new UserWithAgencyDTO(userWithAgency);

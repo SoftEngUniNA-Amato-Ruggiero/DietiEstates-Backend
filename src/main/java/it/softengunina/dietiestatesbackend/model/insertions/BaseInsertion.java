@@ -7,6 +7,8 @@ import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Abstract class for a generic type of insertion about real estates, uploaded by a Real Estate Agent.
@@ -37,6 +39,7 @@ public abstract class BaseInsertion implements Insertion {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "uploader_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonBackReference
     @NotNull
     @Getter
@@ -45,6 +48,7 @@ public abstract class BaseInsertion implements Insertion {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agency_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     @NotNull
     @Getter

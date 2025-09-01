@@ -4,17 +4,18 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Class for Real Estate Agents who manage their own Real Estate Agency.
+ * Class for a manager of a Real Estate Agency.
  */
 @Entity
 @Table(name = "real_estate_managers")
 @PrimaryKeyJoinColumn(name = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)
-@ToString
-public class RealEstateManager extends RealEstateAgent {
+@ToString(callSuper = true)
+public class RealEstateManager extends UserWithAgency {
     public RealEstateManager(@NonNull BaseUser user,
-                             @NonNull RealEstateAgency agency) {
+                           @NonNull RealEstateAgency agency) {
         super(user, agency);
+        getUser().addRole(this.getClass().getSimpleName());
     }
 }

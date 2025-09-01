@@ -2,8 +2,9 @@ package it.softengunina.dietiestatesbackend.services;
 
 import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserWithAgencyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,9 +16,10 @@ import java.util.Optional;
 @Service
 public class UserNotAffiliatedWithAgencyService {
     private final BaseUserRepository userRepository;
-    private final RealEstateAgentRepository agentRepository;
+    private final UserWithAgencyRepository<UserWithAgency> agentRepository;
 
-    public UserNotAffiliatedWithAgencyService(BaseUserRepository userRepository, RealEstateAgentRepository agentRepository) {
+    public UserNotAffiliatedWithAgencyService(BaseUserRepository userRepository,
+                                              UserWithAgencyRepository<UserWithAgency> agentRepository) {
         this.userRepository = userRepository;
         this.agentRepository = agentRepository;
     }
