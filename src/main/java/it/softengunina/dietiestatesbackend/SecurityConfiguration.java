@@ -7,7 +7,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.*;
@@ -23,21 +22,15 @@ public class SecurityConfiguration {
     private String apiDocsPath;
     @Value("${springdoc.swagger-ui.path}")
     private String swaggerPath;
-    @Value("${spring.h2.console.path}")
-    private String h2ConsolePath;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
             .cors(Customizer.withDefaults())
             .csrf(Customizer.withDefaults())
-            .headers( headers -> headers
-                    // For H2 console
-                    .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin
-                    )
-            )
+            .headers(Customizer.withDefaults())
             .authorizeHttpRequests(authz -> authz
-                    .requestMatchers(h2ConsolePath+"/**", apiDocsPath+"/**", swaggerPath+"/**").permitAll()
+                    .requestMatchers(apiDocsPath+"/**", swaggerPath+"/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/insertions", "/insertions/**").permitAll()
                     .anyRequest().authenticated()
             )
