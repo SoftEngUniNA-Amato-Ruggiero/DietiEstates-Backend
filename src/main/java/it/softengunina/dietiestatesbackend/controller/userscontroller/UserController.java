@@ -23,7 +23,7 @@ public class UserController {
     }
 
     /**
-     * Endpoint to retrieve user information by username.
+     * Retrieves user information by username.
      *
      * @param username The username of the user to retrieve.
      * @return UserDTO containing user details.
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     /**
-     * Endpoint to retrieve user information by user ID.
+     * Retrieves user information by user ID.
      *
      * @param id The ID of the user to retrieve.
      * @return UserDTO containing user details.

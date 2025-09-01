@@ -27,7 +27,7 @@ public class MeController {
     }
 
     /**
-     * Endpoint to retrieve the authenticated user's information along with the agency they are affiliated with.
+     * Retrieves the authenticated user's information along with the agency they are affiliated with.
      *
      * @return UserWithAgencyDTO containing user and agency details
      * @throws ResponseStatusException if the user is not affiliated with any agency
