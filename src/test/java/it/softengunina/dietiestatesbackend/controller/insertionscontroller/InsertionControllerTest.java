@@ -1,16 +1,18 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithRentDTO;
+import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.insertions.*;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
+import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
-import org.junit.jupiter.api.AfterEach;
+import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,35 +40,29 @@ class InsertionControllerTest {
     RealEstateAgentRepository agentRepository;
     @MockitoBean
     RealEstateAgencyRepository agencyRepository;
-
-    @Mock
-    Address address;
-    @Mock
-    InsertionDetails details;
-    @Mock
-    RealEstateAgent uploader;
-
-    AutoCloseable mocks;
+    @MockitoBean
+    InsertionDTOVisitorImpl visitor;
 
     BaseInsertion insertion;
+    UserWithAgency uploader;
+    RealEstateAgency agency;
     Long insertionId;
 
     @BeforeEach
     void setUp() {
-        mocks = MockitoAnnotations.openMocks(this);
         insertionId = 1L;
-        insertion = new InsertionForSale(address, details, uploader, 100000.0);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        mocks.close();
+        agency = new RealEstateAgency("iban", "agencyName");
+        uploader = new RealEstateAgent(new BaseUser("username", "sub"), agency);
+        insertion = new InsertionForRent(new Address(), new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 900.0);
     }
 
     @Test
     void getInsertions() throws Exception {
         Mockito.when(repository.findAll(Mockito.any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(insertion)));
+
+        Mockito.when(visitor.visit(Mockito.any(InsertionForRent.class)))
+                        .thenAnswer(i -> new InsertionWithRentDTO(i.getArgument(0, InsertionForRent.class)));
 
         mockMvc.perform(get("/insertions"))
                 .andExpect(status().isOk())

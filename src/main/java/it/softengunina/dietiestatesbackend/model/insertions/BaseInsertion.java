@@ -1,9 +1,10 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import it.softengunina.dietiestatesbackend.factory.insertiondtofactory.InsertionDTOFactory;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
+import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitor;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -39,34 +40,37 @@ public abstract class BaseInsertion implements Insertion {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "uploader_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     @NotNull
     @Getter
     @Setter
-    private RealEstateAgent uploader;
+    private BaseUser uploader;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agency_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonBackReference
     @NotNull
     @Getter
     @Setter
     private RealEstateAgency agency;
 
-    protected BaseInsertion(@NonNull Address address, InsertionDetails details, @NonNull RealEstateAgent uploader) {
+    protected BaseInsertion(@NonNull Address address,
+                            InsertionDetails details,
+                            @NonNull BaseUser uploader,
+                            RealEstateAgency agency) {
         this.address = address;
         this.details = details;
         this.uploader = uploader;
-        this.agency = uploader.getAgency();
+        this.agency = agency;
     }
 
     /**
-     * Gets the correct DTO Factory for the specific type of insertion,
+     * Gets the correct DTO for the specific type of insertion,
      * allowing polymorphic creation of the correct DTOs for the concrete insertion type.
      *
-     * @return InsertionDTOFactory specific for the type of insertion.
+     * @return InsertionDTO specific for the type of insertion.
      */
-    public abstract InsertionDTOFactory getDTOFactory();
+    public abstract InsertionDTO accept(InsertionDTOVisitor visitor);
 }

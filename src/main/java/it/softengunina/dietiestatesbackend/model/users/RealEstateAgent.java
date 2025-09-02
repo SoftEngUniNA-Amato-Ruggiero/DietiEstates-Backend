@@ -14,7 +14,7 @@ import lombok.*;
 @ToString(callSuper = true)
 public class RealEstateAgent extends UserWithAgency {
     public RealEstateAgent(@NonNull BaseUser user,
-                           @NonNull RealEstateAgency agency) {
+                           RealEstateAgency agency) {
         super(user, agency);
         getUser().addRole(this.getClass().getSimpleName());
     }

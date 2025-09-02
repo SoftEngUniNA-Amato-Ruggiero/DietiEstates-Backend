@@ -41,7 +41,7 @@ public abstract class UserWithAgency implements User {
     private RealEstateAgency agency;
 
     protected UserWithAgency(@NonNull BaseUser user,
-                             @NonNull RealEstateAgency agency) {
+                             RealEstateAgency agency) {
         this.user = user;
         this.agency = agency;
     }

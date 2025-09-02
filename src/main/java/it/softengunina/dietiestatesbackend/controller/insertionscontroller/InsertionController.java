@@ -3,6 +3,7 @@ package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
+import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,11 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/insertions")
 public class InsertionController {
     private final InsertionRepository<BaseInsertion> insertionRepository;
+    private final InsertionDTOVisitorImpl visitor;
 
-    public InsertionController(InsertionRepository<BaseInsertion> insertionRepository) {
+    public InsertionController(InsertionRepository<BaseInsertion> insertionRepository, InsertionDTOVisitorImpl visitor) {
         this.insertionRepository = insertionRepository;
+        this.visitor = visitor;
     }
 
     /**
@@ -29,7 +32,7 @@ public class InsertionController {
      */
     @GetMapping
     public Page<InsertionDTO> getInsertions(Pageable pageable) {
-        return insertionRepository.findAll(pageable).map(i -> i.getDTOFactory().build());
+        return insertionRepository.findAll(pageable).map(i -> i.accept(visitor));
     }
 
     /**
@@ -43,6 +46,6 @@ public class InsertionController {
     public InsertionDTO getInsertionById(@PathVariable Long id) {
         BaseInsertion insertion = insertionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Insertion not found"));
-        return insertion.getDTOFactory().build();
+        return insertion.accept(visitor);
     }
 }

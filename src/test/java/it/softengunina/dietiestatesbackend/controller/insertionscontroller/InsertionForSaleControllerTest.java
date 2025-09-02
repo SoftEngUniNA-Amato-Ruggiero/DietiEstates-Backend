@@ -2,19 +2,18 @@ package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceDTO;
-import it.softengunina.dietiestatesbackend.model.insertions.Address;
-import it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails;
-import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
+import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.insertions.*;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
+import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForSaleRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import org.junit.jupiter.api.AfterEach;
+import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -42,36 +41,30 @@ class InsertionForSaleControllerTest {
     @MockitoBean
     RealEstateAgentRepository agentRepository;
     @MockitoBean
+    InsertionDTOVisitorImpl visitor;
+    @MockitoBean
     TokenService tokenService;
 
-    @Mock
-    Address address;
-    @Mock
-    InsertionDetails details;
-    @Mock
-    RealEstateAgent uploader;
-
-    AutoCloseable mocks;
-
     InsertionForSale insertion;
+    UserWithAgency uploader;
+    RealEstateAgency agency;
     Long insertionId;
 
     @BeforeEach
     void setUp() {
-        mocks = MockitoAnnotations.openMocks(this);
         insertionId = 1L;
-        insertion = new InsertionForSale(address, details, uploader, 100000.0);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        mocks.close();
+        agency = new RealEstateAgency("iban", "agencyName");
+        uploader = new RealEstateAgent(new BaseUser("username", "sub"), agency);
+        insertion = new InsertionForSale(new Address(), new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 90000.0);
     }
 
     @Test
     void getInsertions() throws Exception {
         Mockito.when(repository.findAll(Mockito.any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(insertion)));
+
+        Mockito.when(visitor.visit(Mockito.any(InsertionForSale.class)))
+                .thenAnswer(i -> new InsertionWithPriceDTO(i.getArgument(0, InsertionForSale.class)));
 
         mockMvc.perform(get("/insertions/for-sale"))
                 .andExpect(status().isOk())
@@ -85,8 +78,11 @@ class InsertionForSaleControllerTest {
         InsertionWithPriceDTO testReq = new InsertionWithPriceDTO(insertion);
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn("uploaderSub");
-        Mockito.when(agentRepository.findByUser_CognitoSub("uploaderSub")).thenReturn(Optional.of(uploader));
+        Mockito.when(agentRepository.findByUser_CognitoSub("uploaderSub")).thenReturn(Optional.of((RealEstateAgent) uploader));
         Mockito.when(repository.save(Mockito.any(InsertionForSale.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Mockito.when(visitor.visit(Mockito.any(InsertionForSale.class)))
+                .thenAnswer(i -> new InsertionWithPriceDTO(i.getArgument(0, InsertionForSale.class)));
 
         mockMvc.perform(post("/insertions/for-sale")
                 .contentType("application/json")
