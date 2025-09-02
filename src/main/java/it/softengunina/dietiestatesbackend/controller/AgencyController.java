@@ -4,12 +4,12 @@ import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
 import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
+import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.UserWithAgencyRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.services.UserNotAffiliatedWithAgencyService;
 import jakarta.validation.Valid;
@@ -29,19 +29,19 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/agencies")
 public class AgencyController {
+    private final UserWithAgencyRepository<UserWithAgency> userWithAgencyRepository;
     private final RealEstateAgencyRepository agencyRepository;
-    private final RealEstateAgentRepository agentRepository;
     private final RealEstateManagerRepository managerRepository;
     private final UserNotAffiliatedWithAgencyService userNotAffiliatedWithAgencyService;
     private final TokenService tokenService;
 
-    AgencyController(RealEstateAgencyRepository agencyRepository,
-                     RealEstateAgentRepository agentRepository,
+    AgencyController(UserWithAgencyRepository<UserWithAgency> userWithAgencyRepository,
+                     RealEstateAgencyRepository agencyRepository,
                      RealEstateManagerRepository managerRepository,
                      UserNotAffiliatedWithAgencyService userNotAffiliatedWithAgencyService,
                      TokenService tokenService) {
+        this.userWithAgencyRepository = userWithAgencyRepository;
         this.agencyRepository = agencyRepository;
-        this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
         this.userNotAffiliatedWithAgencyService = userNotAffiliatedWithAgencyService;
         this.tokenService = tokenService;
@@ -82,7 +82,7 @@ public class AgencyController {
     public Page<UserWithAgencyDTO> getAgentsByAgencyId(@PathVariable Long id, Pageable pageable) {
         RealEstateAgency agency = agencyRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agency not found"));
-        Page<RealEstateAgent> agents = agentRepository.findByAgency(agency, pageable);
+        Page<UserWithAgency> agents = userWithAgencyRepository.findByAgency(agency, pageable);
         return agents.map(UserWithAgencyDTO::new);
     }
 
