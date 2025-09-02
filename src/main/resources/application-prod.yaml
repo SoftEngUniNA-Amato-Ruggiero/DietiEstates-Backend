@@ -16,6 +16,10 @@ spring:
       ddl-auto: update
     open-in-view: false
 
+  h2:
+    console:
+      enabled: false
+
   security:
     oauth2:
       resourceserver:
