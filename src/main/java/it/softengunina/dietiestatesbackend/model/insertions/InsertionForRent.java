@@ -7,7 +7,6 @@ import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.Insertio
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
-import jakarta.persistence.Transient;
 
 /**
  * Class for insertions about real estates that are available for rent.
