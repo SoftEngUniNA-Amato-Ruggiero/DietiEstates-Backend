@@ -20,8 +20,8 @@ public interface UserWithAgencyRepository<T extends UserWithAgency> extends JpaR
     boolean existsByUser_Username(String username);
     boolean existsByUser_CognitoSub(String cognitoSub);
 
-    Optional<T> findOneByUser_Username(String username);
-    Optional<T> findOneByUser_CognitoSub(String cognitoSub);
+    Optional<T> findFirstByUser_Username(String username);
+    Optional<T> findFirstByUser_CognitoSub(String cognitoSub);
 
     List<T> findAllByUser_Username(String username);
     List<T> findAllByUser_CognitoSub(String cognitoSub);
