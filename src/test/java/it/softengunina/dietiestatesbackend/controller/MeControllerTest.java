@@ -68,7 +68,7 @@ class MeControllerTest {
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.user.username").value(agent.getUsername()))
                 .andExpect(jsonPath("$.user.id").value(agent.getId()))
-                .andExpect(jsonPath("$.roles").value(hasItem("RealEstateAgent")));
+                .andExpect(jsonPath("$.user.roles").value(hasItem("RealEstateAgent")));
     }
 
     @Test
@@ -82,7 +82,7 @@ class MeControllerTest {
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.user.username").value(manager.getUsername()))
                 .andExpect(jsonPath("$.user.id").value(manager.getId()))
-                .andExpect(jsonPath("$.roles").value(hasItem("RealEstateManager")));
+                .andExpect(jsonPath("$.user.roles").value(hasItem("RealEstateManager")));
     }
 
     @Test

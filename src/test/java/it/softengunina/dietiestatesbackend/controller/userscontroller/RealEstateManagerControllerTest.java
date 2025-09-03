@@ -56,7 +56,7 @@ class RealEstateManagerControllerTest {
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
         Mockito.when(managerRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
-        Mockito.when(agentRepository.findByUser_Username(agent.getUsername())).thenReturn(Optional.of(agent));
+        Mockito.when(agentRepository.findByAgencyAndUser_Username(manager.getAgency(), agent.getUsername())).thenReturn(Optional.of(agent));
         Mockito.when(managerRepository.save(Mockito.any(RealEstateManager.class))).thenAnswer(i -> i.getArgument(0));
 
         mockMvc.perform(post("/managers")
@@ -66,6 +66,6 @@ class RealEstateManagerControllerTest {
                 .andExpect(jsonPath("$.user.username").value(agent.getUsername()))
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
-                .andExpect(jsonPath("$.roles").value(hasItem("RealEstateManager")));
+                .andExpect(jsonPath("$.user.roles").value(hasItem("RealEstateManager")));
     }
 }

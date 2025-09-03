@@ -35,35 +35,30 @@ public class RealEstateManagerController {
     }
 
     /**
-     * Promotes an existing agent to a manager within the same agency.
+     * Promotes an existing agent to a manager for the requesting manager's agency.
      * Access is restricted to users with a manager role.
-     * @param req The user DTO containing the username of the agent to be promoted.
-     * @return The promoted manager's DTO including agency information.
-     * @throws ResponseStatusException if the requester is not a manager, if the agent is not found,
-     *                                 if the agent is affiliated with another agency that is not the requesting manager's,
-     *                                 or if the agent is already a manager.
+     * @param req The UserDTO containing the username of the agent to be promoted.
+     * @return The UserWithAgencyDTO for the newly created manager's data along with agency information.
+     * @throws ResponseStatusException with HttpStatus.FORBIDDEN if the requesting user is not a manager.
+     * @throws ResponseStatusException with HttpStatus.NOT_FOUND if the requested agent is not found.
+     * @throws ResponseStatusException with HttpStatus.CONFLICT if the requested agent is already a manager.
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public UserWithAgencyDTO createManager(@Valid @RequestBody UserDTO req) {
-
         try {
             RealEstateManager manager = managerRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
-            RealEstateAgent agent = agentRepository.findByUser_Username(req.getUsername())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not an agent"));
+            RealEstateAgent agent = agentRepository.findByAgencyAndUser_Username(manager.getAgency(), req.getUsername())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agent not found"));
 
-            if(!agent.getAgency().equals(manager.getAgency())) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not affiliated with your agency");
-            }
-
-            RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent.getUser(), agent.getAgency()));
+            RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent.getUser(), manager.getAgency()));
             return new UserWithAgencyDTO(promoted);
 
         } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Agent is already a manager for your agency");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already a manager");
         }
     }
 }

@@ -6,8 +6,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.util.Set;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -20,11 +18,8 @@ public class UserWithAgencyDTO {
     @Valid
     private RealEstateAgencyDTO agency;
 
-    private Set<String> roles;
-
     public UserWithAgencyDTO(UserWithAgency user) {
         this.user = new UserDTO(user);
         this.agency = new RealEstateAgencyDTO(user.getAgency());
-        this.roles = user.getRoles();
     }
 }

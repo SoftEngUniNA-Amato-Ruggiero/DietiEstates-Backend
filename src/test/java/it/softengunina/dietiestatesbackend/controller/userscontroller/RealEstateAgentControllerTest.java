@@ -6,10 +6,10 @@ import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.services.UserNotAffiliatedWithAgencyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,7 +33,7 @@ class RealEstateAgentControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    UserNotAffiliatedWithAgencyService userNotAffiliatedWithAgencyService;
+    BaseUserRepository userRepository;
     @MockitoBean
     RealEstateAgentRepository agentRepository;
     @MockitoBean
@@ -59,7 +59,7 @@ class RealEstateAgentControllerTest {
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
         Mockito.when(managerRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
-        Mockito.when(userNotAffiliatedWithAgencyService.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(agentRepository.save(Mockito.any(RealEstateAgent.class))).thenAnswer(i -> i.getArguments()[0]);
 
         mockMvc.perform(post("/agents")
@@ -69,6 +69,6 @@ class RealEstateAgentControllerTest {
                 .andExpect(jsonPath("$.user.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
-                .andExpect(jsonPath("$.roles").value(hasItem("RealEstateAgent")));
+                .andExpect(jsonPath("$.user.roles").value(hasItem("RealEstateAgent")));
     }
 }

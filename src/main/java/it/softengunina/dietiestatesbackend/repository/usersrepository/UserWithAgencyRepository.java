@@ -11,5 +11,11 @@ import java.util.Optional;
 public interface UserWithAgencyRepository<T extends UserWithAgency> extends JpaRepository<T, Long> {
     Optional<T> findByUser_Username(String username);
     Optional<T> findByUser_CognitoSub(String cognitoSub);
+
     Page<T> findByAgency(RealEstateAgency agency, Pageable pageable);
+    Optional<T> findByAgencyAndUser_Username(RealEstateAgency agency, String username);
+    Optional<T> findByAgencyAndUser_CognitoSub(RealEstateAgency agency, String cognitoSub);
+
+    Optional<RealEstateAgency> findAgencyByUser_Username(String username);
+    Optional<RealEstateAgency> findAgencyByUser_CognitoSub(String cognitoSub);
 }

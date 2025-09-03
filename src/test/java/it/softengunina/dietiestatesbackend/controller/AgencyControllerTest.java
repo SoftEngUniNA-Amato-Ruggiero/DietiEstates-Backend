@@ -7,10 +7,9 @@ import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
-import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserWithAgencyRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.services.UserNotAffiliatedWithAgencyService;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +41,7 @@ class AgencyControllerTest {
     @MockitoBean
     RealEstateAgencyRepository agencyRepository;
     @MockitoBean
-    UserWithAgencyRepository<UserWithAgency> agentRepository;
+    RealEstateAgentRepository agentRepository;
     @MockitoBean
     RealEstateManagerRepository managerRepository;
     @MockitoBean
@@ -113,6 +112,8 @@ class AgencyControllerTest {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
         Mockito.when(userFinderService.findByCognitoSub(user.getCognitoSub())).thenReturn(Optional.of(user));
         Mockito.when(agencyRepository.saveAndFlush(Mockito.any(RealEstateAgency.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(agentRepository.save(Mockito.any(RealEstateAgent.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         Mockito.when(managerRepository.save(Mockito.any(RealEstateManager.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));

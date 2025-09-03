@@ -20,14 +20,14 @@ import java.util.Set;
 @ToString
 public abstract class UserWithAgency implements User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     @Setter(AccessLevel.PROTECTED)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @MapsId
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @Getter
     @Setter(AccessLevel.PROTECTED)
     private BaseUser user;
