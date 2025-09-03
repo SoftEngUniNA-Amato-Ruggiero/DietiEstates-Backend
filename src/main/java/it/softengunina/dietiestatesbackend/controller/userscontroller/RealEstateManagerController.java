@@ -54,6 +54,10 @@ public class RealEstateManagerController {
             RealEstateAgent agent = agentRepository.findByAgencyAndUser_Username(manager.getAgency(), req.getUsername())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agent not found"));
 
+            if (managerRepository.existsByUser_Username(agent.getUsername())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already a manager");
+            }
+
             RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent.getUser(), manager.getAgency()));
             return new UserWithAgencyDTO(promoted);
 

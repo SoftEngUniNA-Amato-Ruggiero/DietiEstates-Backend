@@ -7,7 +7,8 @@ import lombok.*;
  * Class for a Real Estate Agent.
  */
 @Entity
-@Table(name = "real_estate_agents")
+@Table(name = "real_estate_agents", uniqueConstraints = @UniqueConstraint(columnNames = "user_id"))
+@DiscriminatorValue("RealEstateAgent")
 @PrimaryKeyJoinColumn(name = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)

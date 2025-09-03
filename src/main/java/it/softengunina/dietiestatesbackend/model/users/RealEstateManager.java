@@ -8,6 +8,7 @@ import lombok.*;
  */
 @Entity
 @Table(name = "real_estate_managers")
+@DiscriminatorValue("RealEstateManager")
 @PrimaryKeyJoinColumn(name = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)

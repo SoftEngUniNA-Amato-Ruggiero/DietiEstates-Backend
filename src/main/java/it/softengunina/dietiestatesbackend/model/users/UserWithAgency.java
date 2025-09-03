@@ -13,8 +13,11 @@ import java.util.Set;
  * Abstract class for a user who works for a Real Estate Agency.
  */
 @Entity
-@Table(name = "users_with_agency")
+@Table(name = "users_with_agency", uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"user_id", "agency_id", "role_type"})
+})
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "role_type")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString

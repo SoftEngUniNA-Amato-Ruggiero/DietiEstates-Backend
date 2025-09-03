@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 /**
  * Controller for handling requests related to the authenticated user's information.
  * Provides an endpoint to retrieve the user's details along with their associated agency.
@@ -36,9 +38,11 @@ public class MeController {
     public UserWithAgencyDTO getAgency() {
         String cognitoSub = tokenService.getCognitoSub();
 
-        UserWithAgency userWithAgency = repository.findByUser_CognitoSub(cognitoSub)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not affiliated with any agency"));
+        List<UserWithAgency> roles = repository.findAllByUser_CognitoSub(cognitoSub);
+        if (roles.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not affiliated with any agency");
+        }
 
-        return new UserWithAgencyDTO(userWithAgency);
+        return new UserWithAgencyDTO(roles.getFirst());
     }
 }
