@@ -37,7 +37,7 @@ public class MeController {
         String cognitoSub = tokenService.getCognitoSub();
 
         UserWithAgency user = repository.findFirstByUser_CognitoSub(cognitoSub)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not affiliated with any agency"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not affiliated with any agency"));
 
         return new UserWithAgencyDTO(user);
     }

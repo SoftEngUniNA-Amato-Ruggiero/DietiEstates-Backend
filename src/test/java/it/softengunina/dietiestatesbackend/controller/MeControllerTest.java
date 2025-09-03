@@ -51,7 +51,7 @@ class MeControllerTest {
     @Test
     void getAgency_BaseUser() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
-        Mockito.when(agentRepository.findByUser_CognitoSub(user.getCognitoSub())).thenReturn(Optional.empty());
+        Mockito.when(agentRepository.findFirstByUser_CognitoSub(user.getCognitoSub())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/me/agency"))
                 .andExpect(status().isNotFound());
@@ -60,7 +60,7 @@ class MeControllerTest {
     @Test
     void getAgency_Agent() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(agent.getCognitoSub());
-        Mockito.when(agentRepository.findByUser_CognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
+        Mockito.when(agentRepository.findFirstByUser_CognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
 
         mockMvc.perform(get("/me/agency"))
                 .andExpect(status().isOk())
@@ -74,7 +74,7 @@ class MeControllerTest {
     @Test
     void getAgency_Manager() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
-        Mockito.when(agentRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
+        Mockito.when(agentRepository.findFirstByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
 
         mockMvc.perform(get("/me/agency"))
                 .andExpect(status().isOk())
@@ -88,7 +88,7 @@ class MeControllerTest {
     @Test
     void getAgency_UserNotFound() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn("wrongCognitoSub");
-        Mockito.when(agentRepository.findByUser_CognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
+        Mockito.when(agentRepository.findFirstByUser_CognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/me/agency"))
                 .andExpect(status().isNotFound());
