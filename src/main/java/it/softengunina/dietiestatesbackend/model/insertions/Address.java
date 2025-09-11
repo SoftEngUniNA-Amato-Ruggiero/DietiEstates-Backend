@@ -1,7 +1,10 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
+
 
 @Embeddable
 @NoArgsConstructor
@@ -11,8 +14,8 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public class Address {
-    private String street;
-    private Short houseNumber;
-    private String city;
-    private String postalCode;
+    private String address;
+
+    @Column(columnDefinition = "varchar(255)")
+    private Point location;
 }
