@@ -15,9 +15,6 @@ import java.util.Set;
 @ToString
 @EqualsAndHashCode
 public class InsertionDetails {
-    private Short floor;
-    private boolean hasElevator;
-
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "insertion_tags",
@@ -27,4 +24,9 @@ public class InsertionDetails {
     @Column(name = "tag")
     @EqualsAndHashCode.Exclude
     private Set<String> tags;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    @Lob
+    @EqualsAndHashCode.Exclude
+    private String description;
 }
