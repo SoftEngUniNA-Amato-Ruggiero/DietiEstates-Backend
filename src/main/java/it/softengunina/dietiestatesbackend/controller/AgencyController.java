@@ -104,8 +104,8 @@ public class AgencyController {
 
             RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getName(), req.getIban()));
 
-            agentRepository.save(new RealEstateAgent(user, agency));
-            RealEstateManager manager = managerRepository.save(new RealEstateManager(user, agency));
+            RealEstateAgent agent = agentRepository.save(new RealEstateAgent(user, agency));
+            RealEstateManager manager = managerRepository.save(new RealEstateManager(agent.getUser(), agent.getAgency()));
             return new UserWithAgencyDTO(manager);
 
         } catch (UserIsAlreadyAffiliatedWithAgencyException e) {
