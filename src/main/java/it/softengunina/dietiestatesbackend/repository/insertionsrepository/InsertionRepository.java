@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InsertionRepository<T extends BaseInsertion> extends JpaRepository<T, Long> {
     Page<T> findByUploader(RealEstateAgent uploader, Pageable pageable);
-    Page<T> findByAddress_City(String city, Pageable pageable);
+    Page<T> findByAddress(String address, Pageable pageable);
 }
