@@ -37,6 +37,12 @@ public class InsertionForSale extends BaseInsertion implements InsertionWithPric
         super(address, details, uploader, agency);
         this.price = price;
     }
+
+    /**
+     * Accepts a visitor to produce a DTO
+     * @param visitor it is the visitor which creates the DTO appropriate to this class
+     * @return the DTO produced by the visitor
+     */
     @Override
     public InsertionDTO accept(InsertionDTOVisitor visitor) {
         return visitor.visit(this);
