@@ -5,6 +5,7 @@ import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
 import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
@@ -82,7 +83,7 @@ public class AgencyController {
     public Page<UserWithAgencyDTO> getAgentsByAgencyId(@PathVariable Long id, Pageable pageable) {
         RealEstateAgency agency = agencyRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agency not found"));
-        Page<RealEstateAgent> agents = agentRepository.findByAgency(agency, pageable);
+        Page<RealEstateAgent> agents = agentRepository.findByBusinessUser_Agency(agency, pageable);
         return agents.map(UserWithAgencyDTO::new);
     }
 
@@ -104,8 +105,8 @@ public class AgencyController {
 
             RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getName(), req.getIban()));
 
-            RealEstateAgent agent = agentRepository.save(new RealEstateAgent(user, agency));
-            RealEstateManager manager = managerRepository.save(new RealEstateManager(agent.getUser(), agent.getAgency()));
+            BusinessUser businessUser = new BusinessUser(user, agency);
+            RealEstateManager manager = managerRepository.save(new RealEstateManager(businessUser));
             return new UserWithAgencyDTO(manager);
 
         } catch (UserIsAlreadyAffiliatedWithAgencyException e) {

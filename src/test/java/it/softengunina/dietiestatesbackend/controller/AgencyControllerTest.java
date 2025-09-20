@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
 import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -60,8 +61,8 @@ class AgencyControllerTest {
         agencyId = 1L;
         agency = new RealEstateAgency("testIban", "testAgency");
         user = new BaseUser("testEmail", "testSub");
-        agent = new RealEstateAgent(new BaseUser("agentEmail", "agentSub"), agency);
-        managerOfDifferentAgency = new RealEstateManager(new BaseUser("managerEmail", "managerSub"), new RealEstateAgency("differentIban", "differentAgency"));
+        agent = new RealEstateAgent(new BusinessUser(new BaseUser("agentEmail", "agentSub"), agency));
+        managerOfDifferentAgency = new RealEstateManager(new BusinessUser(new BaseUser("managerEmail", "managerSub"), new RealEstateAgency("differentIban", "differentAgency")));
     }
 
     @Test
@@ -96,7 +97,7 @@ class AgencyControllerTest {
     @Test
     void getAgentsByAgencyId() throws Exception {
         Mockito.when(agencyRepository.findById(agencyId)).thenReturn(Optional.of(agency));
-        Mockito.when(agentRepository.findByAgency(Mockito.eq(agency), Mockito.any(Pageable.class)))
+        Mockito.when(agentRepository.findByBusinessUser_Agency(Mockito.eq(agency), Mockito.any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(agent)));
 
         mockMvc.perform(get("/agencies/" + agencyId + "/agents"))

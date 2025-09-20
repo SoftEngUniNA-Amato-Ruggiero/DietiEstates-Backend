@@ -4,8 +4,7 @@ import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithRentDT
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.insertions.*;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
@@ -44,7 +43,7 @@ class InsertionControllerTest {
     InsertionDTOVisitorImpl visitor;
 
     BaseInsertion insertion;
-    UserWithAgency uploader;
+    BusinessUser uploader;
     RealEstateAgency agency;
     Long insertionId;
 
@@ -52,7 +51,7 @@ class InsertionControllerTest {
     void setUp() {
         insertionId = 1L;
         agency = new RealEstateAgency("iban", "agencyName");
-        uploader = new RealEstateAgent(new BaseUser("username", "sub"), agency);
+        uploader = new BusinessUser(new BaseUser("username", "sub"), agency);
         insertion = new InsertionForRent(new Address(), new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 900.0);
     }
 

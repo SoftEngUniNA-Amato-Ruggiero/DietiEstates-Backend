@@ -4,9 +4,9 @@ import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWit
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserWithAgencyRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ class UserNotAffiliatedWithAgencyServiceTest {
     @Mock
     BaseUserRepository userRepository;
     @Mock
-    UserWithAgencyRepository<UserWithAgency> agentRepository;
+    BusinessUserRepository agentRepository;
 
     AutoCloseable mocks;
 
@@ -37,7 +37,7 @@ class UserNotAffiliatedWithAgencyServiceTest {
         service = new UserNotAffiliatedWithAgencyService(userRepository, agentRepository);
         user = new BaseUser("baseUserName", "baseUserCognitoSub");
         agency = new RealEstateAgency("agencyIban", "agencyName");
-        agent = new RealEstateAgent(new BaseUser("agentUserName", "agentUserCognitoSub"), agency);
+        agent = new RealEstateAgent(new BusinessUser(new BaseUser("agentUserName", "agentUserCognitoSub"), agency));
     }
 
     @AfterEach
@@ -56,7 +56,7 @@ class UserNotAffiliatedWithAgencyServiceTest {
 
     @Test
     void findByCognitoSub_WhenAgent() {
-        Mockito.when(agentRepository.findByUser_CognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
+        Mockito.when(agentRepository.findByUser_CognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent.getBusinessUser()));
         Mockito.when(userRepository.findByCognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent.getUser()));
 
         String cognitoSub = agent.getCognitoSub();
@@ -74,7 +74,7 @@ class UserNotAffiliatedWithAgencyServiceTest {
 
     @Test
     void findByUsername_WhenAgent() {
-        Mockito.when(agentRepository.findByUser_Username(agent.getUsername())).thenReturn(Optional.of(agent));
+        Mockito.when(agentRepository.findByUser_Username(agent.getUsername())).thenReturn(Optional.of(agent.getBusinessUser()));
         Mockito.when(userRepository.findByUsername(agent.getUsername())).thenReturn(Optional.of(agent.getUser()));
 
         String username = agent.getUsername();

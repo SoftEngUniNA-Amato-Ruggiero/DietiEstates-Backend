@@ -2,10 +2,10 @@ package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
-import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserWithAgencyRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class MeControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    UserWithAgencyRepository<UserWithAgency> agentRepository;
+    BusinessUserRepository businessUserRepository;
 
     @MockitoBean
     TokenService tokenService;
@@ -44,25 +44,25 @@ class MeControllerTest {
     void setUp() {
         user = new BaseUser("testUsername", "testCognitoSub");
         agency = new RealEstateAgency("TestIban", "TestAgencyName");
-        agent = new RealEstateAgent(new BaseUser("agentUsername", "agentCognitoSub"), agency);
-        manager = new RealEstateManager(new BaseUser("managerUsername", "managerCognitoSub"), agency);
+        agent = new RealEstateAgent(new BusinessUser(new BaseUser("agentUsername", "agentCognitoSub"), agency));
+        manager = new RealEstateManager(new BusinessUser(new BaseUser("managerUsername", "managerCognitoSub"), agency));
     }
 
     @Test
     void getAgency_BaseUser() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
-        Mockito.when(agentRepository.findFirstByUser_CognitoSub(user.getCognitoSub())).thenReturn(Optional.empty());
+        Mockito.when(businessUserRepository.findByUser_CognitoSub(user.getCognitoSub())).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/me/agency"))
+        mockMvc.perform(get("/me"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getAgency_Agent() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(agent.getCognitoSub());
-        Mockito.when(agentRepository.findFirstByUser_CognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent));
+        Mockito.when(businessUserRepository.findByUser_CognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent.getBusinessUser()));
 
-        mockMvc.perform(get("/me/agency"))
+        mockMvc.perform(get("/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
@@ -74,9 +74,9 @@ class MeControllerTest {
     @Test
     void getAgency_Manager() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
-        Mockito.when(agentRepository.findFirstByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
+        Mockito.when(businessUserRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager.getBusinessUser()));
 
-        mockMvc.perform(get("/me/agency"))
+        mockMvc.perform(get("/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
@@ -88,9 +88,9 @@ class MeControllerTest {
     @Test
     void getAgency_UserNotFound() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn("wrongCognitoSub");
-        Mockito.when(agentRepository.findFirstByUser_CognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
+        Mockito.when(businessUserRepository.findByUser_CognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/me/agency"))
+        mockMvc.perform(get("/me"))
                 .andExpect(status().isNotFound());
     }
 }

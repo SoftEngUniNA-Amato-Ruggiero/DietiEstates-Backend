@@ -23,20 +23,17 @@ public class SecurityConfiguration {
     private String apiDocsPath;
     @Value("${springdoc.swagger-ui.path}")
     private String swaggerPath;
-    @Value("${spring.h2.console.path}")
-    private String h2ConsolePath;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
             .cors(Customizer.withDefaults())
-            .csrf(csrf -> csrf
-                    .ignoringRequestMatchers(h2ConsolePath+"/**"))
+            .csrf(Customizer.withDefaults())
             .headers(headers -> headers
                     .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
             )
             .authorizeHttpRequests(authz -> authz
-                    .requestMatchers(apiDocsPath+"/**", swaggerPath+"/**", h2ConsolePath+"/**").permitAll()
+                    .requestMatchers(apiDocsPath+"/**", swaggerPath+"/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/insertions", "/insertions/**").permitAll()
                     .anyRequest().authenticated()
             )

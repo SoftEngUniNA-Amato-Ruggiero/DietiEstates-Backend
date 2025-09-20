@@ -3,6 +3,7 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -45,8 +46,8 @@ class RealEstateManagerControllerTest {
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("agencyIban", "agencyName");
-        manager = new RealEstateManager(new BaseUser("managerName", "managerSub"), agency);
-        agent = new RealEstateAgent(new BaseUser("userName", "userSub"), agency);
+        manager = new RealEstateManager(new BusinessUser(new BaseUser("managerName", "managerSub"), agency));
+        agent = new RealEstateAgent(new BusinessUser(new BaseUser("userName", "userSub"), agency));
     }
 
     @Test
@@ -55,8 +56,8 @@ class RealEstateManagerControllerTest {
         UserDTO req = new UserDTO(agent);
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
-        Mockito.when(managerRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
-        Mockito.when(agentRepository.findByAgencyAndUser_Username(manager.getAgency(), agent.getUsername())).thenReturn(Optional.of(agent));
+        Mockito.when(managerRepository.findByBusinessUser_User_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
+        Mockito.when(agentRepository.findByBusinessUser_AgencyAndBusinessUser_User_Username(manager.getAgency(), agent.getUsername())).thenReturn(Optional.of(agent));
         Mockito.when(managerRepository.save(Mockito.any(RealEstateManager.class))).thenAnswer(i -> i.getArgument(0));
 
         mockMvc.perform(post("/managers")

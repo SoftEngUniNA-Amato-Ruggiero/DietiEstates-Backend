@@ -1,6 +1,5 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitor;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
@@ -23,7 +22,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @EqualsAndHashCode
 public abstract class BaseInsertion implements Insertion {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     @Setter(AccessLevel.PROTECTED)
     private Long id;
@@ -31,17 +30,19 @@ public abstract class BaseInsertion implements Insertion {
     @Embedded
     @Getter
     @Setter
-    private Address address;
+    private InsertionDetails details;
 
-    @Embedded
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "address_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @NotNull
     @Getter
     @Setter
-    private InsertionDetails details;
+    private Address address;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "uploader_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @NotNull
     @Getter
     @Setter
@@ -50,7 +51,7 @@ public abstract class BaseInsertion implements Insertion {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agency_id", nullable = false)
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonBackReference
+    
     @NotNull
     @Getter
     @Setter

@@ -5,10 +5,9 @@ import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceD
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.insertions.*;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
-import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForSaleRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,14 +38,14 @@ class InsertionForSaleControllerTest {
     @MockitoBean
     InsertionForSaleRepository repository;
     @MockitoBean
-    RealEstateAgentRepository agentRepository;
+    BusinessUserRepository businessUserRepository;
     @MockitoBean
     InsertionDTOVisitorImpl visitor;
     @MockitoBean
     TokenService tokenService;
 
     InsertionForSale insertion;
-    UserWithAgency uploader;
+    BusinessUser uploader;
     RealEstateAgency agency;
     Long insertionId;
 
@@ -54,7 +53,7 @@ class InsertionForSaleControllerTest {
     void setUp() {
         insertionId = 1L;
         agency = new RealEstateAgency("iban", "agencyName");
-        uploader = new RealEstateAgent(new BaseUser("username", "sub"), agency);
+        uploader = new BusinessUser(new BaseUser("username", "sub"), agency);
         insertion = new InsertionForSale(new Address(), new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 90000.0);
     }
 
@@ -78,7 +77,7 @@ class InsertionForSaleControllerTest {
         InsertionWithPriceDTO testReq = new InsertionWithPriceDTO(insertion);
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn("uploaderSub");
-        Mockito.when(agentRepository.findByUser_CognitoSub("uploaderSub")).thenReturn(Optional.of((RealEstateAgent) uploader));
+        Mockito.when(businessUserRepository.findByUser_CognitoSub("uploaderSub")).thenReturn(Optional.of(uploader));
         Mockito.when(repository.save(Mockito.any(InsertionForSale.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Mockito.when(visitor.visit(Mockito.any(InsertionForSale.class)))

@@ -1,8 +1,8 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
-import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.UserWithAgencyRepository;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,26 +17,27 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/me")
 public class MeController {
-    private final UserWithAgencyRepository<UserWithAgency> repository;
+    private final BusinessUserRepository businessUserRepository;
     private final TokenService tokenService;
 
-    MeController(UserWithAgencyRepository<UserWithAgency> repository,
+    MeController(BusinessUserRepository businessUserRepository,
                  TokenService tokenService) {
-        this.repository = repository;
+        this.businessUserRepository = businessUserRepository;
         this.tokenService = tokenService;
     }
 
     /**
      * Retrieves the authenticated user's information along with the agency they are affiliated with.
-     *
+     * If the user is not affiliated with any agency, it throws a 404 NOT FOUND error.
+     * This is because the base user information are already in the jwt.
      * @return UserWithAgencyDTO containing user and agency details
      * @throws ResponseStatusException if the user is not affiliated with any agency
      */
-    @GetMapping("/agency")
+    @GetMapping
     public UserWithAgencyDTO getAgency() {
         String cognitoSub = tokenService.getCognitoSub();
 
-        UserWithAgency user = repository.findFirstByUser_CognitoSub(cognitoSub)
+        BusinessUser user = businessUserRepository.findByUser_CognitoSub(cognitoSub)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not affiliated with any agency"));
 
         return new UserWithAgencyDTO(user);

@@ -2,6 +2,7 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -54,17 +55,17 @@ public class RealEstateAgentController {
     @Transactional
     public UserWithAgencyDTO createAgent(@Valid @RequestBody UserDTO req) {
         try {
-            RealEstateManager manager = managerRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
+            RealEstateManager manager = managerRepository.findByBusinessUser_User_CognitoSub(tokenService.getCognitoSub())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
             BaseUser user = userRepository.findByUsername(req.getUsername())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-            if (agentRepository.existsByUser_Username(user.getUsername())) {
+            if (agentRepository.existsByBusinessUser_User_Username(user.getUsername())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent");
             }
 
-            RealEstateAgent agent = agentRepository.save(new RealEstateAgent(user, manager.getAgency()));
+            RealEstateAgent agent = agentRepository.save(new RealEstateAgent(new BusinessUser(user, manager.getAgency())));
             return new UserWithAgencyDTO(agent);
 
         } catch (DataIntegrityViolationException e) {

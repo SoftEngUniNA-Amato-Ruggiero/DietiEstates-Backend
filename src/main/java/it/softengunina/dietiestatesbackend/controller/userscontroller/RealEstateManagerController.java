@@ -48,17 +48,17 @@ public class RealEstateManagerController {
     @Transactional
     public UserWithAgencyDTO createManager(@Valid @RequestBody UserDTO req) {
         try {
-            RealEstateManager manager = managerRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
+            RealEstateManager manager = managerRepository.findByBusinessUser_User_CognitoSub(tokenService.getCognitoSub())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
 
-            RealEstateAgent agent = agentRepository.findByAgencyAndUser_Username(manager.getAgency(), req.getUsername())
+            RealEstateAgent agent = agentRepository.findByBusinessUser_AgencyAndBusinessUser_User_Username(manager.getAgency(), req.getUsername())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agent not found"));
 
-            if (managerRepository.existsByUser_Username(agent.getUsername())) {
+            if (managerRepository.existsByBusinessUser_User_Username(agent.getUsername())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already a manager");
             }
 
-            RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent.getUser(), manager.getAgency()));
+            RealEstateManager promoted = managerRepository.save(new RealEstateManager(agent.getBusinessUser()));
             return new UserWithAgencyDTO(promoted);
 
         } catch (DataIntegrityViolationException e) {

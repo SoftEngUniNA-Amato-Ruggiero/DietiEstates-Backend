@@ -3,6 +3,7 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -48,7 +49,7 @@ class RealEstateAgentControllerTest {
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("agencyIban", "agencyName");
-        manager = new RealEstateManager(new BaseUser("managerName", "managerSub"), agency);
+        manager = new RealEstateManager(new BusinessUser(new BaseUser("managerName", "managerSub"), agency));
         user = new BaseUser("userName", "userSub");
     }
 
@@ -58,7 +59,7 @@ class RealEstateAgentControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
-        Mockito.when(managerRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
+        Mockito.when(managerRepository.findByBusinessUser_User_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(agentRepository.save(Mockito.any(RealEstateAgent.class))).thenAnswer(i -> i.getArguments()[0]);
 

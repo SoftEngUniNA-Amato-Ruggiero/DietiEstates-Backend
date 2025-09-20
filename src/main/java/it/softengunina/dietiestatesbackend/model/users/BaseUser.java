@@ -14,7 +14,6 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "users")
-@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
@@ -61,5 +60,9 @@ public class BaseUser implements User {
 
     public boolean removeRole(@NonNull String role) {
         return roles.remove(role);
+    }
+
+    public boolean hasRole(@NonNull String role) {
+        return roles.contains(role);
     }
 }

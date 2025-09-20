@@ -2,6 +2,7 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ class UserControllerTest {
     void setUp() {
         agency = new RealEstateAgency("TestIban", "TestAgencyName");
         user = new BaseUser("testUsername", "testCognitoSub");
-        agent = new RealEstateAgent(new BaseUser("agentUsername", "agentCognitoSub"), agency);
+        agent = new RealEstateAgent(new BusinessUser(new BaseUser("agentUsername", "agentCognitoSub"), agency));
     }
 
     @Test

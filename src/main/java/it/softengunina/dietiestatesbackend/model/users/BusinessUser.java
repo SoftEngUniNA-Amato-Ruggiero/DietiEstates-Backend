@@ -1,4 +1,5 @@
 package it.softengunina.dietiestatesbackend.model.users;
+
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,14 +9,14 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.util.Set;
 
 /**
- * Class for a manager of a Real Estate Agency.
+ * Abstract class for a user who works for a Real Estate Agency.
  */
 @Entity
-@Table(name = "real_estate_managers")
+@Table(name = "business_users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
-public class RealEstateManager implements UserWithAgency {
+public class BusinessUser implements UserWithAgency {
     @Id
     @Getter
     @Setter(AccessLevel.PROTECTED)
@@ -27,50 +28,48 @@ public class RealEstateManager implements UserWithAgency {
     @JoinColumn(name = "user_id")
     @Getter
     @Setter(AccessLevel.PROTECTED)
-    private BusinessUser businessUser;
+    private BaseUser user;
 
-    public RealEstateManager(@NonNull BusinessUser businessUser) {
-        this.businessUser = businessUser;
-        this.businessUser.addRole(this.getClass().getSimpleName());
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "agency_id", nullable = false)
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
+    private RealEstateAgency agency;
+
+    public BusinessUser(@NonNull BaseUser user,
+                        @NonNull RealEstateAgency agency) {
+        this.user = user;
+        this.agency = agency;
     }
 
     @Override
     public String getUsername() {
-        return businessUser.getUsername();
+        return user.getUsername();
     }
 
     @Override
     public String getCognitoSub() {
-        return businessUser.getCognitoSub();
+        return user.getCognitoSub();
     }
 
     @Override
     public Set<String> getRoles() {
-        return businessUser.getRoles();
+        return user.getRoles();
     }
 
     @Override
     public boolean addRole(@NonNull String role) {
-        return businessUser.addRole(role);
+        return user.addRole(role);
     }
 
     @Override
     public boolean removeRole(@NonNull String role) {
-        return businessUser.removeRole(role);
+        return user.removeRole(role);
     }
 
     @Override
     public boolean hasRole(@NonNull String role) {
-        return businessUser.hasRole(role);
-    }
-
-    @Override
-    public RealEstateAgency getAgency() {
-        return businessUser.getAgency();
-    }
-
-    @Override
-    public BaseUser getUser() {
-        return businessUser.getUser();
+        return user.hasRole(role);
     }
 }
