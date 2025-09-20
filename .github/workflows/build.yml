@@ -10,7 +10,7 @@ jobs:
     name: Build and analyze
     runs-on: ubuntu-latest
     services:
-      postgres:
+      db:
         image: postgis/postgis:17-master
         ports: [ 5432:5432 ]
         env:
@@ -46,4 +46,5 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=softengunina-amato-ruggiero_dietiestates-backend -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
