@@ -1,11 +1,9 @@
 package it.softengunina.dietiestatesbackend.model.users;
-import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Delegate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import java.util.Set;
 
 /**
  * Class for a manager of a Real Estate Agency.
@@ -27,50 +25,11 @@ public class RealEstateManager implements UserWithAgency {
     @JoinColumn(name = "user_id")
     @Getter
     @Setter(AccessLevel.PROTECTED)
+    @Delegate(types = UserWithAgency.class)
     private BusinessUser businessUser;
 
     public RealEstateManager(@NonNull BusinessUser businessUser) {
         this.businessUser = businessUser;
         this.businessUser.addRole(this.getClass().getSimpleName());
-    }
-
-    @Override
-    public String getUsername() {
-        return businessUser.getUsername();
-    }
-
-    @Override
-    public String getCognitoSub() {
-        return businessUser.getCognitoSub();
-    }
-
-    @Override
-    public Set<String> getRoles() {
-        return businessUser.getRoles();
-    }
-
-    @Override
-    public boolean addRole(@NonNull String role) {
-        return businessUser.addRole(role);
-    }
-
-    @Override
-    public boolean removeRole(@NonNull String role) {
-        return businessUser.removeRole(role);
-    }
-
-    @Override
-    public boolean hasRole(@NonNull String role) {
-        return businessUser.hasRole(role);
-    }
-
-    @Override
-    public RealEstateAgency getAgency() {
-        return businessUser.getAgency();
-    }
-
-    @Override
-    public BaseUser getUser() {
-        return businessUser.getUser();
     }
 }
