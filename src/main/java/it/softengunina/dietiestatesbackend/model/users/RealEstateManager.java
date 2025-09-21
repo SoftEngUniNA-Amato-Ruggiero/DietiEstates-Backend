@@ -30,6 +30,5 @@ public class RealEstateManager implements UserWithAgency {
 
     public RealEstateManager(@NonNull BusinessUser businessUser) {
         this.businessUser = businessUser;
-        this.businessUser.addRole(this.getClass().getSimpleName());
     }
 }
