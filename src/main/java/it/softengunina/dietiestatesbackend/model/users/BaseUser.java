@@ -1,7 +1,12 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
+import it.softengunina.dietiestatesbackend.model.Role;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class for a User that has made an authenticated request to the system.
@@ -28,9 +33,37 @@ public class BaseUser implements User {
     @Setter
     private String cognitoSub;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private final Set<Role> roles = new HashSet<>();
+
     public BaseUser(@NonNull String username,
                     @NonNull String cognitoSub) {
         this.username = username;
         this.cognitoSub = cognitoSub;
+    }
+
+    @Override
+    public Set<Role> getRoles() {
+        return Collections.unmodifiableSet(roles);
+    }
+
+    @Override
+    public boolean hasRole(@NonNull Role role) {
+        return roles.contains(role);
+    }
+
+    @Override
+    public boolean addRole(@NonNull Role role) {
+        return roles.add(role);
+    }
+
+    @Override
+    public boolean removeRole(@NonNull Role role) {
+        return roles.remove(role);
     }
 }

@@ -1,4 +1,5 @@
 package it.softengunina.dietiestatesbackend.model.users;
+import it.softengunina.dietiestatesbackend.listeners.UserRoleListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Delegate;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
  * Class for a manager of a Real Estate Agency.
  */
 @Entity
+@EntityListeners(UserRoleListener.class)
 @Table(name = "real_estate_managers")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode

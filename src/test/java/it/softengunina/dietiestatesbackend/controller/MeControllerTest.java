@@ -48,7 +48,7 @@ class MeControllerTest {
     }
 
     @Test
-    void getAgency_BaseUser() throws Exception {
+    void getMe_BaseUser() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
         Mockito.when(businessUserRepository.findByUser_CognitoSub(user.getCognitoSub())).thenReturn(Optional.empty());
 
@@ -57,7 +57,7 @@ class MeControllerTest {
     }
 
     @Test
-    void getAgency_Agent() throws Exception {
+    void getMe_Agent() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(agent.getCognitoSub());
         Mockito.when(businessUserRepository.findByUser_CognitoSub(agent.getCognitoSub())).thenReturn(Optional.of(agent.getBusinessUser()));
 
@@ -70,7 +70,7 @@ class MeControllerTest {
     }
 
     @Test
-    void getAgency_Manager() throws Exception {
+    void getMe_Manager() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
         Mockito.when(businessUserRepository.findByUser_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager.getBusinessUser()));
 
@@ -83,7 +83,7 @@ class MeControllerTest {
     }
 
     @Test
-    void getAgency_UserNotFound() throws Exception {
+    void getMe_UserNotFound() throws Exception {
         Mockito.when(tokenService.getCognitoSub()).thenReturn("wrongCognitoSub");
         Mockito.when(businessUserRepository.findByUser_CognitoSub("wrongCognitoSub")).thenReturn(Optional.empty());
 

@@ -34,7 +34,7 @@ public class MeController {
      * @throws ResponseStatusException if the user is not affiliated with any agency
      */
     @GetMapping
-    public UserWithAgencyDTO getAgency() {
+    public UserWithAgencyDTO getMe() {
         String cognitoSub = tokenService.getCognitoSub();
 
         BusinessUser user = businessUserRepository.findByUser_CognitoSub(cognitoSub)
