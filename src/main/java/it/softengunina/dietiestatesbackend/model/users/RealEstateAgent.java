@@ -15,8 +15,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @ToString
 public class RealEstateAgent implements UserWithAgency {
     @Id
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
     private Long id;
 
     @OneToOne
