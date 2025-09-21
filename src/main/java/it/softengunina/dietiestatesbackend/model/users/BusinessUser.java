@@ -8,7 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 /**
- * Abstract class for a user who works for a Real Estate Agency.
+ * Class for a Business User.
  */
 @Entity
 @Table(name = "business_users")

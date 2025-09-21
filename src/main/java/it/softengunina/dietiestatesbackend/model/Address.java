@@ -1,4 +1,4 @@
-package it.softengunina.dietiestatesbackend.model.insertions;
+package it.softengunina.dietiestatesbackend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +7,6 @@ import org.locationtech.jts.geom.Point;
 @Entity
 @Table(name = "addresses")
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class Address {
@@ -31,4 +30,16 @@ public class Address {
 
     @Column(columnDefinition = "geometry(Point, 4326)", nullable = false)
     private Point location;
+
+    public Address(@NonNull String city,
+                   @NonNull String province,
+                   @NonNull String postalCode,
+                   @NonNull String street,
+                   @NonNull Point location) {
+        this.city = city;
+        this.province = province;
+        this.postalCode = postalCode;
+        this.street = street;
+        this.location = location;
+    }
 }

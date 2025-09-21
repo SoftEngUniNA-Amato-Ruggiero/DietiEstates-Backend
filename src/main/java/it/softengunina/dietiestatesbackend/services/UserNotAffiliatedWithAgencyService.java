@@ -15,12 +15,12 @@ import java.util.Optional;
 @Service
 public class UserNotAffiliatedWithAgencyService {
     private final BaseUserRepository userRepository;
-    private final BusinessUserRepository agentRepository;
+    private final BusinessUserRepository businessUserRepository;
 
     public UserNotAffiliatedWithAgencyService(BaseUserRepository userRepository,
-                                              BusinessUserRepository agentRepository) {
+                                              BusinessUserRepository businessUserRepository) {
         this.userRepository = userRepository;
-        this.agentRepository = agentRepository;
+        this.businessUserRepository = businessUserRepository;
     }
 
     /**
@@ -31,7 +31,7 @@ public class UserNotAffiliatedWithAgencyService {
      * @throws UserIsAlreadyAffiliatedWithAgencyException if the user is already affiliated with an agency.
      */
     public Optional<BaseUser> findByCognitoSub(String cognitoSub) {
-        if (agentRepository.findByUser_CognitoSub(cognitoSub).isPresent()) {
+        if (businessUserRepository.findByUser_CognitoSub(cognitoSub).isPresent()) {
             throw new UserIsAlreadyAffiliatedWithAgencyException("User is already affiliated with an agency");
         }
 
@@ -46,7 +46,7 @@ public class UserNotAffiliatedWithAgencyService {
      * @throws UserIsAlreadyAffiliatedWithAgencyException if the user is already affiliated with an agency.
      */
     public Optional<BaseUser> findByUsername(String username) {
-        if (agentRepository.findByUser_Username(username).isPresent()) {
+        if (businessUserRepository.findByUser_Username(username).isPresent()) {
             throw new UserIsAlreadyAffiliatedWithAgencyException("User is already affiliated with an agency");
         }
 

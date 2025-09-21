@@ -2,6 +2,7 @@ package it.softengunina.dietiestatesbackend.model.insertions;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceDTO;
+import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;

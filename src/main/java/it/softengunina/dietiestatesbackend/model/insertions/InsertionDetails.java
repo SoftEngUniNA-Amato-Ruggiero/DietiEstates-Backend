@@ -20,7 +20,7 @@ public class InsertionDetails {
             name = "insertion_tags",
             joinColumns = @JoinColumn(name = "tags")
     )
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     @Column(name = "tag")
     @EqualsAndHashCode.Exclude
     private Set<String> tags;

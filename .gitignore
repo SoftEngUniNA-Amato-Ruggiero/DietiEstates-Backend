@@ -35,10 +35,5 @@ build/
 ### Environment ###
 .env
 
-### H2 database files ###
-**.trace.db
-**.mv.db
-/schema.sql
-
 ### Secrets ###
 /secrets/postgres-passwd.txt
