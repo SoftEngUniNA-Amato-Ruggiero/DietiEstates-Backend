@@ -17,18 +17,28 @@ public class Address {
     private Long id;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private String city;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private String province;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private String postalCode;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private String street;
 
     @Column(columnDefinition = "geometry(Point, 4326)", nullable = false)
+    @Getter
+    @Setter
     private Point location;
 
     public Address(@NonNull String city,
