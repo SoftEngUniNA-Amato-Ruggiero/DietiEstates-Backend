@@ -29,7 +29,7 @@ spring:
           schema-generation:
             scripts:
               action: create
-              create-target: ./src/main/resources/db/migration/V1__Initial_schema.sql
+              create-target: ./target/generated-schema.sql
               format: true
 
   security:
