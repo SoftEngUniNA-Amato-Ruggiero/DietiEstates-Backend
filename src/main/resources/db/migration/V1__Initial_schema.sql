@@ -22,7 +22,7 @@
     );
 
     create table if not exists insertion_tags (
-        tags bigint not null,
+        insertion_id bigint not null,
         tag varchar(255)
     );
 
@@ -90,8 +90,8 @@
        on delete cascade;
 
     alter table if exists insertion_tags 
-       add constraint FK1fkgc2aua4wltci62lb66hq9m 
-       foreign key (tags) 
+       add constraint FK9ji16ucubob0tptqt3257nk6y
+       foreign key (insertion_id)
        references insertions;
 
     alter table if exists insertions 
@@ -144,4 +144,3 @@
        add constraint FKhfh9dx7w3ubf1co1vdev94g3f
        foreign key (user_id)
        references users;
-

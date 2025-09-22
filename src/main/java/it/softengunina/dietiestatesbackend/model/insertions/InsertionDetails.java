@@ -12,21 +12,17 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
 public class InsertionDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "insertion_tags",
-            joinColumns = @JoinColumn(name = "tags")
+            joinColumns = @JoinColumn(name = "insertion_id")
     )
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @Column(name = "tag")
-    @EqualsAndHashCode.Exclude
     private Set<String> tags;
 
     @Column(name = "description", columnDefinition = "TEXT")
     @Lob
-    @EqualsAndHashCode.Exclude
     private String description;
 }
