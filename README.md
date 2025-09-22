@@ -2,11 +2,11 @@
 
 ## Requirements
 - Java 21 or higher
-- A running PostgreSQL database with GIS extension (for production profile)
+- A running PostgreSQL database with GIS extension
 
 ## Profiles
-- Development profile (default)
-- Production profile (`prod`)
+- Development profile (default) - generates the schema of the db from the annotations
+- Production profile (`prod`) - validates the schema of the db from the annotations, assumes one already exists
 
 ## Configure environment variables
 - Rename the file `.env.example` to `.env` and set the `DB_PASSWORD` environment variable. Optionally you can set `DB_HOST` (default: localhost) and `DB_PORT` (default: 5432).
