@@ -17,8 +17,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @ToString
 public class BusinessUser implements UserWithAgency {
     @Id
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
     private Long id;
 
     @OneToOne
