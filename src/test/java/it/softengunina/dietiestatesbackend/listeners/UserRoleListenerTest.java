@@ -50,7 +50,7 @@ class UserRoleListenerTest {
 
         listener.prePersist(agent);
 
-        assertTrue(agent.getRoles().contains(expectedRole));
+        assertTrue(agent.hasRole(expectedRole));
     }
 
     @Test
@@ -61,6 +61,6 @@ class UserRoleListenerTest {
 
         listener.prePersist(agent);
 
-        assertTrue(agent.getRoles().contains(expectedRole));
+        assertTrue(agent.hasRole(expectedRole));
     }
 }
