@@ -103,7 +103,7 @@ public class AgencyController {
             BaseUser user = userNotAffiliatedWithAgencyService.findByCognitoSub(tokenService.getCognitoSub())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "We could not find you in our database"));
 
-            RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getName(), req.getIban()));
+            RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
 
             BusinessUser businessUser = new BusinessUser(user, agency);
             RealEstateManager manager = managerRepository.save(new RealEstateManager(businessUser));
