@@ -24,11 +24,12 @@ public abstract class RealEstateAbstractUser implements UserWithAgency {
     @Delegate(types = UserWithAgency.class)
     private BusinessUser businessUser;
 
-    @Transient
-    private final Role role = new Role(this.getClass().getSimpleName());
-
     protected RealEstateAbstractUser(@NonNull BusinessUser businessUser) {
         this.businessUser = businessUser;
-        this.addRole(role);
+        this.addRole(new Role(getRoleName()));
+    }
+
+    protected String getRoleName() {
+        return this.getClass().getSimpleName();
     }
 }
