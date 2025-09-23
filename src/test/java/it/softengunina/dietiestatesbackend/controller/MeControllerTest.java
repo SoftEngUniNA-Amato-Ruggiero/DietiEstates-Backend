@@ -1,6 +1,7 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.Role;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 @WebMvcTest(controllers = MeController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -66,7 +68,8 @@ class MeControllerTest {
                 .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.user.username").value(agent.getUsername()))
-                .andExpect(jsonPath("$.user.id").value(agent.getId()));
+                .andExpect(jsonPath("$.user.id").value(agent.getId()))
+                .andExpect(jsonPath("$.user.roles[*].name", containsInAnyOrder(agent.getRoles().stream().map(Role::getName).toArray())));
     }
 
     @Test
@@ -79,7 +82,8 @@ class MeControllerTest {
                 .andExpect(jsonPath("$.agency.iban").value(agency.getIban()))
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.user.username").value(manager.getUsername()))
-                .andExpect(jsonPath("$.user.id").value(manager.getId()));
+                .andExpect(jsonPath("$.user.id").value(manager.getId()))
+                .andExpect(jsonPath("$.user.roles[*].name", containsInAnyOrder(manager.getRoles().stream().map(Role::getName).toArray())));
     }
 
     @Test

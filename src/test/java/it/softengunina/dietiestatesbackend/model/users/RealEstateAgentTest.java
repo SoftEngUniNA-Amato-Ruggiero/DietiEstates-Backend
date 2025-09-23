@@ -1,6 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,5 +20,11 @@ class RealEstateAgentTest {
     @Test
     void getAgency() {
         assertEquals(agency, agent.getAgency());
+    }
+
+    @Test
+    void hasRole() {
+        Role role = new Role(agent.getClass().getSimpleName());
+        assertTrue(agent.hasRole(role));
     }
 }
