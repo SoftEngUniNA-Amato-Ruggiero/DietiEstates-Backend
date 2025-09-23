@@ -1,7 +1,8 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionRequest;
+import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForSaleRepository;
@@ -9,11 +10,16 @@ import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUs
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import jakarta.validation.Valid;
+import org.geojson.Feature;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Map;
 
 /**
  * Controller for handling requests related to insertions for sale.
@@ -56,11 +62,23 @@ public class InsertionForSaleController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public InsertionDTO createInsertion(@Valid @RequestBody InsertionWithPriceDTO req) {
+    public InsertionDTO createInsertion(@Valid @RequestBody InsertionRequest req) {
         BusinessUser uploader = businessUserRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot create an insertion."));
 
-        InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(req.getAddress(), req.getDetails(), uploader.getUser(), uploader.getAgency(), req.getPrice()));
+        Feature feature = req.getAddress().getFeatures().getFirst();
+        Map<String, Object> properties = feature.getProperties();
+        String city = properties.get("city").toString();
+        String province = properties.get("county").toString();
+        String postalCode = properties.get("postcode").toString();
+        String street = properties.get("street").toString();
+        Double lat = (Double) properties.get("lat");
+        Double lon = (Double) properties.get("lon");
+        Point location = new org.locationtech.jts.geom.GeometryFactory().createPoint(new Coordinate(lon, lat));
+
+        Address address = new Address(city, province, postalCode, street, location);
+
+        InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(address, req.getDetails(), uploader.getUser(), uploader.getAgency(), req.getPrice()));
         return insertion.accept(insertionDTOVisitor);
     }
 }
