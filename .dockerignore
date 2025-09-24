@@ -1,0 +1,11 @@
+.github
+.idea
+.run
+.sonarlint
+secrets/postgres-passwd.txt.example
+target
+.env.example
+.gitattributes
+.gitignore
+qodana.yaml
+README.md

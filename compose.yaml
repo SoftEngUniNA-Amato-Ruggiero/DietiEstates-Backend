@@ -1,4 +1,24 @@
 services:
+  db:
+    image: postgis/postgis:17-master
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/
+      # set shared memory limit
+      - type: tmpfs
+        target: /dev/shm
+        tmpfs:
+          size: 134217728 # 128*2^20 bytes = 128Mb
+    environment:
+      POSTGRES_DB: dietiestatesdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD_FILE: /run/secrets/DB_PASSWORD
+      PGDATA: /var/lib/postgresql/17/docker
+    secrets:
+      - DB_PASSWORD
+
   app:
     build:
       context: .
@@ -15,43 +35,6 @@ services:
       DB_USER: admin
     secrets:
       - DB_PASSWORD
-
-  db:
-    image: postgis/postgis:17-master
-    restart: always
-    ports:
-      - "5432:5432"
-    volumes:
-    #  - ./src/main/resources/db/migration:/docker-entrypoint-initdb.d
-      - pgdata:/var/lib/postgresql/
-      # set shared memory limit
-      - type: tmpfs
-        target: /dev/shm
-        tmpfs:
-          size: 134217728 # 128*2^20 bytes = 128Mb
-    environment:
-      POSTGRES_DB: dietiestatesdb
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD_FILE: /run/secrets/DB_PASSWORD
-      PGDATA: /var/lib/postgresql/17/docker
-    secrets:
-      - DB_PASSWORD
-
-  adminer:
-    image: adminer:latest
-    restart: always
-    ports:
-      - "8080:8080"
-
-  docs:
-    build:
-      context: .
-      dockerfile: Dockerfile.site
-    restart: always
-    ports:
-      - "8082:80"
-    volumes:
-        - site:/usr/share/nginx/html:ro
 
 volumes:
   pgdata:
