@@ -60,7 +60,7 @@ public class RealEstateManagerController {
             BaseUser user = userRepository.findByUsername(req.getUsername())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-            if (user.hasRole(RealEstateManager.getRole())) {
+            if (user.hasRoleByName(RealEstateManager.class.getSimpleName())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already a manager");
             }
 

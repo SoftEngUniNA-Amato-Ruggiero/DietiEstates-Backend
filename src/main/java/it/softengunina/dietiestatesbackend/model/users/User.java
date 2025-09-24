@@ -10,6 +10,8 @@ public interface User {
     String getCognitoSub();
     Set<Role> getRoles();
     boolean hasRole(Role role);
+    boolean hasRoleById(Long roleId);
+    boolean hasRoleByName(String roleName);
     boolean addRole(Role role);
     boolean removeRole(Role role);
 }

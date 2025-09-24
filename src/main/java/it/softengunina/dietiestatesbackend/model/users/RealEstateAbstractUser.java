@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
-import it.softengunina.dietiestatesbackend.model.Role;
+import it.softengunina.dietiestatesbackend.listeners.UserRoleListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Delegate;
@@ -8,10 +8,11 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @MappedSuperclass
+@EntityListeners(UserRoleListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
-public abstract class RealEstateAbstractUser implements UserWithAgency {
+public abstract class RealEstateAbstractUser implements UserWithAgency, UserWithSpecificRole {
     @Id
     private Long id;
 
@@ -24,11 +25,7 @@ public abstract class RealEstateAbstractUser implements UserWithAgency {
     @Delegate(types = UserWithAgency.class)
     private BusinessUser businessUser;
 
-    protected RealEstateAbstractUser(@NonNull BusinessUser businessUser, Role role) {
+    protected RealEstateAbstractUser(@NonNull BusinessUser businessUser) {
         this.businessUser = businessUser;
-        this.addRole(role);
     }
-
-    @PreRemove
-    public abstract void removeRole();
 }

@@ -69,7 +69,7 @@ class MeControllerTest {
                 .andExpect(jsonPath("$.agency.name").value(agency.getName()))
                 .andExpect(jsonPath("$.user.username").value(agent.getUsername()))
                 .andExpect(jsonPath("$.user.id").value(agent.getId()))
-                .andExpect(jsonPath("$.user.roles[*].name", containsInAnyOrder(agent.getRoles().stream().map(Role::getName).toArray())));
+                .andExpect(jsonPath("$.user.roles[*].id", containsInAnyOrder(agent.getRoles().stream().map(Role::getName).toArray())));
     }
 
     @Test
