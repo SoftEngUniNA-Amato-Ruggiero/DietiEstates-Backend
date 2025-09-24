@@ -1,8 +1,8 @@
-create index if not exists addresses_location on addresses using gist(location);
-create index if not exists insertions_uploader_id on insertions(uploader_id);
-create index if not exists insertions_agency_id on insertions(agency_id);
-create index if not exists insertions_address_id on insertions(address_id);
-create index if not exists insertions_tags on insertion_tags(tags);
-create index if not exists insertions_for_rent_rent on insertions_for_rent(rent);
-create index if not exists insertions_for_sale_price on insertions_for_sale(price);
-create index if not exists business_users_agency_id on business_users(agency_id);
+CREATE INDEX IF NOT EXISTS addresses_location ON addresses using gist (location);
+CREATE INDEX IF NOT EXISTS insertions_uploader_id ON insertions (uploader_id);
+CREATE INDEX IF NOT EXISTS insertions_agency_id ON insertions (agency_id);
+CREATE INDEX IF NOT EXISTS insertions_address_id ON insertions (address_id);
+CREATE INDEX IF NOT EXISTS insertions_tags ON insertion_tags (tag);
+CREATE INDEX IF NOT EXISTS insertions_for_rent_rent ON insertions_for_rent (rent);
+CREATE INDEX IF NOT EXISTS insertions_for_sale_price ON insertions_for_sale (price);
+CREATE INDEX IF NOT EXISTS business_users_agency_id ON business_users (agency_id);
