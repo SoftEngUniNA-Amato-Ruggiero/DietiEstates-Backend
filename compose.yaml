@@ -9,7 +9,6 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_PROFILES_ACTIVE: prod
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: dietiestatesdb
