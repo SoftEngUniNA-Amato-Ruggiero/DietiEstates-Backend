@@ -1,12 +1,13 @@
 package it.softengunina.dietiestatesbackend.controller;
 
-import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
+import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyRequestDTO;
+import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyResponseDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
 import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
-import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
@@ -54,9 +55,8 @@ public class AgencyController {
      * @return A paginated list of RealEstateAgencyDTOs representing the agencies.
      */
     @GetMapping
-    public Page<RealEstateAgencyDTO> getAgencies(Pageable pageable) {
-        Page<RealEstateAgency> agencies = agencyRepository.findAll(pageable);
-        return agencies.map(RealEstateAgencyDTO::new);
+    public Page<RealEstateAgencyResponseDTO> getAgencies(Pageable pageable) {
+        return agencyRepository.findAllBy(pageable);
     }
 
     /**
@@ -66,10 +66,9 @@ public class AgencyController {
      * @throws ResponseStatusException with HttpStatus.NOT_FOUND if the agency does not exist.
      */
     @GetMapping("/{id}")
-    public RealEstateAgencyDTO getAgencyById(@PathVariable Long id) {
-        RealEstateAgency agency = agencyRepository.findById(id)
+    public RealEstateAgencyResponseDTO getAgencyById(@PathVariable Long id) {
+        return agencyRepository.findDTOById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return new RealEstateAgencyDTO(agency);
     }
 
     /**
@@ -80,11 +79,10 @@ public class AgencyController {
      * @throws ResponseStatusException with HttpStatus.NOT_FOUND if the agency does not exist.
      */
     @GetMapping("/{id}/agents")
-    public Page<UserWithAgencyDTO> getAgentsByAgencyId(@PathVariable Long id, Pageable pageable) {
+    public Page<UserResponseDTO> getAgentsByAgencyId(@PathVariable Long id, Pageable pageable) {
         RealEstateAgency agency = agencyRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agency not found"));
-        Page<RealEstateAgent> agents = agentRepository.findByBusinessUser_Agency(agency, pageable);
-        return agents.map(UserWithAgencyDTO::new);
+        return agentRepository.findByBusinessUser_Agency(agency, pageable).map(UserResponseDTO::new);
     }
 
     /**
@@ -98,7 +96,7 @@ public class AgencyController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public UserWithAgencyDTO createAgency(@Valid @RequestBody RealEstateAgencyDTO req) {
+    public BusinessUserResponseDTO createAgency(@Valid @RequestBody RealEstateAgencyRequestDTO req) {
         try {
             BaseUser user = userNotAffiliatedWithAgencyService.findByCognitoSub(tokenService.getCognitoSub())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "We could not find you in our database"));
@@ -107,7 +105,8 @@ public class AgencyController {
 
             BusinessUser businessUser = new BusinessUser(user, agency);
             RealEstateManager manager = managerRepository.save(new RealEstateManager(businessUser));
-            return new UserWithAgencyDTO(manager);
+
+            return new BusinessUserResponseDTO(manager);
 
         } catch (UserIsAlreadyAffiliatedWithAgencyException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are already affiliated with an agency");

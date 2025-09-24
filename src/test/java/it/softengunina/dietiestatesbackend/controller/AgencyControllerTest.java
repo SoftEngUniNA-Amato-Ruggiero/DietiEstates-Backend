@@ -1,7 +1,8 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyDTO;
+import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyRequestDTO;
+import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyResponseDTO;
 import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
@@ -67,8 +68,8 @@ class AgencyControllerTest {
 
     @Test
     void getAgencies() throws Exception {
-        Mockito.when(agencyRepository.findAll(Mockito.any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(agency)));
+        Mockito.when(agencyRepository.findAllBy(Mockito.any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(new RealEstateAgencyResponseDTO(agency))));
 
         mockMvc.perform(get("/agencies"))
                 .andExpect(status().isOk())
@@ -78,7 +79,7 @@ class AgencyControllerTest {
 
     @Test
     void getAgencyById() throws Exception {
-        Mockito.when(agencyRepository.findById(agencyId)).thenReturn(Optional.of(agency));
+        Mockito.when(agencyRepository.findDTOById(agencyId)).thenReturn(Optional.of(new RealEstateAgencyResponseDTO(agency)));
 
         mockMvc.perform(get("/agencies/" + agencyId))
                 .andExpect(status().isOk())
@@ -88,7 +89,7 @@ class AgencyControllerTest {
 
     @Test
     void getAgencyById_NotFound() throws Exception {
-        Mockito.when(agencyRepository.findById(2L)).thenReturn(Optional.empty());
+        Mockito.when(agencyRepository.findDTOById(2L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/agencies/" + 2L))
                 .andExpect(status().isNotFound());
@@ -102,12 +103,12 @@ class AgencyControllerTest {
 
         mockMvc.perform(get("/agencies/" + agencyId + "/agents"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].user.username").value(agent.getUsername()));
+                .andExpect(jsonPath("$.content[0].username").value(agent.getUsername()));
     }
 
     @Test
     void createAgency() throws Exception {
-        RealEstateAgencyDTO req = new RealEstateAgencyDTO(null, "requestIban", "requestAgency");
+        RealEstateAgencyRequestDTO req = new RealEstateAgencyRequestDTO("requestIban", "requestAgency");
         ObjectMapper objectMapper = new ObjectMapper();
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(user.getCognitoSub());
@@ -127,7 +128,7 @@ class AgencyControllerTest {
 
     @Test
     void createAgency_whenUserIsAlreadyAgent() throws Exception {
-        RealEstateAgencyDTO req = new RealEstateAgencyDTO(null, "requestIban", "requestAgency");
+        RealEstateAgencyRequestDTO req = new RealEstateAgencyRequestDTO("requestIban", "requestAgency");
         ObjectMapper objectMapper = new ObjectMapper();
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(managerOfDifferentAgency.getCognitoSub());

@@ -1,4 +1,5 @@
 package it.softengunina.dietiestatesbackend.model.users;
+import it.softengunina.dietiestatesbackend.model.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,15 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class RealEstateManager extends RealEstateAbstractUser {
+    @Getter
+    private static final Role role = new Role(RealEstateManager.class.getSimpleName());
+
     public RealEstateManager(@NonNull BusinessUser businessUser) {
-        super(businessUser);
+        super(businessUser, role);
+    }
+
+    @Override
+    public void removeRole() {
+        this.removeRole(role);
     }
 }

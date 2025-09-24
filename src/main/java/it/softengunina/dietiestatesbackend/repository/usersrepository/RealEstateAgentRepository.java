@@ -13,6 +13,7 @@ public interface RealEstateAgentRepository extends JpaRepository<RealEstateAgent
     Optional<RealEstateAgent> findByBusinessUser_User_CognitoSub(String cognitoSub);
 
     Page<RealEstateAgent> findByBusinessUser_Agency(RealEstateAgency agency, Pageable pageable);
+
     Optional<RealEstateAgent> findByBusinessUser_AgencyAndBusinessUser_User_Username(RealEstateAgency agency, String username);
     Optional<RealEstateAgent> findByBusinessUser_AgencyAndBusinessUser_User_CognitoSub(RealEstateAgency agency, String cognitoSub);
 

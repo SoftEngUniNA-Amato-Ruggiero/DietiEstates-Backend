@@ -11,15 +11,11 @@ import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import jakarta.validation.Valid;
 import org.geojson.Feature;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Map;
 
 /**
  * Controller for handling requests related to insertions for sale.
@@ -67,16 +63,7 @@ public class InsertionForSaleController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot create an insertion."));
 
         Feature feature = req.getAddress().getFeatures().getFirst();
-        Map<String, Object> properties = feature.getProperties();
-        String city = properties.get("city").toString();
-        String province = properties.get("county").toString();
-        String postalCode = properties.get("postcode").toString();
-        String street = properties.get("street").toString();
-        Double lat = (Double) properties.get("lat");
-        Double lon = (Double) properties.get("lon");
-        Point location = new org.locationtech.jts.geom.GeometryFactory().createPoint(new Coordinate(lon, lat));
-
-        Address address = new Address(city, province, postalCode, street, location);
+        Address address = Address.fromProperties(feature.getProperties());
 
         InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(address, req.getDetails(), uploader.getUser(), uploader.getAgency(), req.getPrice()));
         return insertion.accept(insertionDTOVisitor);

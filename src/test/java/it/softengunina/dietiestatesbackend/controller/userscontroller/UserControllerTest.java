@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
@@ -43,7 +44,7 @@ class UserControllerTest {
 
     @Test
     void getUserByUsername() throws Exception {
-        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findDTOByUsername(user.getUsername())).thenReturn(Optional.of(new UserResponseDTO(user)));
         mockMvc.perform(get("/users")
         .param("username", user.getUsername()))
                 .andExpect(status().isOk())
@@ -52,7 +53,7 @@ class UserControllerTest {
 
     @Test
     void getUserById() throws Exception {
-        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findDTOById(userId)).thenReturn(Optional.of(new UserResponseDTO(user)));
         mockMvc.perform(get("/users/" + userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()));

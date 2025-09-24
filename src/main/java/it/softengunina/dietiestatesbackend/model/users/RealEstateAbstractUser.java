@@ -15,7 +15,7 @@ public abstract class RealEstateAbstractUser implements UserWithAgency {
     @Id
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
@@ -24,12 +24,11 @@ public abstract class RealEstateAbstractUser implements UserWithAgency {
     @Delegate(types = UserWithAgency.class)
     private BusinessUser businessUser;
 
-    protected RealEstateAbstractUser(@NonNull BusinessUser businessUser) {
+    protected RealEstateAbstractUser(@NonNull BusinessUser businessUser, Role role) {
         this.businessUser = businessUser;
-        this.addRole(new Role(getRoleName()));
+        this.addRole(role);
     }
 
-    protected String getRoleName() {
-        return this.getClass().getSimpleName();
-    }
+    @PreRemove
+    public abstract void removeRole();
 }

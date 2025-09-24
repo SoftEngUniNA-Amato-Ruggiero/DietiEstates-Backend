@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,10 +51,12 @@ class InsertionControllerTest {
 
     @BeforeEach
     void setUp() {
+        Address address = mock(Address.class);
+
         insertionId = 1L;
         agency = new RealEstateAgency("iban", "agencyName");
         uploader = new BusinessUser(new BaseUser("username", "sub"), agency);
-        insertion = new InsertionForRent(new Address(), new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 900.0);
+        insertion = new InsertionForRent(address, new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 900.0);
     }
 
     @Test
