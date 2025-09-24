@@ -1,12 +1,13 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserRequestDTO;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
@@ -27,15 +28,18 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/agents")
 public class RealEstateAgentController {
     private final BaseUserRepository userRepository;
+    private final BusinessUserRepository businessUserRepository;
     private final RealEstateAgentRepository agentRepository;
     private final RealEstateManagerRepository managerRepository;
     private final TokenService tokenService;
 
     RealEstateAgentController(BaseUserRepository userRepository,
+                              BusinessUserRepository businessUserRepository,
                               RealEstateAgentRepository agentRepository,
                               RealEstateManagerRepository managerRepository,
                               TokenService tokenService) {
         this.userRepository = userRepository;
+        this.businessUserRepository = businessUserRepository;
         this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
         this.tokenService = tokenService;
@@ -49,11 +53,12 @@ public class RealEstateAgentController {
      * @throws ResponseStatusException with HttpStatus.FORBIDDEN if the requesting user is not a manager.
      * @throws ResponseStatusException with HttpStatus.NOT_FOUND if the requested user is not found.
      * @throws ResponseStatusException with HttpStatus.CONFLICT if the requested user is already an agent.
+     * @throws ResponseStatusException with HttpStatus.INTERNAL_SERVER_ERROR for other errors.
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public UserWithAgencyDTO createAgent(@Valid @RequestBody UserDTO req) {
+    public BusinessUserResponseDTO createAgent(@Valid @RequestBody UserRequestDTO req) {
         try {
             RealEstateManager manager = managerRepository.findByBusinessUser_User_CognitoSub(tokenService.getCognitoSub())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
@@ -61,15 +66,22 @@ public class RealEstateAgentController {
             BaseUser user = userRepository.findByUsername(req.getUsername())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-            if (agentRepository.existsByBusinessUser_User_Username(user.getUsername())) {
+            if (user.hasRoleByName(RealEstateAgent.class.getSimpleName())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent");
             }
 
-            RealEstateAgent agent = agentRepository.save(new RealEstateAgent(new BusinessUser(user, manager.getAgency())));
-            return new UserWithAgencyDTO(agent);
+            BusinessUser businessUser = businessUserRepository.findById(user.getId())
+                    .orElse(new BusinessUser(user, manager.getAgency()));
+
+            RealEstateAgent agent = agentRepository.save(new RealEstateAgent(businessUser));
+            return new BusinessUserResponseDTO(agent);
 
         } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Data integrity violation: " + e.getMessage());
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unknown error: " + e.getMessage());
         }
     }
 }

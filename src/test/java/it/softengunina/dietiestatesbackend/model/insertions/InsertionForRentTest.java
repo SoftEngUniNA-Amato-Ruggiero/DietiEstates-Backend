@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class InsertionForRentTest {
     InsertionForRent insertion;
@@ -20,9 +21,11 @@ class InsertionForRentTest {
 
     @BeforeEach
     void setUp() {
+        Address address = mock(Address.class);
+
         agency = new RealEstateAgency("iban", "agencyName");
         uploader = new BusinessUser(new BaseUser("username", "sub"), agency);
-        insertion = new InsertionForRent(new Address(), new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 900.0);
+        insertion = new InsertionForRent(address, new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 900.0);
         visitor = new InsertionDTOVisitorImpl();
     }
 

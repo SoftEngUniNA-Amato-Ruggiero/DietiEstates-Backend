@@ -1,7 +1,8 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionRequest;
+import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForSaleRepository;
@@ -9,6 +10,7 @@ import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUs
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import jakarta.validation.Valid;
+import org.geojson.Feature;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -56,11 +58,14 @@ public class InsertionForSaleController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public InsertionDTO createInsertion(@Valid @RequestBody InsertionWithPriceDTO req) {
+    public InsertionDTO createInsertion(@Valid @RequestBody InsertionRequest req) {
         BusinessUser uploader = businessUserRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot create an insertion."));
 
-        InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(req.getAddress(), req.getDetails(), uploader.getUser(), uploader.getAgency(), req.getPrice()));
+        Feature feature = req.getAddress().getFeatures().getFirst();
+        Address address = Address.fromProperties(feature.getProperties());
+
+        InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(address, req.getDetails(), uploader.getUser(), uploader.getAgency(), req.getPrice()));
         return insertion.accept(insertionDTOVisitor);
     }
 }

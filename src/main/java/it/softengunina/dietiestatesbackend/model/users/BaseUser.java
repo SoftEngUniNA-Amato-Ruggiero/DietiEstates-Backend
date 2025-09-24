@@ -33,7 +33,7 @@ public class BaseUser implements User {
     @Setter
     private String cognitoSub;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),
@@ -55,6 +55,16 @@ public class BaseUser implements User {
     @Override
     public boolean hasRole(@NonNull Role role) {
         return roles.contains(role);
+    }
+
+    @Override
+    public boolean hasRoleById(@NonNull Long roleId) {
+        return roles.stream().anyMatch(role -> role.getId().equals(roleId));
+    }
+
+    @Override
+    public boolean hasRoleByName(@NonNull String roleName) {
+        return roles.stream().anyMatch(role -> role.getName().equals(roleName));
     }
 
     @Override

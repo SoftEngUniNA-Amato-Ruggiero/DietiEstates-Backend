@@ -52,7 +52,6 @@ public abstract class BaseInsertion implements Insertion {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agency_id", nullable = false)
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    
     @NotNull
     @Getter
     @Setter

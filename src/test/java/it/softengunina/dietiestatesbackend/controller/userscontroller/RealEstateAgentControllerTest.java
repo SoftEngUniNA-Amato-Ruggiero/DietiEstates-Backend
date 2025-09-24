@@ -1,13 +1,14 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserRequestDTO;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
@@ -35,6 +36,8 @@ class RealEstateAgentControllerTest {
     @MockitoBean
     BaseUserRepository userRepository;
     @MockitoBean
+    BusinessUserRepository businessUserRepository;
+    @MockitoBean
     RealEstateAgentRepository agentRepository;
     @MockitoBean
     RealEstateManagerRepository managerRepository;
@@ -54,12 +57,13 @@ class RealEstateAgentControllerTest {
 
     @Test
     void createAgent() throws Exception {
-        UserDTO req = new UserDTO(user);
+        UserRequestDTO req = new UserRequestDTO(user);
         ObjectMapper objectMapper = new ObjectMapper();
 
         Mockito.when(tokenService.getCognitoSub()).thenReturn(manager.getCognitoSub());
         Mockito.when(managerRepository.findByBusinessUser_User_CognitoSub(manager.getCognitoSub())).thenReturn(Optional.of(manager));
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(businessUserRepository.findById(Mockito.any())).thenReturn(Optional.empty());
         Mockito.when(agentRepository.save(Mockito.any(RealEstateAgent.class))).thenAnswer(i -> i.getArguments()[0]);
 
         mockMvc.perform(post("/agents")

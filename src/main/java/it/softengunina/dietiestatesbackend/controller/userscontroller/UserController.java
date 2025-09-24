@@ -1,7 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserDTO;
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,10 +29,9 @@ public class UserController {
      * @throws ResponseStatusException if the user is not found.
      */
     @GetMapping
-    public UserDTO getUserByUsername(@RequestParam String username) {
-        User user = userRepository.findByUsername(username)
+    public UserResponseDTO getUserByUsername(@RequestParam String username) {
+        return userRepository.findDTOByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return new UserDTO(user);
     }
 
     /**
@@ -44,9 +42,8 @@ public class UserController {
      * @throws ResponseStatusException if the user is not found.
      */
     @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable Long id) {
-        User user = userRepository.findById(id)
+    public UserResponseDTO getUserById(@PathVariable Long id) {
+        return userRepository.findDTOById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return new UserDTO(user);
     }
 }

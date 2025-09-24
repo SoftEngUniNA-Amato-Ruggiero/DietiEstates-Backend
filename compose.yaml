@@ -9,7 +9,6 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_PROFILES_ACTIVE: prod
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: dietiestatesdb
@@ -23,7 +22,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./src/main/resources/db/migration:/docker-entrypoint-initdb.d
+    #  - ./src/main/resources/db/migration:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/
       # set shared memory limit
       - type: tmpfs

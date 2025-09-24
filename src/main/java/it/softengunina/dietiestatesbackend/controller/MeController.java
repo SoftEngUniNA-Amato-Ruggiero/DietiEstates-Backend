@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller;
 
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserWithAgencyDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
@@ -34,12 +34,11 @@ public class MeController {
      * @throws ResponseStatusException if the user is not affiliated with any agency
      */
     @GetMapping
-    public UserWithAgencyDTO getMe() {
+    public BusinessUserResponseDTO getMe() {
         String cognitoSub = tokenService.getCognitoSub();
 
         BusinessUser user = businessUserRepository.findByUser_CognitoSub(cognitoSub)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not affiliated with any agency"));
-
-        return new UserWithAgencyDTO(user);
+        return new BusinessUserResponseDTO(user);
     }
 }

@@ -1,29 +1,26 @@
-# Run locally
+# Run natively
 
 ## Requirements
 - Java 21 or higher
 - A running PostgreSQL database with GIS extension
 
-## Profiles
-- Development profile (default) - generates the schema of the db from the annotations
-- Production profile (`prod`) - validates the schema of the db from the annotations, assumes one already exists
-
 ## Configure environment variables
-- Rename the file `.env.example` to `.env` and set the `DB_PASSWORD` environment variable. Optionally you can set `DB_HOST` (default: localhost) and `DB_PORT` (default: 5432).
-- The database connection will use username `admin` and database name `dietiestatesdb`.
+Rename the file `.env.example` to `.env` and set the following environment variables:
+- `DB_PASSWORD` is the only mandatory variable to configure and has no default value. 
+- `DB_USER` (default: `admin`).
+- `DB_HOST` (default: `localhost`).
+- `DB_PORT` (default: `5432`).
+- `DB_NAME` (default: `dietiestatesdb`).
+- `FRONTEND_URL` (default: `http://localhost:4200`).
 
 ## On Windows
 - Build
 ```bash
-./mvnw.cmd clean install
+.\mvnw.cmd clean install
 ```
-- Run (development profile)
+- Run
 ```bash
-./mvnw.cmd spring-boot:run
-```
-- Run (production profile)
-```bash
-./mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=prod
+.\mvnw.cmd spring-boot:run
 ```
 
 ## On Linux or macOS
@@ -35,10 +32,6 @@
 ```bash
 ./mvnw spring-boot:run
 ```
-- Run (production profile)
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
-```
 
 # Run using Docker
 
@@ -47,7 +40,8 @@
 - Docker Compose
 
 ## Configure environment variables
-- Rename the file `./secrets/postgres-passwd.txt.example` to `./secrets/postgres-passwd.txt` and set the database password.
+Rename the file `./secrets/postgres-passwd.txt.example` to `./secrets/postgres-passwd.txt` and set the database password.
+The other environment variables can be set in the `docker-compose.yml` file if you want to override the default values.
 
 ## Build and Run
 ```bash

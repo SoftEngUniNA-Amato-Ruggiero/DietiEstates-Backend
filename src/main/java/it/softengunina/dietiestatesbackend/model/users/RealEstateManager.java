@@ -11,7 +11,13 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class RealEstateManager extends RealEstateAbstractUser {
+
     public RealEstateManager(@NonNull BusinessUser businessUser) {
         super(businessUser);
+    }
+
+    @Override
+    public String getSpecificRoleName() {
+        return this.getClass().getSimpleName();
     }
 }

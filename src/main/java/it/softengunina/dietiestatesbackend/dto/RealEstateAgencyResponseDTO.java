@@ -1,14 +1,15 @@
 package it.softengunina.dietiestatesbackend.dto;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class RealEstateAgencyDTO {
+public class RealEstateAgencyResponseDTO {
+    @NotNull
     private Long id;
 
     @NotBlank
@@ -17,7 +18,7 @@ public class RealEstateAgencyDTO {
     @NotBlank
     private String name;
 
-    public RealEstateAgencyDTO (RealEstateAgency agency) {
+    public RealEstateAgencyResponseDTO(RealEstateAgency agency) {
         this.id = agency.getId();
         this.iban = agency.getIban();
         this.name = agency.getName();

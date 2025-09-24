@@ -7,11 +7,11 @@ import lombok.*;
 
 import java.util.Set;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class UserDTO {
+public class UserResponseDTO {
+    @NotNull
     private Long id;
 
     @NotBlank
@@ -20,7 +20,7 @@ public class UserDTO {
     @NotNull
     private Set<Role> roles;
 
-    public UserDTO(User user) {
+    public UserResponseDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.roles = user.getRoles();

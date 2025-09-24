@@ -5,7 +5,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "dietiestates_roles")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @EqualsAndHashCode
 public class Role {
@@ -17,7 +17,7 @@ public class Role {
 
     @Column(unique = true, nullable = false)
     @Getter
-    @Setter
+    @Setter(AccessLevel.PROTECTED)
     private String name;
 
     public Role(String name) {
