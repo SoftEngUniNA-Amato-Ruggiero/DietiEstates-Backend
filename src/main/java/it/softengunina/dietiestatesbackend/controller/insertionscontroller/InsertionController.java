@@ -4,6 +4,10 @@ import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.Inserti
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.BaseInsertionRepository;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @RestController
 @RequestMapping("/insertions")
+@Slf4j
 public class InsertionController {
     private final BaseInsertionRepository<BaseInsertion> insertionRepository;
     private final InsertionDTOVisitorImpl visitor;
@@ -24,15 +29,14 @@ public class InsertionController {
         this.visitor = visitor;
     }
 
-    /**
-     * Retrieves a paginated list of all insertions.
-     *
-     * @param pageable Pagination information.
-     * @return A page of insertion DTOs.
-     */
     @GetMapping
-    public Page<InsertionResponseDTO> getInsertions(Pageable pageable) {
-        return insertionRepository.findAll(pageable).map(i -> i.accept(visitor));
+    public Page<InsertionResponseDTO> getInsertionsByLocation(@RequestParam double lat, @RequestParam double lng, @RequestParam double distance, Pageable pageable) {
+        Point point = new GeometryFactory().createPoint(new Coordinate(lng, lat));
+        point.setSRID(4326);
+        log.info("Searching insertions near point: {} with distance: {}", point, distance);
+        Page<InsertionResponseDTO> page = insertionRepository.findByLocationNear(point, distance, pageable).map(i -> i.accept(visitor));
+        page.forEach(dto -> log.info("Found insertion: {}", dto));
+        return page;
     }
 
     /**

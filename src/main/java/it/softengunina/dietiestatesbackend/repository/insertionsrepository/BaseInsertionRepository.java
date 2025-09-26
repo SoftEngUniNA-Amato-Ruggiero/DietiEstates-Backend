@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface BaseInsertionRepository<T extends BaseInsertion> extends JpaRepository<T, Long> {
     Page<T> findByUploader(RealEstateAgent uploader, Pageable pageable);
@@ -24,6 +25,7 @@ public interface BaseInsertionRepository<T extends BaseInsertion> extends JpaRep
     Page<T> findByTagsContaining(String tag, Pageable pageable);
     Page<T> findByDescriptionContaining(String description, Pageable pageable);
 
+    @Transactional
     @Query("SELECT i FROM BaseInsertion i WHERE function('ST_DWithin', i.address.location, :point, :distance) = true")
     Page<T> findByLocationNear(@Param("point") Point point, @Param("distance") double distance, Pageable pageable);
 }
