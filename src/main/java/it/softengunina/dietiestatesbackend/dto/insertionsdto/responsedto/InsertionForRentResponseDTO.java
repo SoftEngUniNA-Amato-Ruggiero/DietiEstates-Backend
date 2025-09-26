@@ -1,20 +1,17 @@
-package it.softengunina.dietiestatesbackend.dto.insertionsdto;
+package it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto;
 
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionWithRent;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class InsertionWithRentDTO extends BaseInsertionDTO {
-    @NotNull
+public class InsertionForRentResponseDTO extends BaseInsertionResponseDTO implements InsertionWithRentResponseDTO {
     private Double rent;
 
-    public InsertionWithRentDTO(InsertionWithRent insertion) {
+    public InsertionForRentResponseDTO(InsertionWithRent insertion) {
         super(insertion);
         this.rent = insertion.getRent();
     }

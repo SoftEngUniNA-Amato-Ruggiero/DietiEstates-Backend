@@ -1,8 +1,8 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
-import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
+import it.softengunina.dietiestatesbackend.repository.insertionsrepository.BaseInsertionRepository;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +16,10 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/insertions")
 public class InsertionController {
-    private final InsertionRepository<BaseInsertion> insertionRepository;
+    private final BaseInsertionRepository<BaseInsertion> insertionRepository;
     private final InsertionDTOVisitorImpl visitor;
 
-    public InsertionController(InsertionRepository<BaseInsertion> insertionRepository, InsertionDTOVisitorImpl visitor) {
+    public InsertionController(BaseInsertionRepository<BaseInsertion> insertionRepository, InsertionDTOVisitorImpl visitor) {
         this.insertionRepository = insertionRepository;
         this.visitor = visitor;
     }
@@ -31,7 +31,7 @@ public class InsertionController {
      * @return A page of insertion DTOs.
      */
     @GetMapping
-    public Page<InsertionDTO> getInsertions(Pageable pageable) {
+    public Page<InsertionResponseDTO> getInsertions(Pageable pageable) {
         return insertionRepository.findAll(pageable).map(i -> i.accept(visitor));
     }
 
@@ -43,7 +43,7 @@ public class InsertionController {
      * @throws ResponseStatusException if the insertion is not found.
      */
     @GetMapping("/{id}")
-    public InsertionDTO getInsertionById(@PathVariable Long id) {
+    public InsertionResponseDTO getInsertionById(@PathVariable Long id) {
         BaseInsertion insertion = insertionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Insertion not found"));
         return insertion.accept(visitor);

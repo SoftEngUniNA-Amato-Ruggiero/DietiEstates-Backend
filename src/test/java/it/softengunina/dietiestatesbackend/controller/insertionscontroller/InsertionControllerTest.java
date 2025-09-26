@@ -1,13 +1,13 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithRentDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionForRentResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.insertions.*;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
-import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
+import it.softengunina.dietiestatesbackend.repository.insertionsrepository.BaseInsertionRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,7 +37,7 @@ class InsertionControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    InsertionRepository<BaseInsertion> repository;
+    BaseInsertionRepository<BaseInsertion> repository;
     @MockitoBean
     RealEstateAgentRepository agentRepository;
     @MockitoBean
@@ -56,8 +57,14 @@ class InsertionControllerTest {
         insertionId = 1L;
         agency = new RealEstateAgency("iban", "agencyName");
         uploader = new BusinessUser(new BaseUser("username", "sub"), agency);
-        insertion = new InsertionForRent(address, new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 900.0);
-    }
+        insertion = InsertionForRent.builder()
+                .description("description")
+                .tags(Set.of("tag1, tag2"))
+                .address(address)
+                .rent(90000.0)
+                .uploader(uploader.getUser())
+                .agency(uploader.getAgency())
+                .build();    }
 
     @Test
     void getInsertions() throws Exception {
@@ -65,7 +72,7 @@ class InsertionControllerTest {
                 .thenReturn(new PageImpl<>(Collections.singletonList(insertion)));
 
         Mockito.when(visitor.visit(Mockito.any(InsertionForRent.class)))
-                        .thenAnswer(i -> new InsertionWithRentDTO(i.getArgument(0, InsertionForRent.class)));
+                        .thenAnswer(i -> new InsertionForRentResponseDTO(i.getArgument(0, InsertionForRent.class)));
 
         mockMvc.perform(get("/insertions"))
                 .andExpect(status().isOk())

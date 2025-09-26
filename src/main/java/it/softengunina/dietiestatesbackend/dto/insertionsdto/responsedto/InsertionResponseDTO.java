@@ -1,14 +1,16 @@
-package it.softengunina.dietiestatesbackend.dto.insertionsdto;
+package it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto;
 
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
-import it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails;
 
-public interface InsertionDTO {
+import java.util.Set;
+
+public interface InsertionResponseDTO {
     Long getId();
+    String getDescription();
+    Set<String> getTags();
     Address getAddress();
-    InsertionDetails getDetails();
     UserResponseDTO getUploader();
     RealEstateAgencyRequestDTO getAgency();
 }

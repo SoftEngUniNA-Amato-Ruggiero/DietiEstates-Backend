@@ -1,8 +1,8 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionRequest;
-import it.softengunina.dietiestatesbackend.model.Address;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForSaleRequestDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
+import it.softengunina.dietiestatesbackend.factory.insertionfactory.InsertionForSaleFactory;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForSaleRepository;
@@ -10,7 +10,6 @@ import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUs
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import jakarta.validation.Valid;
-import org.geojson.Feature;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,15 +25,18 @@ public class InsertionForSaleController {
     private final InsertionForSaleRepository insertionForSaleRepository;
     private final BusinessUserRepository businessUserRepository;
     private final InsertionDTOVisitorImpl insertionDTOVisitor;
+    private final InsertionForSaleFactory insertionForSaleFactory;
     private final TokenService tokenService;
 
     public InsertionForSaleController(InsertionForSaleRepository insertionForSaleRepository,
                                       BusinessUserRepository businessUserRepository,
                                       InsertionDTOVisitorImpl insertionDTOVisitor,
+                                      InsertionForSaleFactory insertionForSaleFactory,
                                       TokenService tokenService) {
         this.insertionForSaleRepository = insertionForSaleRepository;
         this.businessUserRepository = businessUserRepository;
         this.insertionDTOVisitor = insertionDTOVisitor;
+        this.insertionForSaleFactory = insertionForSaleFactory;
         this.tokenService = tokenService;
     }
 
@@ -45,7 +47,7 @@ public class InsertionForSaleController {
      * @return A page of insertion DTOs.
      */
     @GetMapping
-    public Page<InsertionDTO> getInsertions(Pageable pageable) {
+    public Page<InsertionResponseDTO> getInsertionsForSale(Pageable pageable) {
         return insertionForSaleRepository.findAll(pageable).map(i -> i.accept(insertionDTOVisitor));
     }
 
@@ -58,14 +60,13 @@ public class InsertionForSaleController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public InsertionDTO createInsertion(@Valid @RequestBody InsertionRequest req) {
+    public InsertionResponseDTO createInsertionForSale(@Valid @RequestBody InsertionForSaleRequestDTO req) {
         BusinessUser uploader = businessUserRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot create an insertion."));
 
-        Feature feature = req.getAddress().getFeatures().getFirst();
-        Address address = Address.fromProperties(feature.getProperties());
-
-        InsertionForSale insertion = insertionForSaleRepository.save(new InsertionForSale(address, req.getDetails(), uploader.getUser(), uploader.getAgency(), req.getPrice()));
+        InsertionForSale insertion = insertionForSaleRepository.save(
+                insertionForSaleFactory.createInsertion(req, uploader)
+        );
         return insertion.accept(insertionDTOVisitor);
     }
 }

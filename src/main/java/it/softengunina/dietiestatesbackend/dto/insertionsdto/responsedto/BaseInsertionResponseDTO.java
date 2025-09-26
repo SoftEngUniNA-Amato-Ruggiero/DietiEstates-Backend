@@ -1,30 +1,42 @@
-package it.softengunina.dietiestatesbackend.dto.insertionsdto;
+package it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto;
 
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
-import it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseInsertionDTO implements InsertionDTO {
-    private Long id;
-    @Valid
+@EqualsAndHashCode
+@ToString
+public class BaseInsertionResponseDTO implements InsertionResponseDTO {
     @NotNull
+    private Long id;
+    @NotNull
+    private String description;
+    @NotNull
+    private Set<String> tags;
+    @NotNull
+    @Valid
     private Address address;
-    private InsertionDetails details;
+    @NotNull
+    @Valid
     private UserResponseDTO uploader;
+    @NotNull
+    @Valid
     private RealEstateAgencyRequestDTO agency;
 
-    protected BaseInsertionDTO(Insertion insertion) {
+    public BaseInsertionResponseDTO (@NonNull Insertion insertion) {
         this.id = insertion.getId();
+        this.description = insertion.getDescription();
+        this.tags = insertion.getTags();
         this.address = insertion.getAddress();
-        this.details = insertion.getDetails();
         this.uploader = new UserResponseDTO(insertion.getUploader());
         this.agency = new RealEstateAgencyRequestDTO(insertion.getAgency());
     }
