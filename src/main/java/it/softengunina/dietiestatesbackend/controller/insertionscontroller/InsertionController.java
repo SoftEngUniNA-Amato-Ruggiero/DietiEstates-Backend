@@ -33,10 +33,7 @@ public class InsertionController {
     public Page<InsertionResponseDTO> getInsertionsByLocation(@RequestParam double lat, @RequestParam double lng, @RequestParam double distance, Pageable pageable) {
         Point point = new GeometryFactory().createPoint(new Coordinate(lng, lat));
         point.setSRID(4326);
-        log.info("Searching insertions near point: {} with distance: {}", point, distance);
-        Page<InsertionResponseDTO> page = insertionRepository.findByLocationNear(point, distance, pageable).map(i -> i.accept(visitor));
-        page.forEach(dto -> log.info("Found insertion: {}", dto));
-        return page;
+        return insertionRepository.findByLocationNear(point, distance, pageable).map(i -> i.accept(visitor));
     }
 
     /**

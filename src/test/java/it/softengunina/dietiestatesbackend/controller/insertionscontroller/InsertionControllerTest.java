@@ -12,6 +12,7 @@ import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstate
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Point;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -68,13 +69,24 @@ class InsertionControllerTest {
 
     @Test
     void getInsertions() throws Exception {
-        Mockito.when(repository.findAll(Mockito.any(Pageable.class)))
+        double lat = 44.40565;
+        double lng = 8.946256;
+        double distance = 2.0;
+        int pageNumber = 0;
+        int pageSize = 10;
+
+        Mockito.when(repository.findByLocationNear(Mockito.any(Point.class), Mockito.any(double.class), Mockito.any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(insertion)));
 
         Mockito.when(visitor.visit(Mockito.any(InsertionForRent.class)))
                         .thenAnswer(i -> new InsertionForRentResponseDTO(i.getArgument(0, InsertionForRent.class)));
 
-        mockMvc.perform(get("/insertions"))
+        mockMvc.perform(get("/insertions")
+                        .param("lat", String.valueOf(lat))
+                        .param("lng", String.valueOf(lng))
+                        .param("distance", String.valueOf(distance))
+                        .param("page", String.valueOf(pageNumber))
+                        .param("size", String.valueOf(pageSize)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[0]").exists());
