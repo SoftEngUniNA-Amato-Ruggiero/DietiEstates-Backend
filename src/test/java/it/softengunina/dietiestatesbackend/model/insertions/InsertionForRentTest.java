@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithRentDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionForRentResponseDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithRentResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -9,6 +9,8 @@ import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -25,16 +27,23 @@ class InsertionForRentTest {
 
         agency = new RealEstateAgency("iban", "agencyName");
         uploader = new BusinessUser(new BaseUser("username", "sub"), agency);
-        insertion = new InsertionForRent(address, new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 900.0);
+        insertion = InsertionForRent.builder()
+                .description("description")
+                .tags(Set.of("tag1, tag2"))
+                .address(address)
+                .rent(90000.0)
+                .uploader(uploader.getUser())
+                .agency(uploader.getAgency())
+                .build();
         visitor = new InsertionDTOVisitorImpl();
     }
 
     @Test
     void accept() {
-        InsertionDTO dto = insertion.accept(visitor);
+        InsertionWithRentResponseDTO dto = insertion.accept(visitor);
         assertAll( () -> {
-            assertInstanceOf(InsertionWithRentDTO.class, dto);
-            assertEquals(insertion.getRent(), ((InsertionWithRentDTO) dto).getRent());
+            assertInstanceOf(InsertionForRentResponseDTO.class, dto);
+            assertEquals(insertion.getRent(), dto.getRent());
         });
     }
 }

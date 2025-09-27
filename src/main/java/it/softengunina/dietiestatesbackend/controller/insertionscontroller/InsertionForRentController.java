@@ -1,7 +1,8 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForRentRequestDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
+import it.softengunina.dietiestatesbackend.factory.insertionfactory.InsertionForRentFactory;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForRent;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForRentRepository;
@@ -21,30 +22,48 @@ public class InsertionForRentController {
     private final InsertionForRentRepository insertionForRentRepository;
     private final BusinessUserRepository businessUserRepository;
     private final InsertionDTOVisitorImpl insertionDTOVisitor;
+    private final InsertionForRentFactory insertionForRentFactory;
     private final TokenService tokenService;
 
     public InsertionForRentController(InsertionForRentRepository insertionForRentRepository,
                                       BusinessUserRepository businessUserRepository,
                                       InsertionDTOVisitorImpl insertionDTOVisitor,
+                                      InsertionForRentFactory insertionForRentFactory,
                                       TokenService tokenService) {
         this.insertionForRentRepository = insertionForRentRepository;
         this.businessUserRepository = businessUserRepository;
         this.insertionDTOVisitor = insertionDTOVisitor;
+        this.insertionForRentFactory = insertionForRentFactory;
         this.tokenService = tokenService;
     }
 
+    /**
+     * Retrieves a paginated list of all insertions for rent.
+     *
+     * @param pageable Pagination information.
+     * @return A page of insertion DTOs.
+     */
     @GetMapping
-    public Page<InsertionDTO> getInsertions(Pageable pageable) {
+    public Page<InsertionResponseDTO> getInsertions(Pageable pageable) {
         return insertionForRentRepository.findAll(pageable).map(i -> i.accept(insertionDTOVisitor));
     }
 
+    /**
+     * Creates a new insertion for rent.
+     *
+     * @param req The insertion data.
+     * @return The created insertion DTO.
+     * @throws ResponseStatusException if the user is not a business user.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public InsertionDTO createInsertion(@Valid @RequestBody InsertionWithPriceDTO req) {
+    public InsertionResponseDTO createInsertionForRent(@Valid @RequestBody InsertionForRentRequestDTO req) {
         BusinessUser uploader = businessUserRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Only business users can create insertions."));
 
-        InsertionForRent insertion = insertionForRentRepository.save(new InsertionForRent(req.getAddress(), req.getDetails(), uploader.getUser(), uploader.getAgency(), req.getPrice()));
+        InsertionForRent insertion = insertionForRentRepository.save(
+                insertionForRentFactory.createInsertion(req, uploader)
+        );
         return insertion.accept(insertionDTOVisitor);
     }
 }

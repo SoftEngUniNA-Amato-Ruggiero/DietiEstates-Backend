@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionWithPriceDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionForSaleResponseDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithPriceResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -9,6 +9,8 @@ import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -24,16 +26,23 @@ class InsertionForSaleTest {
         Address address = mock(Address.class);
         agency = new RealEstateAgency("iban", "agencyName");
         uploader = new BusinessUser(new BaseUser("username", "sub"), agency);
-        insertion = new InsertionForSale(address, new InsertionDetails(), uploader.getUser(), uploader.getAgency(), 90000.0);
+        insertion = InsertionForSale.builder()
+                .description("description")
+                .tags(Set.of("tag1, tag2"))
+                .address(address)
+                .price(90000.0)
+                .uploader(uploader.getUser())
+                .agency(uploader.getAgency())
+                .build();
         visitor = new InsertionDTOVisitorImpl();
     }
 
     @Test
     void accept() {
-        InsertionDTO dto = insertion.accept(visitor);
+        InsertionWithPriceResponseDTO dto = insertion.accept(visitor);
         assertAll( () -> {
-            assertInstanceOf(InsertionWithPriceDTO.class, dto);
-            assertEquals(insertion.getPrice(), ((InsertionWithPriceDTO) dto).getPrice());
+            assertInstanceOf(InsertionForSaleResponseDTO.class, dto);
+            assertEquals(insertion.getPrice(), dto.getPrice());
         });
     }
 }

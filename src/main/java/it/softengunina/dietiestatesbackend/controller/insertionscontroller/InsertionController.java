@@ -1,9 +1,13 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
-import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionRepository;
+import it.softengunina.dietiestatesbackend.repository.insertionsrepository.BaseInsertionRepository;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,24 +19,24 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @RestController
 @RequestMapping("/insertions")
+@Slf4j
 public class InsertionController {
-    private final InsertionRepository<BaseInsertion> insertionRepository;
+    private final BaseInsertionRepository<BaseInsertion> insertionRepository;
     private final InsertionDTOVisitorImpl visitor;
 
-    public InsertionController(InsertionRepository<BaseInsertion> insertionRepository, InsertionDTOVisitorImpl visitor) {
+    public InsertionController(BaseInsertionRepository<BaseInsertion> insertionRepository, InsertionDTOVisitorImpl visitor) {
         this.insertionRepository = insertionRepository;
         this.visitor = visitor;
     }
 
-    /**
-     * Retrieves a paginated list of all insertions.
-     *
-     * @param pageable Pagination information.
-     * @return A page of insertion DTOs.
-     */
     @GetMapping
-    public Page<InsertionDTO> getInsertions(Pageable pageable) {
-        return insertionRepository.findAll(pageable).map(i -> i.accept(visitor));
+    public Page<InsertionResponseDTO> getInsertionsByLocation(@RequestParam double lat, @RequestParam double lng, @RequestParam double distance, Pageable pageable) {
+        Point point = new GeometryFactory().createPoint(new Coordinate(lng, lat));
+        point.setSRID(4326);
+        log.info("Searching insertions near point: {} with distance: {}", point, distance);
+        Page<InsertionResponseDTO> page = insertionRepository.findByLocationNear(point, distance, pageable).map(i -> i.accept(visitor));
+        page.forEach(dto -> log.info("Found insertion: {}", dto));
+        return page;
     }
 
     /**
@@ -43,7 +47,7 @@ public class InsertionController {
      * @throws ResponseStatusException if the insertion is not found.
      */
     @GetMapping("/{id}")
-    public InsertionDTO getInsertionById(@PathVariable Long id) {
+    public InsertionResponseDTO getInsertionById(@PathVariable Long id) {
         BaseInsertion insertion = insertionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Insertion not found"));
         return insertion.accept(visitor);

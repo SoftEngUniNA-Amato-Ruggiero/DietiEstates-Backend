@@ -38,7 +38,6 @@ services:
 
 volumes:
   pgdata:
-  site:
 
 secrets:
   DB_PASSWORD:

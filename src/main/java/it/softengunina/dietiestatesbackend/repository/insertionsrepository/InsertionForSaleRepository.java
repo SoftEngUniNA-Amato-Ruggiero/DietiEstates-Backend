@@ -4,7 +4,7 @@ import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface InsertionForSaleRepository extends InsertionRepository<InsertionForSale> {
+public interface InsertionForSaleRepository extends BaseInsertionRepository<InsertionForSale> {
     Page<InsertionForSale> findByPrice(Double price, Pageable pageable);
     Page<InsertionForSale> findByPriceLessThanEqual(Double price, Pageable pageable);
     Page<InsertionForSale> findByPriceGreaterThanEqual(Double price, Pageable pageable);

@@ -1,15 +1,19 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.InsertionDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
-import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitor;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitor;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Abstract class for a generic type of insertion about real estates, uploaded by a Real Estate Agent.
@@ -19,8 +23,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @EqualsAndHashCode
+@ToString
 public abstract class BaseInsertion implements Insertion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +32,20 @@ public abstract class BaseInsertion implements Insertion {
     @Setter(AccessLevel.PROTECTED)
     private Long id;
 
-    @Embedded
+    @Column(name = "description", columnDefinition = "TEXT")
+    @Lob
     @Getter
     @Setter
-    private InsertionDetails details;
+    private String description;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "insertion_tags",
+            joinColumns = @JoinColumn(name = "insertion_id")
+    )
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @Column(name = "tag")
+    private final Set<String> tags = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "address_id", nullable = false)
@@ -57,21 +71,52 @@ public abstract class BaseInsertion implements Insertion {
     @Setter
     private RealEstateAgency agency;
 
-    protected BaseInsertion(@NonNull Address address,
-                            InsertionDetails details,
+    protected BaseInsertion(@NonNull String description,
+                            @NonNull Set<String> tags,
+                            @NonNull Address address,
                             @NonNull BaseUser uploader,
-                            RealEstateAgency agency) {
+                            @NonNull RealEstateAgency agency) {
+        this.description = description;
+        this.tags.addAll(tags);
         this.address = address;
-        this.details = details;
         this.uploader = uploader;
         this.agency = agency;
     }
 
-    /**
-     * Gets the correct DTO for the specific type of insertion,
-     * allowing polymorphic creation of the correct DTOs for the concrete insertion type.
-     *
-     * @return InsertionDTO specific for the type of insertion.
-     */
-    public abstract InsertionDTO accept(InsertionDTOVisitor visitor);
+    public abstract InsertionResponseDTO accept(InsertionDTOVisitor visitor);
+
+    @Override
+    public Set<String> getTags() {
+        return Collections.unmodifiableSet(tags);
+    }
+
+    @Override
+    public boolean hasTag(@NonNull String tag) {
+        return this.tags.contains(tag);
+    }
+
+    @Override
+    public boolean addTag(@NonNull String tag) {
+        return this.tags.add(tag);
+    }
+
+    @Override
+    public boolean addAllTagsFromSet(@NonNull Set<String> tags) {
+        return this.tags.addAll(tags);
+    }
+
+    @Override
+    public boolean removeTag(@NonNull String tag) {
+        return this.tags.remove(tag);
+    }
+
+    @Override
+    public boolean removeAllTagsFromSet(@NonNull Set<String> tags) {
+        return this.tags.removeAll(tags);
+    }
+
+    @Override
+    public void clearTags() {
+        this.tags.clear();
+    }
 }

@@ -1,21 +1,17 @@
-package it.softengunina.dietiestatesbackend.dto.insertionsdto;
+package it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto;
 
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionWithPrice;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class InsertionWithPriceDTO extends BaseInsertionDTO {
-    @NotNull
+public class InsertionForSaleResponseDTO extends BaseInsertionResponseDTO implements InsertionWithPriceResponseDTO {
     private Double price;
 
-    public InsertionWithPriceDTO(InsertionWithPrice insertion) {
+    public InsertionForSaleResponseDTO(InsertionWithPrice insertion) {
         super(insertion);
         this.price = insertion.getPrice();
     }
