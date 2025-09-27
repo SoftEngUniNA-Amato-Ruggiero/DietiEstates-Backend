@@ -4,25 +4,27 @@ import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class RealEstateAgentTest {
-    RealEstateAgent agent;
+class RealEstateManagerTest {
+
+    RealEstateManager manager;
     RealEstateAgency agency;
 
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("testIban", "testAgency");
-        agent = new RealEstateAgent(new BusinessUser(new BaseUser("testAgent", "testSub"), agency));
+        manager = new RealEstateManager(new BusinessUser(new BaseUser("testManager", "testSub"), agency));
     }
 
     @Test
     void getAgency() {
-        assertEquals(agency, agent.getAgency());
+        assertEquals(agency, manager.getAgency());
     }
 
     @Test
     void getSpecificRoleName() {
-        assertEquals("RealEstateAgent", agent.getSpecificRoleName());
+        assertEquals("RealEstateManager", manager.getSpecificRoleName());
     }
+
 }
