@@ -1,6 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
 import it.softengunina.dietiestatesbackend.listeners.UserRoleListener;
+import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Delegate;
@@ -27,5 +28,9 @@ public abstract class RealEstateAbstractUser implements UserWithAgency, UserWith
 
     protected RealEstateAbstractUser(@NonNull BusinessUser businessUser) {
         this.businessUser = businessUser;
+    }
+
+    protected RealEstateAbstractUser(@NonNull String username, @NonNull String cognitoSub, @NonNull RealEstateAgency agency) {
+        this.businessUser = new BusinessUser(username, cognitoSub, agency);
     }
 }

@@ -3,12 +3,14 @@ package it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto;
 import it.softengunina.dietiestatesbackend.dto.AddressDTO;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
+import it.softengunina.dietiestatesbackend.model.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -35,7 +37,7 @@ public class BaseInsertionResponseDTO implements InsertionResponseDTO {
     public BaseInsertionResponseDTO (@NonNull Insertion insertion) {
         this.id = insertion.getId();
         this.description = insertion.getDescription();
-        this.tags = insertion.getTags();
+        this.tags = insertion.getTags().stream().map(Tag::getName).collect(Collectors.toSet());
         this.address = new AddressDTO(insertion.getAddress());
         this.uploader = new UserResponseDTO(insertion.getUploader());
         this.agency = new RealEstateAgencyRequestDTO(insertion.getAgency());

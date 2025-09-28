@@ -4,6 +4,7 @@ import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.Inserti
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithPriceResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.Tag;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
@@ -28,7 +29,7 @@ class InsertionForSaleTest {
         uploader = new BusinessUser(new BaseUser("username", "sub"), agency);
         insertion = InsertionForSale.builder()
                 .description("description")
-                .tags(Set.of("tag1, tag2"))
+                .tags(Tag.fromNames(Set.of("tag1, tag2")))
                 .address(address)
                 .price(90000.0)
                 .uploader(uploader.getUser())

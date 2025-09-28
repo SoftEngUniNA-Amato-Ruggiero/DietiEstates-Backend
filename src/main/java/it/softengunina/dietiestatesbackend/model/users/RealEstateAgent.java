@@ -1,4 +1,5 @@
 package it.softengunina.dietiestatesbackend.model.users;
+import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,13 @@ public class RealEstateAgent extends RealEstateAbstractUser {
 
     public RealEstateAgent(@NonNull BusinessUser businessUser) {
         super(businessUser);
+    }
+
+    @Builder
+    public RealEstateAgent(@NonNull String username,
+                           @NonNull String cognitoSub,
+                           @NonNull RealEstateAgency agency) {
+        super(username, cognitoSub, agency);
     }
 
     @Override

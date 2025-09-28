@@ -19,7 +19,7 @@ public class BusinessUser implements UserWithAgency {
     @Id
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     @MapsId
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
@@ -38,6 +38,14 @@ public class BusinessUser implements UserWithAgency {
     public BusinessUser(@NonNull BaseUser user,
                         @NonNull RealEstateAgency agency) {
         this.user = user;
+        this.agency = agency;
+    }
+
+    @Builder
+    public BusinessUser(@NonNull String username,
+                        @NonNull String cognitoSub,
+                        @NonNull RealEstateAgency agency) {
+        this.user = new BaseUser(username, cognitoSub);
         this.agency = agency;
     }
 }

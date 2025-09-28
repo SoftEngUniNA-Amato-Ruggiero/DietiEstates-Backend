@@ -1,8 +1,10 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
+import it.softengunina.dietiestatesbackend.listeners.InsertionTagListener;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.Tag;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitor;
 import jakarta.persistence.*;
@@ -21,6 +23,7 @@ import java.util.Set;
 @Entity
 @Table(name = "insertions")
 @Inheritance(strategy = InheritanceType.JOINED)
+@EntityListeners(InsertionTagListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -38,14 +41,13 @@ public abstract class BaseInsertion implements Insertion {
     @Setter
     private String description;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
             name = "insertion_tags",
-            joinColumns = @JoinColumn(name = "insertion_id")
+            joinColumns = @JoinColumn(name = "insertion_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    @Column(name = "tag")
-    private final Set<String> tags = new HashSet<>();
+    private final Set<Tag> tags = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "address_id", nullable = false)
@@ -72,7 +74,7 @@ public abstract class BaseInsertion implements Insertion {
     private RealEstateAgency agency;
 
     protected BaseInsertion(@NonNull String description,
-                            @NonNull Set<String> tags,
+                            @NonNull Set<Tag> tags,
                             @NonNull Address address,
                             @NonNull BaseUser uploader,
                             @NonNull RealEstateAgency agency) {
@@ -86,32 +88,38 @@ public abstract class BaseInsertion implements Insertion {
     public abstract InsertionResponseDTO accept(InsertionDTOVisitor visitor);
 
     @Override
-    public Set<String> getTags() {
+    public Set<Tag> getTags() {
         return Collections.unmodifiableSet(tags);
     }
 
     @Override
-    public boolean hasTag(@NonNull String tag) {
+    public void setTags(@NonNull Set<Tag> tags) {
+        this.clearTags();
+        this.addAllTagsFromSet(tags);
+    }
+
+    @Override
+    public boolean hasTag(@NonNull Tag tag) {
         return this.tags.contains(tag);
     }
 
     @Override
-    public boolean addTag(@NonNull String tag) {
+    public boolean addTag(@NonNull Tag tag) {
         return this.tags.add(tag);
     }
 
     @Override
-    public boolean addAllTagsFromSet(@NonNull Set<String> tags) {
+    public boolean addAllTagsFromSet(@NonNull Set<Tag> tags) {
         return this.tags.addAll(tags);
     }
 
     @Override
-    public boolean removeTag(@NonNull String tag) {
+    public boolean removeTag(@NonNull Tag tag) {
         return this.tags.remove(tag);
     }
 
     @Override
-    public boolean removeAllTagsFromSet(@NonNull Set<String> tags) {
+    public boolean removeAllTagsFromSet(@NonNull Set<Tag> tags) {
         return this.tags.removeAll(tags);
     }
 

@@ -2,6 +2,7 @@ package it.softengunina.dietiestatesbackend.factory.insertionfactory;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForRentRequestDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
+import it.softengunina.dietiestatesbackend.model.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForRent;
 import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
 import org.geojson.Feature;
@@ -15,7 +16,7 @@ public class InsertionForRentFactory implements InsertionFactory<InsertionForRen
 
         return InsertionForRent.builder()
                 .description(req.getDescription())
-                .tags(req.getTags())
+                .tags(Tag.fromNames(req.getTags()))
                 .address(address)
                 .uploader(uploader.getUser())
                 .agency(uploader.getAgency())

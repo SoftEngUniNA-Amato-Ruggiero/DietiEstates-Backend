@@ -3,6 +3,7 @@ package it.softengunina.dietiestatesbackend.model.insertions;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithPriceResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
+import it.softengunina.dietiestatesbackend.model.Tag;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitor;
 import jakarta.persistence.Entity;
@@ -36,7 +37,7 @@ public class InsertionForSale extends BaseInsertion implements InsertionWithPric
      */
     @Builder
     public InsertionForSale(@NonNull String description,
-                            @NonNull Set<String> tags,
+                            @NonNull Set<Tag> tags,
                             @NonNull Address address,
                             @NonNull BaseUser uploader,
                             @NonNull RealEstateAgency agency,
