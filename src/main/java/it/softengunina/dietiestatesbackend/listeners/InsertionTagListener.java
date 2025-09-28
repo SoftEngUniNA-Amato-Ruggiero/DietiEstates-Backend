@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.listeners;
 
 import it.softengunina.dietiestatesbackend.model.Tag;
-import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
+import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import it.softengunina.dietiestatesbackend.repository.TagRepository;
 import jakarta.persistence.PrePersist;
 import org.springframework.context.annotation.Lazy;
@@ -19,7 +19,7 @@ public class InsertionTagListener {
     }
 
     @PrePersist
-    public void assignTag(BaseInsertion insertion)  {
+    public void assignTag(Insertion insertion)  {
         Set<Tag> managedTags = insertion.getTags().stream()
                 .map(tag -> tagRepository.findByName(tag.getName())
                         .orElseGet(() -> tagRepository.saveAndFlush(new Tag(tag.getName()))))
