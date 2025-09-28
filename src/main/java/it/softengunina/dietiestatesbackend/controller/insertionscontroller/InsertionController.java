@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 /**
  * Controller for handling requests related to all kinds of insertions.
  */
@@ -43,6 +45,26 @@ public class InsertionController {
         Point point = new GeometryFactory().createPoint(new Coordinate(lng, lat));
         point.setSRID(4326);
         return insertionRepository.findByLocationNear(point, distance, pageable).map(i -> i.accept(visitor));
+    }
+
+    @GetMapping("/search")
+    public Page<InsertionResponseDTO> searchInsertionsByLocationAndTag(@RequestParam double lat,
+                                                                       @RequestParam double lng,
+                                                                       @RequestParam double distance,
+                                                                       @RequestParam(required = false) String tags,
+                                                                       Pageable pageable) {
+        Point point = new GeometryFactory().createPoint(new Coordinate(lng, lat));
+        point.setSRID(4326);
+
+        log.info(tags);
+
+        if (tags == null || tags.isEmpty()){
+            return insertionRepository.findByLocationNear(point, distance, pageable).map(i -> i.accept(visitor));
+        } else {
+            List<String> tagsList = List.of(tags.split(","));
+            return insertionRepository.findByLocationNearAndAllTagsPresent(point, distance, tagsList, tagsList.size(), pageable).map(i -> i.accept(visitor));
+        }
+
     }
 
     /**
