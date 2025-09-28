@@ -11,6 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
+
 public interface BaseInsertionRepository<T extends BaseInsertion> extends JpaRepository<T, Long> {
     Page<T> findByUploader(RealEstateAgent uploader, Pageable pageable);
 
@@ -23,9 +26,22 @@ public interface BaseInsertionRepository<T extends BaseInsertion> extends JpaRep
     Page<T> findByAddress_Country(String country, Pageable pageable);
 
     Page<T> findByTagsContaining(String tag, Pageable pageable);
+    Page<T> findByTagsIn(Set<String> tags, Pageable pageable);
     Page<T> findByDescriptionContaining(String description, Pageable pageable);
 
     @Transactional
-    @Query("SELECT i FROM BaseInsertion i WHERE function('ST_DWithin', i.address.location, :point, :distance) = true")
+    @Query("SELECT i FROM #{#entityName} i WHERE function('ST_DWithin', i.address.location, :point, :distance) = true")
     Page<T> findByLocationNear(@Param("point") Point point, @Param("distance") double distance, Pageable pageable);
+
+    @Transactional
+    @Query("SELECT i FROM #{#entityName} i JOIN i.tags t " +
+            "WHERE function('ST_DWithin', i.address.location, :point, :distance) = true " +
+            "AND t.name IN :tags " +
+            "GROUP BY i " +
+            "HAVING COUNT(DISTINCT t.name) = :tagCount")
+    Page<T> findByLocationNearAndAllTagsPresent(@Param("point") Point point,
+                                                @Param("distance") double distance,
+                                                @Param("tags") List<String> tags,
+                                                @Param("tagCount") int tagCount,
+                                                Pageable pageable);
 }
