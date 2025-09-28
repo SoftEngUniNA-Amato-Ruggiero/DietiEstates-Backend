@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Controller for handling requests related to insertions for rent.
+ */
 @RestController
 @RequestMapping("/insertions/for-rent")
 public class InsertionForRentController {

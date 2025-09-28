@@ -29,6 +29,15 @@ public class InsertionController {
         this.visitor = visitor;
     }
 
+    /**
+     * Retrieves a paginated list of insertions near a specified location within a given distance.
+     *
+     * @param lat the latitude of the location.
+     * @param lng the longitude of the location.
+     * @param distance the distance in degrees.
+     * @param pageable pagination information.
+     * @return A page of insertion DTOs.
+     */
     @GetMapping
     public Page<InsertionResponseDTO> getInsertionsByLocation(@RequestParam double lat, @RequestParam double lng, @RequestParam double distance, Pageable pageable) {
         Point point = new GeometryFactory().createPoint(new Coordinate(lng, lat));
