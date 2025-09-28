@@ -7,15 +7,13 @@ import it.softengunina.dietiestatesbackend.model.insertions.InsertionForRent;
 import org.geojson.Feature;
 import org.geojson.FeatureCollection;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-
+import static org.junit.jupiter.api.Assertions.*;
 class InsertionForRentFactoryTest {
     
     @Test
@@ -31,20 +29,22 @@ class InsertionForRentFactoryTest {
         request.setAddress(featureCollection);
         request.setRent(500.0);
 
-        RealEstateAgency agency = mock (RealEstateAgency.class);
+        RealEstateAgency agency = Mockito.mock (RealEstateAgency.class);
         var uploader = new it.softengunina.dietiestatesbackend.model.users.BusinessUser("Luigi", "Ruggiero", agency);
 
         InsertionForRentFactory insertionForRentFactory = new InsertionForRentFactory();
 
         InsertionForRent insertion = insertionForRentFactory.createInsertion(request, uploader);
 
-        assertEquals("Villa in vendita in zona residenziale con stazione metro (che non esiste, infatti questo è un test", insertion.getDescription());
-        assertEquals(Address.fromProperties(feature.getProperties()), insertion.getAddress());
-        assertEquals(uploader.getUser(), insertion.getUploader());
-        assertEquals(agency, insertion.getAgency());
-        assertEquals(500.0, insertion.getRent());
-        assertTrue(insertion.getTags().stream().anyMatch(tag -> tag.getName().equals("giardino")));
-        assertTrue(insertion.getTags().stream().anyMatch(tag -> tag.getName().equals("garage")));
+        assertAll(
+                () -> assertEquals("Villa in vendita in zona residenziale con stazione metro (che non esiste, infatti questo è un test", insertion.getDescription()),
+                () -> assertEquals(Address.fromProperties(feature.getProperties()), insertion.getAddress()),
+                () -> assertEquals(uploader.getUser(), insertion.getUploader()),
+                () -> assertEquals(agency, insertion.getAgency()),
+                () -> assertEquals(500.0, insertion.getRent()),
+                () -> assertTrue(insertion.getTags().stream().anyMatch(tag -> tag.getName().equals("giardino"))),
+                () -> assertTrue(insertion.getTags().stream().anyMatch(tag -> tag.getName().equals("garage")))
+        );
     }
 
     private static Feature getFeature() {
