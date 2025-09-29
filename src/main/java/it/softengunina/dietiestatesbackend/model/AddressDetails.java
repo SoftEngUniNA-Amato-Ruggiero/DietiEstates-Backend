@@ -2,6 +2,7 @@ package it.softengunina.dietiestatesbackend.model;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @EqualsAndHashCode
 @ToString
 public class AddressDetails {
@@ -33,6 +34,32 @@ public class AddressDetails {
     private String plusCodeShort;
     private String iso3166Dash2;
     private String placeId;
+
+    public AddressDetails(AddressDetails other) {
+        if (other == null) {
+            return;
+        }
+        this.countryCode = other.countryCode;
+        this.housenumber = other.housenumber;
+        this.street = other.street;
+        this.country = other.country;
+        this.state = other.state;
+        this.stateCode = other.stateCode;
+        this.district = other.district;
+        this.city = other.city;
+        this.suburb = other.suburb;
+        this.county = other.county;
+        this.countyCode = other.countyCode;
+        this.resultType = other.resultType;
+        this.postcode = other.postcode;
+        this.formatted = other.formatted;
+        this.addressLine1 = other.addressLine1;
+        this.addressLine2 = other.addressLine2;
+        this.plusCode = other.plusCode;
+        this.plusCodeShort = other.plusCodeShort;
+        this.iso3166Dash2 = other.iso3166Dash2;
+        this.placeId = other.placeId;
+    }
 
     public static AddressDetails fromProperties(Map<String, Object> map) {
         return AddressDetails.builder()
