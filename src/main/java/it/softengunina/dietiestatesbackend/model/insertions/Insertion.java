@@ -15,6 +15,10 @@ public interface Insertion {
     Address getAddress();
     User getUploader();
     RealEstateAgency getAgency();
+    Double getSize();
+    Integer getNumberOfRooms();
+    Integer getFloor();
+    Boolean getHasElevator();
 
     void setTags(@NonNull Set<Tag> tags);
     boolean hasTag(@NonNull Tag tag);

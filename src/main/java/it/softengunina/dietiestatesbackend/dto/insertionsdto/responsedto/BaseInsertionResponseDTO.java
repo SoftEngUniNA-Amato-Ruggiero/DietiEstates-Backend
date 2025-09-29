@@ -34,6 +34,11 @@ public class BaseInsertionResponseDTO implements InsertionResponseDTO {
     @Valid
     private RealEstateAgencyRequestDTO agency;
 
+    private Double size;
+    private Integer numberOfRooms;
+    private Integer floor;
+    private Boolean hasElevator;
+
     public BaseInsertionResponseDTO (@NonNull Insertion insertion) {
         this.id = insertion.getId();
         this.description = insertion.getDescription();
@@ -41,5 +46,9 @@ public class BaseInsertionResponseDTO implements InsertionResponseDTO {
         this.address = new AddressDTO(insertion.getAddress());
         this.uploader = new UserResponseDTO(insertion.getUploader());
         this.agency = new RealEstateAgencyRequestDTO(insertion.getAgency());
+        this.size = insertion.getSize();
+        this.numberOfRooms = insertion.getNumberOfRooms();
+        this.floor = insertion.getFloor();
+        this.hasElevator = insertion.getHasElevator();
     }
 }

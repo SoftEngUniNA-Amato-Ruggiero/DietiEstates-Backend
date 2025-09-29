@@ -73,56 +73,119 @@ public abstract class BaseInsertion implements Insertion {
     @Setter
     private RealEstateAgency agency;
 
-    protected BaseInsertion(@NonNull String description,
-                            @NonNull Set<Tag> tags,
+    @Embedded
+    @Getter
+    @Setter
+    private InsertionDetails details;
+
+    protected BaseInsertion(String description,
+                            Set<Tag> tags,
                             @NonNull Address address,
                             @NonNull BaseUser uploader,
-                            @NonNull RealEstateAgency agency) {
+                            @NonNull RealEstateAgency agency,
+                            InsertionDetails details) {
         this.description = description;
         this.tags.addAll(tags);
         this.address = address;
         this.uploader = uploader;
         this.agency = agency;
+        this.details = details;
     }
 
+    public Double getSize() {
+        return details != null ? details.getSize() : null;
+    }
+
+    public Integer getNumberOfRooms() {
+        return details != null ? details.getNumberOfRooms() : null;
+    }
+
+    public Integer getFloor() {
+        return details != null ? details.getFloor() : null;
+    }
+
+    public Boolean getHasElevator() {
+        return details != null ? details.getHasElevator() : null;
+    }
+
+    /**
+     * Accept method for the producing a response DTO through the InsertionDTOVisitor.
+     * @param visitor the InsertionDTOVisitor to accept
+     * @return the DTO produced by the visitor
+     */
     public abstract InsertionResponseDTO accept(InsertionDTOVisitor visitor);
 
+    /**
+     * Returns an unmodifiable view of the tags associated with the insertion.
+     */
     @Override
     public Set<Tag> getTags() {
         return Collections.unmodifiableSet(tags);
     }
 
+    /**
+     * Replaces the current set of tags with the provided set.
+     * @param tags the new set of tags to associate with the insertion
+     */
     @Override
     public void setTags(@NonNull Set<Tag> tags) {
         this.clearTags();
         this.addAllTagsFromSet(tags);
     }
 
+    /**
+     * Checks if a specific tag is associated with the insertion.
+     * @param tag the tag to check for association
+     * @return true if the tag is associated with the insertion, false otherwise
+     */
     @Override
     public boolean hasTag(@NonNull Tag tag) {
         return this.tags.contains(tag);
     }
 
+    /**
+     * Adds a tag to the insertion's set of tags.
+     * @param tag the tag to be added
+     * @return true if the tag was added successfully, false if it was already present
+     */
     @Override
     public boolean addTag(@NonNull Tag tag) {
         return this.tags.add(tag);
     }
 
+    /**
+     * Adds multiple tags to the insertion's set of tags.
+     * @param tags the set of tags to be added
+     * @return true if at least one tag was added successfully, false if all were already present
+     */
     @Override
     public boolean addAllTagsFromSet(@NonNull Set<Tag> tags) {
         return this.tags.addAll(tags);
     }
 
+    /**
+     * Removes a tag from the insertion's set of tags.
+     * @param tag the tag to be removed
+     * @return true if the tag was removed successfully, false if it was not present
+     */
     @Override
     public boolean removeTag(@NonNull Tag tag) {
         return this.tags.remove(tag);
     }
 
+    /**
+     * Removes multiple tags from the insertion's set of tags.
+     * @param tags the set of tags to be removed
+     * @return true if at least one tag was removed successfully, false if none were present
+     */
     @Override
     public boolean removeAllTagsFromSet(@NonNull Set<Tag> tags) {
         return this.tags.removeAll(tags);
     }
 
+    /**
+     * Clears all tags associated with the insertion.
+     */
     @Override
     public void clearTags() {
         this.tags.clear();

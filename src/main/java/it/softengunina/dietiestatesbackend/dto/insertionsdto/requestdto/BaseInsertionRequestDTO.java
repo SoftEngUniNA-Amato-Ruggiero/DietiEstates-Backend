@@ -18,4 +18,9 @@ public abstract class BaseInsertionRequestDTO {
     private Set<String> tags;
     @NonNull
     private FeatureCollection address;
+
+    private Double size;
+    private Integer numberOfRooms;
+    private Integer floor;
+    private Boolean hasElevator;
 }
