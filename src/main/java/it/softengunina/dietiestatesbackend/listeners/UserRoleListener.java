@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.listeners;
 
-import it.softengunina.dietiestatesbackend.model.Role;
+import it.softengunina.dietiestatesbackend.model.users.Role;
 import it.softengunina.dietiestatesbackend.model.users.UserWithSpecificRole;
 import it.softengunina.dietiestatesbackend.repository.RoleRepository;
 import jakarta.persistence.PrePersist;

@@ -2,7 +2,6 @@ package it.softengunina.dietiestatesbackend.model.insertions;
 
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.Tag;
 import it.softengunina.dietiestatesbackend.model.users.User;
 import lombok.NonNull;
 

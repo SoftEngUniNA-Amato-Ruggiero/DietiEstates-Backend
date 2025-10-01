@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.Role;
+import it.softengunina.dietiestatesbackend.model.users.Role;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;

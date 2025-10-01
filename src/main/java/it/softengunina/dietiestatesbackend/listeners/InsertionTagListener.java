@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.listeners;
 
-import it.softengunina.dietiestatesbackend.model.Tag;
+import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import it.softengunina.dietiestatesbackend.repository.TagRepository;
 import jakarta.persistence.PrePersist;

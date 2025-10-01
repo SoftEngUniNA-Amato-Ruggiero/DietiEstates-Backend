@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.dto.usersdto;
 
-import it.softengunina.dietiestatesbackend.model.Role;
+import it.softengunina.dietiestatesbackend.model.users.Role;
 import it.softengunina.dietiestatesbackend.model.users.User;
 import jakarta.validation.constraints.*;
 import lombok.*;

@@ -3,13 +3,13 @@ package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionForRentResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.Tag;
+import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.*;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
-import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.BaseInsertionRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
+import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,9 +41,9 @@ class InsertionControllerTest {
     @MockitoBean
     BaseInsertionRepository<BaseInsertion> repository;
     @MockitoBean
-    RealEstateAgentRepository agentRepository;
+    BaseUserRepository userRepository;
     @MockitoBean
-    RealEstateAgencyRepository agencyRepository;
+    TokenService tokenService;
     @MockitoBean
     InsertionDTOVisitorImpl visitor;
 

@@ -1,8 +1,13 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
+import it.softengunina.dietiestatesbackend.exceptions.AuthenticationNotFoundException;
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
+import it.softengunina.dietiestatesbackend.model.SavedSearch;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.BaseInsertionRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
+import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Coordinate;
@@ -11,10 +16,11 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Controller for handling requests related to all kinds of insertions.
@@ -23,10 +29,14 @@ import java.util.List;
 @RequestMapping("/insertions")
 @Slf4j
 public class InsertionController {
+    private final TokenService tokenService;
+    private final BaseUserRepository userRepository;
     private final BaseInsertionRepository<BaseInsertion> insertionRepository;
     private final InsertionDTOVisitorImpl visitor;
 
-    public InsertionController(BaseInsertionRepository<BaseInsertion> insertionRepository, InsertionDTOVisitorImpl visitor) {
+    public InsertionController(TokenService tokenService, BaseUserRepository userRepository, BaseInsertionRepository<BaseInsertion> insertionRepository, InsertionDTOVisitorImpl visitor) {
+        this.tokenService = tokenService;
+        this.userRepository = userRepository;
         this.insertionRepository = insertionRepository;
         this.visitor = visitor;
     }
@@ -48,23 +58,60 @@ public class InsertionController {
     }
 
     @GetMapping("/search")
-    public Page<InsertionResponseDTO> searchInsertionsByLocationAndTag(@RequestParam double lat,
-                                                                       @RequestParam double lng,
-                                                                       @RequestParam double distance,
+    public Page<InsertionResponseDTO> searchInsertionsByLocationAndTag(@RequestParam Double lat,
+                                                                       @RequestParam Double lng,
+                                                                       @RequestParam Double distance,
+                                                                       @RequestParam(required = false) Integer minSize,
+                                                                       @RequestParam(required = false) Integer minNumberOfRooms,
+                                                                       @RequestParam(required = false) Integer maxFloor,
+                                                                       @RequestParam(required = false) Boolean hasElevator,
                                                                        @RequestParam(required = false) String tags,
                                                                        Pageable pageable) {
+
         Point point = new GeometryFactory().createPoint(new Coordinate(lng, lat));
         point.setSRID(4326);
 
-        log.info(tags);
+        Set<String> tagsSet = (tags == null || tags.isEmpty()) ? Set.of() : Set.of(tags.split(","));
 
-        if (tags == null || tags.isEmpty()){
-            return insertionRepository.findByLocationNear(point, distance, pageable).map(i -> i.accept(visitor));
-        } else {
-            List<String> tagsList = List.of(tags.split(","));
-            return insertionRepository.findByLocationNearAndAllTagsPresent(point, distance, tagsList, tagsList.size(), pageable).map(i -> i.accept(visitor));
+        try {
+            BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
+                    .orElseThrow(() -> new AuthenticationNotFoundException("User not found"));
+
+            SavedSearch savedSearch = SavedSearch.builder()
+                    .user(user)
+                    .geometry(point)
+                    .distance(distance)
+                    .tags(tagsSet)
+                    .build();
+
+            log.info("Search: {}", savedSearch);
+        } catch (UsernameNotFoundException e) {
+            // User not authenticated, proceed without saving the search
         }
 
+        if (tagsSet.isEmpty()) {
+            return insertionRepository.search_without_tags(
+                    point,
+                    distance,
+                    minSize,
+                    minNumberOfRooms,
+                    maxFloor,
+                    hasElevator,
+                    pageable
+            ).map(i -> i.accept(visitor));
+        } else {
+            return insertionRepository.search_with_tags(
+                    point,
+                    distance,
+                    tagsSet,
+                    tagsSet.size(),
+                    minSize,
+                    minNumberOfRooms,
+                    maxFloor,
+                    hasElevator,
+                    pageable
+            ).map(i -> i.accept(visitor));
+        }
     }
 
     /**

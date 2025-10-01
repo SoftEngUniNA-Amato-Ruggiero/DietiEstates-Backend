@@ -1,12 +1,13 @@
-package it.softengunina.dietiestatesbackend.model.searches;
+package it.softengunina.dietiestatesbackend.model;
 
-import it.softengunina.dietiestatesbackend.model.AddressDetails;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.locationtech.jts.geom.Geometry;
+
+import java.util.Set;
 
 //@Entity
 //@Table(name = "searches")
@@ -15,26 +16,41 @@ import org.locationtech.jts.geom.Geometry;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Search {
+public class SavedSearch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     @Setter(AccessLevel.PROTECTED)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Getter
     @Setter
     private BaseUser user;
 
-    @Column(columnDefinition = "geometry(Geometry, 4326)")
+    @Column(columnDefinition = "geometry(Geometry, 4326)", nullable = false)
     @Getter
     @Setter
     private Geometry geometry;
 
-    @Embedded
+    @Column(nullable = false)
     @Getter
     @Setter
-    private AddressDetails addressDetails;
+    private Double distance;
+
+    @ElementCollection
+    @CollectionTable(name = "search_tags", joinColumns = @JoinColumn(name = "search_id"))
+    @Column(name = "search_tag")
+    @Getter
+    @Setter
+    private Set<String> tags;
+
+    @Builder
+    public SavedSearch(BaseUser user, Geometry geometry, Double distance, Set<String> tags) {
+        this.user = user;
+        this.geometry = geometry;
+        this.distance = distance;
+        this.tags = tags;
+    }
 }

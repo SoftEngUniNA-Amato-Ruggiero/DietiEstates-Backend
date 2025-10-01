@@ -1,17 +1,14 @@
-package it.softengunina.dietiestatesbackend.model;
+package it.softengunina.dietiestatesbackend.model.users;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Entity
-@Table(name = "tags")
+@Table(name = "dietiestates_roles")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
-public class Tag {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
@@ -23,13 +20,7 @@ public class Tag {
     @Setter(AccessLevel.PROTECTED)
     private String name;
 
-    public Tag(String name) {
+    public Role(String name) {
         this.name = name;
-    }
-
-    public static Set<Tag> fromNames(Set<String> names) {
-        return names.stream()
-                .map(Tag::new)
-                .collect(Collectors.toSet());
     }
 }

@@ -2,7 +2,7 @@ package it.softengunina.dietiestatesbackend.factory.insertionfactory;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForRentRequestDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
-import it.softengunina.dietiestatesbackend.model.Tag;
+import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForRent;
 import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;

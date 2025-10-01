@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.repository;
 
-import it.softengunina.dietiestatesbackend.model.Tag;
+import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

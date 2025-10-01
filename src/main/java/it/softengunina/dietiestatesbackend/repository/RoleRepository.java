@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.repository;
 
-import it.softengunina.dietiestatesbackend.model.Role;
+import it.softengunina.dietiestatesbackend.model.users.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

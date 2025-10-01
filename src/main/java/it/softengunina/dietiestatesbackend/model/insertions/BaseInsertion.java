@@ -4,7 +4,6 @@ import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.Inserti
 import it.softengunina.dietiestatesbackend.listeners.InsertionTagListener;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
-import it.softengunina.dietiestatesbackend.model.Tag;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitor;
 import jakarta.persistence.*;

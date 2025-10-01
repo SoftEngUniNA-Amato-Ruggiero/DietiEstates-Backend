@@ -3,7 +3,7 @@ package it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto;
 import it.softengunina.dietiestatesbackend.dto.AddressDTO;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
-import it.softengunina.dietiestatesbackend.model.Tag;
+import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,5 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
-import it.softengunina.dietiestatesbackend.model.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
