@@ -1,19 +1,12 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.SearchRequestDTO;
+import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
-import it.softengunina.dietiestatesbackend.exceptions.AuthenticationNotFoundException;
-import it.softengunina.dietiestatesbackend.exceptions.JwtNotFoundException;
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
-import it.softengunina.dietiestatesbackend.model.SavedSearch;
-import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.BaseInsertionRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
-import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.services.SaveSearchService;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,82 +23,16 @@ import java.util.Set;
 @RequestMapping("/insertions")
 @Slf4j
 public class InsertionController {
-    private final TokenService tokenService;
-    private final BaseUserRepository userRepository;
     private final BaseInsertionRepository<BaseInsertion> insertionRepository;
+    private final SaveSearchService saveSearchService;
     private final InsertionDTOVisitorImpl visitor;
 
-    public InsertionController(TokenService tokenService, BaseUserRepository userRepository, BaseInsertionRepository<BaseInsertion> insertionRepository, InsertionDTOVisitorImpl visitor) {
-        this.tokenService = tokenService;
-        this.userRepository = userRepository;
+    public InsertionController(BaseInsertionRepository<BaseInsertion> insertionRepository,
+                               SaveSearchService saveSearchService,
+                               InsertionDTOVisitorImpl visitor) {
         this.insertionRepository = insertionRepository;
+        this.saveSearchService = saveSearchService;
         this.visitor = visitor;
-    }
-
-    /**
-     * Retrieves a paginated list of insertions near a specified location within a given distance.
-     *
-     * @param lat the latitude of the location.
-     * @param lng the longitude of the location.
-     * @param distance the distance in degrees.
-     * @param pageable pagination information.
-     * @return A page of insertion DTOs.
-     */
-    @GetMapping
-    public Page<InsertionResponseDTO> getInsertionsByLocation(@RequestParam double lat, @RequestParam double lng, @RequestParam double distance, Pageable pageable) {
-        Point point = new GeometryFactory().createPoint(new Coordinate(lng, lat));
-        point.setSRID(4326);
-        return insertionRepository.findByLocationNear(point, distance, pageable).map(i -> i.accept(visitor));
-    }
-
-    @GetMapping("/search")
-    public Page<InsertionResponseDTO> searchInsertionsByLocationAndTag(@ModelAttribute SearchRequestDTO searchReq,
-                                                                       Pageable pageable) {
-
-        Point point = new GeometryFactory().createPoint(new Coordinate(searchReq.getLng(), searchReq.getLat()));
-        point.setSRID(4326);
-
-        Set<String> tagsSet = (searchReq.getTags() == null || searchReq.getTags().isEmpty()) ? Set.of() : Set.of(searchReq.getTags().split(","));
-
-        try {
-            BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                    .orElseThrow(() -> new AuthenticationNotFoundException("User not found"));
-
-            SavedSearch savedSearch = SavedSearch.builder()
-                    .user(user)
-                    .geometry(point)
-                    .distance(searchReq.getDistance())
-                    .tags(tagsSet)
-                    .build();
-
-            log.info("Search: {}", savedSearch);
-        } catch (JwtNotFoundException e) {
-            // User not authenticated, proceed without saving the search
-        }
-
-        if (tagsSet.isEmpty()) {
-            return insertionRepository.search_without_tags(
-                    point,
-                    searchReq.getDistance(),
-                    searchReq.getMinSize(),
-                    searchReq.getMinNumberOfRooms(),
-                    searchReq.getMaxFloor(),
-                    searchReq.getHasElevator(),
-                    pageable
-            ).map(i -> i.accept(visitor));
-        } else {
-            return insertionRepository.search_with_tags(
-                    point,
-                    searchReq.getDistance(),
-                    tagsSet,
-                    tagsSet.size(),
-                    searchReq.getMinSize(),
-                    searchReq.getMinNumberOfRooms(),
-                    searchReq.getMaxFloor(),
-                    searchReq.getHasElevator(),
-                    pageable
-            ).map(i -> i.accept(visitor));
-        }
     }
 
     /**
@@ -120,5 +47,58 @@ public class InsertionController {
         BaseInsertion insertion = insertionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Insertion not found"));
         return insertion.accept(visitor);
+    }
+
+    /**
+     * Searches for insertions based on the provided search criteria.
+     * Also saves the search criteria for the authenticated user.
+     *
+     * @param searchReq The search criteria.
+     * @param pageable  Pagination information.
+     * @return A page of insertion DTOs matching the search criteria.
+     */
+    @GetMapping("/search")
+    public Page<InsertionResponseDTO> searchInsertions(@ModelAttribute SearchRequestDTO searchReq,
+                                                       Pageable pageable) {
+
+        saveSearchService.saveSearchForAuthenticatedUser(searchReq);
+        return getInsertionResponseDTOS(searchReq, pageable);
+    }
+
+    private Page<InsertionResponseDTO> getInsertionResponseDTOS(SearchRequestDTO searchReq, Pageable pageable) {
+        Point point = searchReq.getPoint();
+        Set<String> tagsSet = searchReq.getTagsSet();
+
+        if (tagsSet.isEmpty()) {
+            return searchInsertionsWithoutTags(searchReq, pageable, point);
+        } else {
+            return searchInsertionsWithTags(searchReq, pageable, point, tagsSet);
+        }
+    }
+
+    private Page<InsertionResponseDTO> searchInsertionsWithTags(SearchRequestDTO searchReq, Pageable pageable, Point point, Set<String> tagsSet) {
+        return insertionRepository.searchWithTags(
+                point,
+                searchReq.getDistance(),
+                tagsSet,
+                tagsSet.size(),
+                searchReq.getMinSize(),
+                searchReq.getMinNumberOfRooms(),
+                searchReq.getMaxFloor(),
+                searchReq.getHasElevator(),
+                pageable
+        ).map(i -> i.accept(visitor));
+    }
+
+    private Page<InsertionResponseDTO> searchInsertionsWithoutTags(SearchRequestDTO searchReq, Pageable pageable, Point point) {
+        return insertionRepository.searchWithoutTags(
+                point,
+                searchReq.getDistance(),
+                searchReq.getMinSize(),
+                searchReq.getMinNumberOfRooms(),
+                searchReq.getMaxFloor(),
+                searchReq.getHasElevator(),
+                pageable
+        ).map(i -> i.accept(visitor));
     }
 }

@@ -39,6 +39,14 @@ public class SavedSearch {
     @Setter
     private Double distance;
 
+    @Getter
+    @Setter
+    private Double minSize;
+
+    @Getter
+    @Setter
+    private Integer minNumberOfRooms;
+
     @ElementCollection
     @CollectionTable(name = "search_tags", joinColumns = @JoinColumn(name = "search_id"))
     @Column(name = "search_tag")

@@ -35,13 +35,13 @@ public interface BaseInsertionRepository<T extends BaseInsertion> extends JpaRep
             "AND (:minNumberOfRooms IS NULL OR i.details.numberOfRooms >= :minNumberOfRooms) " +
             "AND (:maxFloor IS NULL OR i.details.floor <= :maxFloor) " +
             "AND (:hasElevator IS NULL OR i.details.hasElevator = :hasElevator)")
-    Page<T> search_without_tags(@Param("point") Point point,
-                               @Param("distance") Double distance,
-                               @Param("minSize") Integer minSize,
-                               @Param("minNumberOfRooms") Integer minNumberOfRooms,
-                               @Param("maxFloor") Integer maxFloor,
-                               @Param("hasElevator") Boolean hasElevator,
-                               Pageable pageable);
+    Page<T> searchWithoutTags(@Param("point") Point point,
+                              @Param("distance") Double distance,
+                              @Param("minSize") Double minSize,
+                              @Param("minNumberOfRooms") Integer minNumberOfRooms,
+                              @Param("maxFloor") Integer maxFloor,
+                              @Param("hasElevator") Boolean hasElevator,
+                              Pageable pageable);
 
     @Transactional
     @Query("SELECT i FROM #{#entityName} i JOIN i.tags t " +
@@ -53,13 +53,13 @@ public interface BaseInsertionRepository<T extends BaseInsertion> extends JpaRep
             "AND t.name IN :tags " +
             "GROUP BY i " +
             "HAVING COUNT(t.name) = :tagCount")
-    Page<T> search_with_tags(@Param("point") Point point,
-                            @Param("distance") Double distance,
-                            @Param("tags") Set<String> tags,
-                            @Param("tagCount") int tagCount,
-                            @Param("minSize") Integer minSize,
-                            @Param("minNumberOfRooms") Integer minNumberOfRooms,
-                            @Param("maxFloor") Integer maxFloor,
-                            @Param("hasElevator") Boolean hasElevator,
-                            Pageable pageable);
+    Page<T> searchWithTags(@Param("point") Point point,
+                           @Param("distance") Double distance,
+                           @Param("tags") Set<String> tags,
+                           @Param("tagCount") int tagCount,
+                           @Param("minSize") Double minSize,
+                           @Param("minNumberOfRooms") Integer minNumberOfRooms,
+                           @Param("maxFloor") Integer maxFloor,
+                           @Param("hasElevator") Boolean hasElevator,
+                           Pageable pageable);
 }
