@@ -1,7 +1,9 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
+import it.softengunina.dietiestatesbackend.dto.SearchRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
 import it.softengunina.dietiestatesbackend.exceptions.AuthenticationNotFoundException;
+import it.softengunina.dietiestatesbackend.exceptions.JwtNotFoundException;
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
 import it.softengunina.dietiestatesbackend.model.SavedSearch;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -16,7 +18,6 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -58,20 +59,13 @@ public class InsertionController {
     }
 
     @GetMapping("/search")
-    public Page<InsertionResponseDTO> searchInsertionsByLocationAndTag(@RequestParam Double lat,
-                                                                       @RequestParam Double lng,
-                                                                       @RequestParam Double distance,
-                                                                       @RequestParam(required = false) Integer minSize,
-                                                                       @RequestParam(required = false) Integer minNumberOfRooms,
-                                                                       @RequestParam(required = false) Integer maxFloor,
-                                                                       @RequestParam(required = false) Boolean hasElevator,
-                                                                       @RequestParam(required = false) String tags,
+    public Page<InsertionResponseDTO> searchInsertionsByLocationAndTag(@ModelAttribute SearchRequestDTO searchReq,
                                                                        Pageable pageable) {
 
-        Point point = new GeometryFactory().createPoint(new Coordinate(lng, lat));
+        Point point = new GeometryFactory().createPoint(new Coordinate(searchReq.getLng(), searchReq.getLat()));
         point.setSRID(4326);
 
-        Set<String> tagsSet = (tags == null || tags.isEmpty()) ? Set.of() : Set.of(tags.split(","));
+        Set<String> tagsSet = (searchReq.getTags() == null || searchReq.getTags().isEmpty()) ? Set.of() : Set.of(searchReq.getTags().split(","));
 
         try {
             BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
@@ -80,35 +74,35 @@ public class InsertionController {
             SavedSearch savedSearch = SavedSearch.builder()
                     .user(user)
                     .geometry(point)
-                    .distance(distance)
+                    .distance(searchReq.getDistance())
                     .tags(tagsSet)
                     .build();
 
             log.info("Search: {}", savedSearch);
-        } catch (UsernameNotFoundException e) {
+        } catch (JwtNotFoundException e) {
             // User not authenticated, proceed without saving the search
         }
 
         if (tagsSet.isEmpty()) {
             return insertionRepository.search_without_tags(
                     point,
-                    distance,
-                    minSize,
-                    minNumberOfRooms,
-                    maxFloor,
-                    hasElevator,
+                    searchReq.getDistance(),
+                    searchReq.getMinSize(),
+                    searchReq.getMinNumberOfRooms(),
+                    searchReq.getMaxFloor(),
+                    searchReq.getHasElevator(),
                     pageable
             ).map(i -> i.accept(visitor));
         } else {
             return insertionRepository.search_with_tags(
                     point,
-                    distance,
+                    searchReq.getDistance(),
                     tagsSet,
                     tagsSet.size(),
-                    minSize,
-                    minNumberOfRooms,
-                    maxFloor,
-                    hasElevator,
+                    searchReq.getMinSize(),
+                    searchReq.getMinNumberOfRooms(),
+                    searchReq.getMaxFloor(),
+                    searchReq.getHasElevator(),
                     pageable
             ).map(i -> i.accept(visitor));
         }
