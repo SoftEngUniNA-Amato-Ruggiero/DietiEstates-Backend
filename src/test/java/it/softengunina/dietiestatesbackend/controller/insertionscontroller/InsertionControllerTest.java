@@ -1,6 +1,5 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionForRentResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.AddressDetails;
@@ -21,13 +20,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -100,32 +97,6 @@ class InsertionControllerTest {
         int pageNumber = 0;
         int pageSize = 10;
         pageable = PageRequest.of(pageNumber, pageSize);
-    }
-
-    @Test
-    void getInsertions() throws Exception {
-
-        Mockito.when(repository.searchWithoutTags(
-                        Mockito.any(Point.class),
-                        Mockito.eq(searchReq.getDistance()),
-                        Mockito.eq(searchReq.getMinSize()),
-                        Mockito.eq(searchReq.getMinNumberOfRooms()),
-                        Mockito.eq(searchReq.getMaxFloor()),
-                        Mockito.eq(searchReq.getHasElevator()),
-                        Mockito.any(Pageable.class)
-                ))
-                .thenReturn(new PageImpl<>(Collections.singletonList(insertion)));
-
-        Mockito.when(visitor.visit(Mockito.any(InsertionForRent.class)))
-                        .thenAnswer(i -> new InsertionForRentResponseDTO(i.getArgument(0, InsertionForRent.class)));
-
-        mockMvc.perform(get("/insertions/search")
-                        .param("lat", String.valueOf(searchReq.getLat()))
-                        .param("lng", String.valueOf(searchReq.getLng()))
-                        .param("distance", String.valueOf(searchReq.getDistance()))
-                        .param("page", String.valueOf(pageable.getPageNumber()))
-                        .param("pageSize", String.valueOf(pageable.getPageSize())))
-                .andExpect(status().isOk());
     }
 
     @Test

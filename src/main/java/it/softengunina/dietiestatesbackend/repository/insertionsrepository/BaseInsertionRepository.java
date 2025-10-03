@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.repository.insertionsrepository;
 
+import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
@@ -29,37 +30,13 @@ public interface BaseInsertionRepository<T extends BaseInsertion> extends JpaRep
     Page<T> findByLocationNear(@Param("point") Point point, @Param("distance") double distance, Pageable pageable);
 
     @Transactional
-    @Query("SELECT i FROM #{#entityName} i " +
-            "WHERE function('ST_DWithin', i.address.location, :point, :distance) = true " +
-            "AND (:minSize IS NULL OR i.details.size >= :minSize) " +
-            "AND (:minNumberOfRooms IS NULL OR i.details.numberOfRooms >= :minNumberOfRooms) " +
-            "AND (:maxFloor IS NULL OR i.details.floor <= :maxFloor) " +
-            "AND (:hasElevator IS NULL OR i.details.hasElevator = :hasElevator)")
-    Page<T> searchWithoutTags(@Param("point") Point point,
-                              @Param("distance") Double distance,
-                              @Param("minSize") Double minSize,
-                              @Param("minNumberOfRooms") Integer minNumberOfRooms,
-                              @Param("maxFloor") Integer maxFloor,
-                              @Param("hasElevator") Boolean hasElevator,
-                              Pageable pageable);
-
-    @Transactional
-    @Query("SELECT i FROM #{#entityName} i JOIN i.tags t " +
-            "WHERE function('ST_DWithin', i.address.location, :point, :distance) = true " +
-            "AND (:minSize IS NULL OR i.details.size >= :minSize) " +
-            "AND (:minNumberOfRooms IS NULL OR i.details.numberOfRooms >= :minNumberOfRooms) " +
-            "AND (:maxFloor IS NULL OR i.details.floor <= :maxFloor) " +
-            "AND (:hasElevator IS NULL OR i.details.hasElevator = :hasElevator) " +
-            "AND t.name IN :tags " +
+    @Query("SELECT i FROM #{#entityName} i LEFT JOIN i.tags t ON (:tagCount > 0 AND t.name in :tags) " +
+            "WHERE function('ST_DWithin', i.address.location, function('ST_SetSRID', function('ST_MakePoint', :#{#req.lng}, :#{#req.lat}), 4326), :#{#req.distance}) = true " +
+            "AND (:#{#req.minSize} IS NULL OR i.details.size >= :#{#req.minSize}) " +
+            "AND (:#{#req.minNumberOfRooms} IS NULL OR i.details.numberOfRooms >= :#{#req.minNumberOfRooms}) " +
+            "AND (:#{#req.maxFloor} IS NULL OR i.details.floor <= :#{#req.maxFloor}) " +
+            "AND (:#{#req.hasElevator} IS NULL OR i.details.hasElevator = :#{#req.hasElevator}) " +
             "GROUP BY i " +
-            "HAVING COUNT(t.name) = :tagCount")
-    Page<T> searchWithTags(@Param("point") Point point,
-                           @Param("distance") Double distance,
-                           @Param("tags") Set<String> tags,
-                           @Param("tagCount") int tagCount,
-                           @Param("minSize") Double minSize,
-                           @Param("minNumberOfRooms") Integer minNumberOfRooms,
-                           @Param("maxFloor") Integer maxFloor,
-                           @Param("hasElevator") Boolean hasElevator,
-                           Pageable pageable);
+            "HAVING :tagCount = 0 OR COUNT(t) = :tagCount")
+    Page<T> search(@Param("req")SearchRequestDTO req, Set<String> tags, Integer tagCount, Pageable pageable);
 }

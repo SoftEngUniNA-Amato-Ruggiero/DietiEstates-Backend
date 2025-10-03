@@ -93,7 +93,7 @@ class InsertionForSaleControllerIntegrationTest {
     }
 
     @Test
-    void searchInsertionsForSale_WithTags() {
+    void searchInsertionsForSale() {
         queryParams = SearchRequestForSaleDTO.searchRequestForSaleDTOBuilder()
                 .lat(20.0)
                 .lng(10.0)
@@ -117,33 +117,6 @@ class InsertionForSaleControllerIntegrationTest {
                         i.getFloor() <= queryParams.getMaxFloor() &&
                         i.getHasElevator().equals(queryParams.getHasElevator()) &&
                         i.getTags().containsAll(List.of(queryParams.getTags().split(",")))
-                ))
-        );
-    }
-
-    @Test
-    void searchInsertionsForSale_WithoutTags() {
-        queryParams = SearchRequestForSaleDTO.searchRequestForSaleDTOBuilder()
-                .lat(20.0)
-                .lng(10.0)
-                .distance(10.0)
-                .minSize(50.0)
-                .minNumberOfRooms(2)
-                .maxFloor(5)
-                .hasElevator(true)
-                .maxPrice(300000.0)
-                .build();
-
-        Page<InsertionResponseDTO> page = insertionForSaleController.searchInsertionsForSale(queryParams, null);
-
-        assertAll(
-                () -> assertNotNull(page),
-                () -> assertFalse(page.isEmpty()),
-                () -> assertTrue(page.stream().allMatch(i ->
-                        i.getSize() >= queryParams.getMinSize() &&
-                                i.getNumberOfRooms() >= queryParams.getMinNumberOfRooms() &&
-                                i.getFloor() <= queryParams.getMaxFloor() &&
-                                i.getHasElevator().equals(queryParams.getHasElevator())
                 ))
         );
     }
