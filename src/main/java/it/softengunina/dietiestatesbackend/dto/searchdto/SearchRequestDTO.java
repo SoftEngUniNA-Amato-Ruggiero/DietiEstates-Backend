@@ -36,7 +36,7 @@ public class SearchRequestDTO {
     }
 
     public SavedSearch toSavedSearch(BaseUser user) {
-        return SavedSearch.builder()
+        return SavedSearch.savedSearchBuilder()
                 .user(user)
                 .geometry(this.getPoint())
                 .distance(this.getDistance())

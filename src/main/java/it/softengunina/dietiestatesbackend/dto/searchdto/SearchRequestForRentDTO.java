@@ -29,7 +29,7 @@ public class SearchRequestForRentDTO extends SearchRequestDTO {
 
     @Override
     public SavedSearchForRent toSavedSearch(BaseUser user) {
-        return SavedSearchForRent.builder()
+        return SavedSearchForRent.savedSearchForRentBuilder()
                 .user(user)
                 .geometry(this.getPoint())
                 .distance(this.getDistance())

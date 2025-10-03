@@ -3,7 +3,6 @@ package it.softengunina.dietiestatesbackend.model.savedsearches;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.locationtech.jts.geom.Geometry;
@@ -15,7 +14,6 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SuperBuilder
 @EqualsAndHashCode
 @ToString
 public class SavedSearch {
@@ -64,6 +62,7 @@ public class SavedSearch {
     @Setter
     private Set<String> tags;
 
+    @Builder(builderMethodName = "savedSearchBuilder")
     public SavedSearch(BaseUser user, Geometry geometry, Double distance, Double minSize, Integer minNumberOfRooms, Integer maxFloor, Boolean hasElevator, Set<String> tags) {
         this.user = user;
         this.geometry = geometry;

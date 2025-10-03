@@ -29,7 +29,7 @@ public class SearchRequestForSaleDTO extends SearchRequestDTO {
 
     @Override
     public SavedSearchForSale toSavedSearch(BaseUser user) {
-        return SavedSearchForSale.builder()
+        return SavedSearchForSale.savedSearchForSaleBuilder()
                 .user(user)
                 .geometry(this.getPoint())
                 .distance(this.getDistance())
