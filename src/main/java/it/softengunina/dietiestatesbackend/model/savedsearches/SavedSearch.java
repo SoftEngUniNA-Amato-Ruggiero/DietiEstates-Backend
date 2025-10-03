@@ -1,19 +1,21 @@
-package it.softengunina.dietiestatesbackend.model;
+package it.softengunina.dietiestatesbackend.model.savedsearches;
 
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.locationtech.jts.geom.Geometry;
 
 import java.util.Set;
 
-//@Entity
-//@Table(name = "searches")
-//@Inheritance(strategy = InheritanceType.JOINED)
+@Entity
+@Table(name = "saved_searches")
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@SuperBuilder
 @EqualsAndHashCode
 @ToString
 public class SavedSearch {
@@ -47,6 +49,14 @@ public class SavedSearch {
     @Setter
     private Integer minNumberOfRooms;
 
+    @Getter
+    @Setter
+    private Integer maxFloor;
+
+    @Getter
+    @Setter
+    private Boolean hasElevator;
+
     @ElementCollection
     @CollectionTable(name = "search_tags", joinColumns = @JoinColumn(name = "search_id"))
     @Column(name = "search_tag")
@@ -54,11 +64,14 @@ public class SavedSearch {
     @Setter
     private Set<String> tags;
 
-    @Builder
-    public SavedSearch(BaseUser user, Geometry geometry, Double distance, Set<String> tags) {
+    public SavedSearch(BaseUser user, Geometry geometry, Double distance, Double minSize, Integer minNumberOfRooms, Integer maxFloor, Boolean hasElevator, Set<String> tags) {
         this.user = user;
         this.geometry = geometry;
         this.distance = distance;
+        this.minSize = minSize;
+        this.minNumberOfRooms = minNumberOfRooms;
+        this.maxFloor = maxFloor;
+        this.hasElevator = hasElevator;
         this.tags = tags;
     }
 }

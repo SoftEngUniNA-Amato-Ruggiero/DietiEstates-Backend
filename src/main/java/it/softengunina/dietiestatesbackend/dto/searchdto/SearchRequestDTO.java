@@ -1,5 +1,7 @@
 package it.softengunina.dietiestatesbackend.dto.searchdto;
 
+import it.softengunina.dietiestatesbackend.model.savedsearches.SavedSearch;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.locationtech.jts.geom.Coordinate;
@@ -32,5 +34,18 @@ public class SearchRequestDTO {
 
     public Set<String> getTagsSet() {
         return (this.getTags() == null || this.getTags().isEmpty()) ? Set.of() : Set.of(this.getTags().split(","));
+    }
+
+    public SavedSearch toSavedSearch(BaseUser user) {
+        return SavedSearch.builder()
+                .user(user)
+                .geometry(this.getPoint())
+                .distance(this.getDistance())
+                .minSize(this.getMinSize())
+                .minNumberOfRooms(this.getMinNumberOfRooms())
+                .maxFloor(this.getMaxFloor())
+                .hasElevator(this.getHasElevator())
+                .tags(this.getTagsSet())
+                .build();
     }
 }
