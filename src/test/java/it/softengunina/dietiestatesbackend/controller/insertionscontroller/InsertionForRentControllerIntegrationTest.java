@@ -94,7 +94,7 @@ class InsertionForRentControllerIntegrationTest {
 
     @Test
     void searchInsertionsForSale_WithTags() {
-        queryParams = SearchRequestForRentDTO.builder()
+        queryParams = SearchRequestForRentDTO.searchRequestForRentDTOBuilder()
                 .lat(40.0)
                 .lng(55.0)
                 .distance(50.0)
@@ -119,7 +119,7 @@ class InsertionForRentControllerIntegrationTest {
 
     @Test
     void searchInsertionsForSale_WithoutTags() {
-        queryParams = SearchRequestForRentDTO.builder()
+        queryParams = SearchRequestForRentDTO.searchRequestForRentDTOBuilder()
                 .lat(40.0)
                 .lng(55.0)
                 .distance(50.0)

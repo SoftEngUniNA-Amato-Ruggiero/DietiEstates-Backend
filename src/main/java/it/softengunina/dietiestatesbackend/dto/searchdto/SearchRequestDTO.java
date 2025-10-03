@@ -3,7 +3,6 @@ package it.softengunina.dietiestatesbackend.dto.searchdto;
 import it.softengunina.dietiestatesbackend.model.savedsearches.SavedSearch;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -13,7 +12,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+@Builder
 @EqualsAndHashCode
 @ToString
 public class SearchRequestDTO {

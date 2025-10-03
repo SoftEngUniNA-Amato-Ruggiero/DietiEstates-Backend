@@ -94,7 +94,7 @@ class InsertionForSaleControllerIntegrationTest {
 
     @Test
     void searchInsertionsForSale_WithTags() {
-        queryParams = SearchRequestForSaleDTO.builder()
+        queryParams = SearchRequestForSaleDTO.searchRequestForSaleDTOBuilder()
                 .lat(20.0)
                 .lng(10.0)
                 .distance(10.0)
@@ -123,7 +123,7 @@ class InsertionForSaleControllerIntegrationTest {
 
     @Test
     void searchInsertionsForSale_WithoutTags() {
-        queryParams = SearchRequestForSaleDTO.builder()
+        queryParams = SearchRequestForSaleDTO.searchRequestForSaleDTOBuilder()
                 .lat(20.0)
                 .lng(10.0)
                 .distance(10.0)

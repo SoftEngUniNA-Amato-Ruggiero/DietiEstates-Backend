@@ -2,17 +2,30 @@ package it.softengunina.dietiestatesbackend.dto.searchdto;
 
 import it.softengunina.dietiestatesbackend.model.savedsearches.SavedSearchForSale;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
 @EqualsAndHashCode(callSuper=true)
 @ToString(callSuper=true)
 public class SearchRequestForSaleDTO extends SearchRequestDTO {
     private Double maxPrice;
+
+    @Builder(builderMethodName = "searchRequestForSaleDTOBuilder")
+    public SearchRequestForSaleDTO(Double maxPrice,
+                                   Double lat,
+                                   Double lng,
+                                   Double distance,
+                                   Double minSize,
+                                   Integer minNumberOfRooms,
+                                   Integer maxFloor,
+                                   Boolean hasElevator,
+                                   String tags) {
+        super(lat, lng, distance, minSize, minNumberOfRooms, maxFloor, hasElevator, tags);
+        this.maxPrice = maxPrice;
+    }
 
     @Override
     public SavedSearchForSale toSavedSearch(BaseUser user) {
