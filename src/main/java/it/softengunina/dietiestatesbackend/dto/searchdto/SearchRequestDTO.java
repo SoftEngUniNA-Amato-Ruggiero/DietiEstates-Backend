@@ -1,6 +1,7 @@
 package it.softengunina.dietiestatesbackend.dto.searchdto;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -10,7 +11,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @EqualsAndHashCode
 @ToString
 public class SearchRequestDTO {

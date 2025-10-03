@@ -39,6 +39,53 @@ public class Address {
         this.location = location;
     }
 
+    @Builder
+    public Address(@NonNull Point location,
+                    String countryCode,
+                    String housenumber,
+                    String street,
+                    String country,
+                    String state,
+                    String stateCode,
+                    String district,
+                    String city,
+                    String suburb,
+                    String county,
+                    String countyCode,
+                    String resultType,
+                    String postcode,
+                    String formatted,
+                    String addressLine1,
+                    String addressLine2,
+                    String plusCode,
+                    String plusCodeShort,
+                    String iso3166Dash2,
+                    String placeId) {
+        this.location = location;
+        this.details = AddressDetails.builder()
+                .countryCode(countryCode)
+                .housenumber(housenumber)
+                .street(street)
+                .country(country)
+                .state(state)
+                .stateCode(stateCode)
+                .district(district)
+                .city(city)
+                .suburb(suburb)
+                .county(county)
+                .countyCode(countyCode)
+                .resultType(resultType)
+                .postcode(postcode)
+                .formatted(formatted)
+                .addressLine1(addressLine1)
+                .addressLine2(addressLine2)
+                .plusCode(plusCode)
+                .plusCodeShort(plusCodeShort)
+                .iso3166Dash2(iso3166Dash2)
+                .placeId(placeId)
+                .build();
+    }
+
     public static Address fromProperties(Map<String, Object> properties) {
         AddressDetails details = AddressDetails.fromProperties(properties);
 

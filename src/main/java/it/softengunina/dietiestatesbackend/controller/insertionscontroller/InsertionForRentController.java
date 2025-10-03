@@ -2,6 +2,7 @@ package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForRentRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithRentResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestForRentDTO;
 import it.softengunina.dietiestatesbackend.factory.insertionfactory.InsertionForRentFactory;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForRent;
@@ -57,7 +58,7 @@ public class InsertionForRentController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public InsertionResponseDTO createInsertionForRent(@Valid @RequestBody InsertionForRentRequestDTO req) {
+    public InsertionWithRentResponseDTO createInsertionForRent(@Valid @RequestBody InsertionForRentRequestDTO req) {
         BusinessUser uploader = businessUserRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Only business users can create insertions."));
 

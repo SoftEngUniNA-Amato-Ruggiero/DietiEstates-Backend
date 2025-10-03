@@ -13,4 +13,8 @@ public interface InsertionResponseDTO {
     AddressDTO getAddress();
     UserResponseDTO getUploader();
     RealEstateAgencyRequestDTO getAgency();
+    Double getSize();
+    Integer getNumberOfRooms();
+    Integer getFloor();
+    Boolean getHasElevator();
 }
