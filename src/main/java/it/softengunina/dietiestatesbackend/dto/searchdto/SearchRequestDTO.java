@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.dto.searchdto;
 
-import lombok.Data;
+import lombok.*;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -8,6 +8,11 @@ import org.locationtech.jts.geom.Point;
 import java.util.Set;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode
+@ToString
 public class SearchRequestDTO {
     private Double lat;
     private Double lng;
