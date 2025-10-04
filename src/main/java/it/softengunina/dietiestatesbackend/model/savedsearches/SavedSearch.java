@@ -23,7 +23,7 @@ public class SavedSearch {
     @Setter(AccessLevel.PROTECTED)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Getter
     @Setter
@@ -55,7 +55,7 @@ public class SavedSearch {
     @Setter
     private Boolean hasElevator;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "search_tags", joinColumns = @JoinColumn(name = "search_id"))
     @Column(name = "search_tag")
     @Getter
