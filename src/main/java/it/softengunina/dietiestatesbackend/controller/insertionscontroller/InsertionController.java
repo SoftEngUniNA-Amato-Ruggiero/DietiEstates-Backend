@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.BaseInsertion;
@@ -52,10 +53,9 @@ public class InsertionController {
      * @return A page of insertion DTOs matching the search criteria.
      */
     @GetMapping("/search")
-    public Page<InsertionResponseDTO> searchInsertions(@ModelAttribute SearchRequestDTO searchReq,
-                                                       Pageable pageable) {
+    public Page<InsertionSearchResultDTO> searchInsertions(@ModelAttribute SearchRequestDTO searchReq,
+                                                           Pageable pageable) {
         Set<String> tagsSet = searchReq.getTagsSet();
-        return insertionRepository.search(searchReq, tagsSet, tagsSet.size(), pageable)
-                .map(i -> i.accept(visitor));
+        return insertionRepository.search(searchReq, tagsSet, tagsSet.size(), pageable);
     }
 }

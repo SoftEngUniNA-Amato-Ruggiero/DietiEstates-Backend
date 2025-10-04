@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForSaleRequestDTO;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithPriceResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestForSaleDTO;
 import it.softengunina.dietiestatesbackend.factory.insertionfactory.InsertionForSaleFactory;
@@ -71,11 +71,10 @@ public class InsertionForSaleController {
      * @return A page of insertion DTOs matching the search criteria.
      */
     @GetMapping("/search")
-    public Page<InsertionResponseDTO> searchInsertionsForSale(@ModelAttribute SearchRequestForSaleDTO searchReq,
-                                                              Pageable pageable) {
+    public Page<InsertionSearchResultDTO> searchInsertionsForSale(@ModelAttribute SearchRequestForSaleDTO searchReq,
+                                                                  Pageable pageable) {
 
         Set<String> tagsSet = searchReq.getTagsSet();
-        return insertionForSaleRepository.search(searchReq, tagsSet, tagsSet.size(), pageable)
-                .map(i -> i.accept(insertionDTOVisitor));
+        return insertionForSaleRepository.search(searchReq, tagsSet, tagsSet.size(), pageable);
     }
 }

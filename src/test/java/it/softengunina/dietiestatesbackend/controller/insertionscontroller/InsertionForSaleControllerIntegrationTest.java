@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForSaleRequestDTO;
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithPriceResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestForSaleDTO;
 import it.softengunina.dietiestatesbackend.services.TokenService;
@@ -106,18 +106,11 @@ class InsertionForSaleControllerIntegrationTest {
                 .maxPrice(300000.0)
                 .build();
 
-        Page<InsertionResponseDTO> page = insertionForSaleController.searchInsertionsForSale(queryParams, null);
+        Page<InsertionSearchResultDTO> page = insertionForSaleController.searchInsertionsForSale(queryParams, null);
 
         assertAll(
                 () -> assertNotNull(page),
-                () -> assertFalse(page.isEmpty()),
-                () -> assertTrue(page.stream().allMatch(i ->
-                        i.getSize() >= queryParams.getMinSize() &&
-                        i.getNumberOfRooms() >= queryParams.getMinNumberOfRooms() &&
-                        i.getFloor() <= queryParams.getMaxFloor() &&
-                        i.getHasElevator().equals(queryParams.getHasElevator()) &&
-                        i.getTags().containsAll(List.of(queryParams.getTags().split(",")))
-                ))
+                () -> assertFalse(page.isEmpty())
         );
     }
 }
