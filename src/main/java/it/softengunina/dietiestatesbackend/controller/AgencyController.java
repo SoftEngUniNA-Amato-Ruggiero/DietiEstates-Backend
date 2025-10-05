@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
@@ -29,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Slf4j
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/agencies")
 public class AgencyController {
     private final RealEstateAgencyRepository agencyRepository;

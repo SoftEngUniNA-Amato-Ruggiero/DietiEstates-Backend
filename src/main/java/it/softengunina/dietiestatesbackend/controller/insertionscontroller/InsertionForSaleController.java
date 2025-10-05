@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForSaleRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithPriceResponseDTO;
@@ -52,6 +53,7 @@ public class InsertionForSaleController {
      * @throws ResponseStatusException if the user is not a business user.
      */
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     @ResponseStatus(HttpStatus.CREATED)
     public InsertionWithPriceResponseDTO createInsertionForSale(@Valid @RequestBody InsertionForSaleRequestDTO req) {
         BusinessUser uploader = businessUserRepository.findByUser_CognitoSub(tokenService.getCognitoSub())

@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
  * Provides endpoints to retrieve user information by username or ID.
  */
 @Slf4j
-@RestController
+@RestController@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/users")
 public class UserController {
     private final BaseUserRepository userRepository;

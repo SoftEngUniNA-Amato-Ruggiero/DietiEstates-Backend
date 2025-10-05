@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
  * Provides an endpoint to retrieve the user's details along with their associated agency.
  */
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/me")
 public class MeController {
     private final BusinessUserRepository businessUserRepository;

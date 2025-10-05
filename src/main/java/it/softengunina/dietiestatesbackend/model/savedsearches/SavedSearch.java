@@ -1,11 +1,15 @@
 package it.softengunina.dietiestatesbackend.model.savedsearches;
 
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.visitor.savedsearchvisitor.SavedSearchVisitor;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.locationtech.jts.geom.Geometry;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Set;
 
@@ -72,5 +76,9 @@ public class SavedSearch {
         this.maxFloor = maxFloor;
         this.hasElevator = hasElevator;
         this.tags = tags;
+    }
+
+    public Page<InsertionSearchResultDTO> getResults(SavedSearchVisitor visitor, Pageable pageable) {
+        return visitor.visit(this, pageable);
     }
 }

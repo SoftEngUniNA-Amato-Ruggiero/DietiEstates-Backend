@@ -1,5 +1,7 @@
 package it.softengunina.dietiestatesbackend.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestForRentDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestForSaleDTO;
@@ -12,6 +14,7 @@ import it.softengunina.dietiestatesbackend.repository.savedsearchesrepository.Sa
 import it.softengunina.dietiestatesbackend.repository.savedsearchesrepository.SavedSearchRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.visitor.savedsearchvisitor.SavedSearchVisitorImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/saved-searches")
 public class SavedSearchController {
     private static final String AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES = "Please authenticate to see your saved searches.";
@@ -29,17 +33,20 @@ public class SavedSearchController {
     private final SavedSearchForRentRepository savedSearchForRentRepository;
     private final BaseUserRepository userRepository;
     private final TokenService tokenService;
+    private final SavedSearchVisitorImpl savedSearchVisitorImpl;
 
     public SavedSearchController(SavedSearchRepository<SavedSearch> savedSearchRepository,
                                  SavedSearchForSaleRepository savedSearchForSaleRepository,
                                  SavedSearchForRentRepository savedSearchForRentRepository,
                                  BaseUserRepository userRepository,
-                                 TokenService tokenService) {
+                                 TokenService tokenService,
+                                 SavedSearchVisitorImpl savedSearchVisitorImpl) {
         this.savedSearchRepository = savedSearchRepository;
         this.savedSearchForSaleRepository = savedSearchForSaleRepository;
         this.savedSearchForRentRepository = savedSearchForRentRepository;
         this.userRepository = userRepository;
         this.tokenService = tokenService;
+        this.savedSearchVisitorImpl = savedSearchVisitorImpl;
     }
 
     /**
@@ -54,6 +61,40 @@ public class SavedSearchController {
         BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
         return savedSearchRepository.findByUser(user, pageable);
+    }
+
+    /**
+     * Retrieves a saved search by its ID for the authenticated user.
+     * If the user is not authenticated, it throws a 401 UNAUTHORIZED error.
+     * If the saved search is not found, it throws a 404 NOT FOUND error.
+     * @param id The ID of the saved search
+     * @return The SavedSearch object
+     * @throws ResponseStatusException if the user is not authenticated or if the saved search is not found
+     */
+    @GetMapping("/{id}")
+    public SavedSearch getSavedSearchById(@PathVariable Long id) {
+        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
+        return savedSearchRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Saved search not found."));
+    }
+
+    /**
+     * Executes a saved search by its ID for the authenticated user and returns the search results.
+     * If the user is not authenticated, it throws a 401 UNAUTHORIZED error.
+     * If the saved search is not found, it throws a 404 NOT FOUND error.
+     * @param id The ID of the saved search
+     * @param pageable Pagination information
+     * @return Page of InsertionSearchResultDTO objects
+     * @throws ResponseStatusException if the user is not authenticated or if the saved search is not found
+     */
+    @GetMapping("/{id}/execute")
+    public Page<InsertionSearchResultDTO> executeSavedSearchById(@PathVariable Long id, Pageable pageable) {
+        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
+        SavedSearch savedSearch = savedSearchRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Saved search not found."));
+        return savedSearch.getResults(savedSearchVisitorImpl, pageable);
     }
 
     /**

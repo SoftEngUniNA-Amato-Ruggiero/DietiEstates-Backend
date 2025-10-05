@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserRequestDTO;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -22,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Slf4j
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/managers")
 public class RealEstateManagerController {
     private final BaseUserRepository userRepository;

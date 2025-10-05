@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForRentRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithRentResponseDTO;
@@ -52,6 +53,7 @@ public class InsertionForRentController {
      * @throws ResponseStatusException if the user is not a business user.
      */
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     @ResponseStatus(HttpStatus.CREATED)
     public InsertionWithRentResponseDTO createInsertionForRent(@Valid @RequestBody InsertionForRentRequestDTO req) {
         BusinessUser uploader = businessUserRepository.findByUser_CognitoSub(tokenService.getCognitoSub())
