@@ -2,12 +2,10 @@ package it.softengunina.dietiestatesbackend.dto.searchdto;
 
 import it.softengunina.dietiestatesbackend.model.savedsearches.SavedSearchForSale;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper=true)
 @ToString(callSuper=true)
 public class SearchRequestForSaleDTO extends SearchRequestDTO {
