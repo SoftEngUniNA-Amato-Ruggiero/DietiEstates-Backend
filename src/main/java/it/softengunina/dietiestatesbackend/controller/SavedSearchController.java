@@ -27,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class SavedSearchController {
     private static final String AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES = "Please authenticate to see your saved searches.";
     public static final String AUTHENTICATE_TO_SAVE_YOUR_SEARCHES = "Please authenticate to save your searches.";
+    public static final String SAVED_SEARCH_NOT_FOUND = "Saved search not found.";
 
     private final SavedSearchRepository<SavedSearch> savedSearchRepository;
     private final SavedSearchForSaleRepository savedSearchForSaleRepository;
@@ -76,7 +77,25 @@ public class SavedSearchController {
         BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
         return savedSearchRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Saved search not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
+    }
+
+    /**
+     * Deletes a saved search by its ID for the authenticated user.
+     * Returns a 204 NO CONTENT status on successful deletion.
+     * If the user is not authenticated, it throws a 401 UNAUTHORIZED error.
+     * If the saved search is not found, it throws a 404 NOT FOUND error.
+     * @param id The ID of the saved search
+     * @throws ResponseStatusException if the user is not authenticated or if the saved search is not found
+     */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSavedSearchById(@PathVariable Long id) {
+        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
+        SavedSearch savedSearch = savedSearchRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
+        savedSearchRepository.delete(savedSearch);
     }
 
     /**
@@ -93,7 +112,7 @@ public class SavedSearchController {
         BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
         SavedSearch savedSearch = savedSearchRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Saved search not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
         return savedSearch.getResults(savedSearchVisitorImpl, pageable);
     }
 
