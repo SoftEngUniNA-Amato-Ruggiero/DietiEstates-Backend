@@ -13,12 +13,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class InsertionTagListener {
+public class InsertionsListener {
     TagRepository tagRepository;
     NotificationsPublishingService notificationsPublishingService;
 
-    public InsertionTagListener(@Lazy TagRepository tagRepository,
-                                @Lazy NotificationsPublishingService notificationsPublishingService) {
+    public InsertionsListener(@Lazy TagRepository tagRepository,
+                              @Lazy NotificationsPublishingService notificationsPublishingService) {
         this.tagRepository = tagRepository;
         this.notificationsPublishingService = notificationsPublishingService;
     }

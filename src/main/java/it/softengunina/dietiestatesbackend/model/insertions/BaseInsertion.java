@@ -1,7 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
-import it.softengunina.dietiestatesbackend.listeners.InsertionTagListener;
+import it.softengunina.dietiestatesbackend.listeners.InsertionsListener;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
@@ -22,7 +22,7 @@ import java.util.Set;
 @Entity
 @Table(name = "insertions")
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners(InsertionTagListener.class)
+@EntityListeners(InsertionsListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
