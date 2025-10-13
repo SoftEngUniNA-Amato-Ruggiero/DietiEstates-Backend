@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
+import it.softengunina.dietiestatesbackend.listeners.UserListener;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +13,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "users")
+@EntityListeners(UserListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
