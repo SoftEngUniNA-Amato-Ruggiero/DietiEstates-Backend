@@ -4,6 +4,7 @@ import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import it.softengunina.dietiestatesbackend.repository.TagRepository;
 import it.softengunina.dietiestatesbackend.services.NotificationsService;
+import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PrePersist;
 import org.springframework.context.annotation.Lazy;
@@ -15,11 +16,14 @@ import java.util.stream.Collectors;
 @Component
 public class InsertionsListener {
     TagRepository tagRepository;
+    InsertionDTOVisitorImpl dtoVisitor;
     NotificationsService notificationsService;
 
     public InsertionsListener(@Lazy TagRepository tagRepository,
+                              @Lazy InsertionDTOVisitorImpl dtoVisitor,
                               @Lazy NotificationsService notificationsService) {
         this.tagRepository = tagRepository;
+        this.dtoVisitor = dtoVisitor;
         this.notificationsService = notificationsService;
     }
 
@@ -34,7 +38,7 @@ public class InsertionsListener {
 
     @PostPersist
     public void sendNotification(Insertion insertion) {
-        String message = String.format("New insertion added: %s", insertion);
+        String message = insertion.accept(dtoVisitor).toString();
         notificationsService.sendNotification(message);
     }
 }

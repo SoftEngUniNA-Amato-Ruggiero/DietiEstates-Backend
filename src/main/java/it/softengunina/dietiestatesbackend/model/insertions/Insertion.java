@@ -1,8 +1,10 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitor;
 import lombok.NonNull;
 
 import java.util.Set;
@@ -26,4 +28,6 @@ public interface Insertion {
     boolean addAllTagsFromSet(@NonNull Set<Tag> tags);
     boolean removeAllTagsFromSet(@NonNull Set<Tag> tags);
     void clearTags();
+
+    InsertionResponseDTO accept(InsertionDTOVisitor visitor);
 }

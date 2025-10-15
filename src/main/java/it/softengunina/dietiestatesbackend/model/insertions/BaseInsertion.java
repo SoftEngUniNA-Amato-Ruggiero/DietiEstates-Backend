@@ -1,11 +1,9 @@
 package it.softengunina.dietiestatesbackend.model.insertions;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
 import it.softengunina.dietiestatesbackend.listeners.InsertionsListener;
 import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
-import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitor;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -106,13 +104,6 @@ public abstract class BaseInsertion implements Insertion {
     public Boolean getHasElevator() {
         return details != null ? details.getHasElevator() : null;
     }
-
-    /**
-     * Accept method for the producing a response DTO through the InsertionDTOVisitor.
-     * @param visitor the InsertionDTOVisitor to accept
-     * @return the DTO produced by the visitor
-     */
-    public abstract InsertionResponseDTO accept(InsertionDTOVisitor visitor);
 
     /**
      * Returns an unmodifiable view of the tags associated with the insertion.
