@@ -10,7 +10,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDTO {
+public class UserResponseDTO implements UserResponse {
     @NotNull
     private Long id;
 

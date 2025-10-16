@@ -5,13 +5,16 @@ import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRe
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.Optional;
-
 @Component
+@Slf4j
 public class UsersInterceptor implements HandlerInterceptor {
     TokenService tokenService;
     BaseUserRepository userRepository;
@@ -23,16 +26,23 @@ public class UsersInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Jwt jwt = tokenService.getJwt();
-        String cognitoSub = tokenService.getCognitoSub(jwt);
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
+        try {
+            Jwt jwt = tokenService.getJwt();
+            String cognitoSub = tokenService.getCognitoSub(jwt);
 
-        Optional<BaseUser> user = userRepository.findByCognitoSub(cognitoSub);
-        if (user.isEmpty()) {
-            String email = tokenService.getEmail(jwt);
-            userRepository.saveAndFlush(new BaseUser(email, cognitoSub));
+            if (!(request.getRequestURI().contains("/me") && request.getMethod().equals("POST"))) {
+                BaseUser user = userRepository.findByCognitoSub(cognitoSub)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Authenticated user not found in the database"));
+                request.setAttribute("user", user);
+            }
+            return true;
+
+        } catch (Exception e) {
+            long tid = Thread.currentThread().threadId();
+            log.warn("preHandle from request of {} on threadId {} caught exception {}:\n{}", request.getRequestURI(), tid, e.getClass().getName(), e.getMessage());
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            return false;
         }
-
-        return true;
     }
 }

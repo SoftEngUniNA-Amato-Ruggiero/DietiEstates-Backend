@@ -10,18 +10,24 @@ INSERT INTO dietiestatesdb.public.users (id, username, cognito_sub) VALUES
     (50, 'manager2UserName', 'manager2Sub');
 
 INSERT INTO dietiestatesdb.public.business_users (user_id, agency_id) VALUES
-    (20, 10),
-    (30, 10),
-    (40, 20),
-    (50, 20);
+    (20, 10), -- agent1
+    (30, 10), -- manager1
+    (40, 20), -- agent2
+    (50, 20); -- manager2
 
 INSERT INTO dietiestatesdb.public.real_estate_agents (user_id) VALUES
-    (20),
-    (40);
+    (20), -- agent1
+    (40); -- agent2
 
 INSERT INTO dietiestatesdb.public.real_estate_managers (user_id) VALUES
-    (30),
-    (50);
+    (30), -- manager1
+    (50); -- manager2
+
+INSERT INTO dietiestatesdb.public.user_roles (role_id, user_id) VALUES
+    (1, 30),  -- manager1
+    (1, 50),  -- manager2
+    (2, 20),  -- agent1
+    (2, 40);  -- agent2
 
 INSERT INTO dietiestatesdb.public.addresses (id, city, state, street, housenumber, location) VALUES
     (10, 'CityA', 'StateA', 'StreetA', '1A', ST_SetSRID(ST_MakePoint(10.0, 20.0), 4326)),
@@ -38,9 +44,9 @@ INSERT INTO dietiestatesdb.public.insertions (id, description, address_id, uploa
     (30, null, 30, 40, 20, 60.0, 2, 5, true);
 
 INSERT INTO dietiestatesdb.public.insertion_tags (insertion_id, tag_id) VALUES
-    (10, 10),
-    (10, 20),
-    (20, 20);
+    (10, 10), -- Insertion 10 has tag 'Garden'
+    (10, 20), -- Insertion 10 has tag 'Garage'
+    (20, 20); -- Insertion 20 has tag 'Garage'
 
 INSERT INTO dietiestatesdb.public.insertions_for_sale (id, price) VALUES
     (10, 300000.0);

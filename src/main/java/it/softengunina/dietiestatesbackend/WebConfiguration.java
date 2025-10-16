@@ -23,6 +23,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
          registry.addInterceptor(usersInterceptor)
                  .excludePathPatterns(apiDocsPath+"/**", swaggerPath+"/**")
-                 .excludePathPatterns("/insertions/search", "/insertions/{id}");
+                 .excludePathPatterns("/insertions/search", "/insertions/{id}")
+                 .excludePathPatterns("/error");
     }
 }

@@ -1,14 +1,18 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
-import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
+import it.softengunina.dietiestatesbackend.exceptions.TokenServiceException;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.services.TokenService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -19,28 +23,55 @@ import org.springframework.web.server.ResponseStatusException;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/me")
 public class MeController {
+    private final BaseUserRepository baseUserRepository;
     private final BusinessUserRepository businessUserRepository;
     private final TokenService tokenService;
 
-    MeController(BusinessUserRepository businessUserRepository,
+    MeController(BaseUserRepository baseUserRepository,
+                 BusinessUserRepository businessUserRepository,
                  TokenService tokenService) {
+        this.baseUserRepository = baseUserRepository;
         this.businessUserRepository = businessUserRepository;
         this.tokenService = tokenService;
     }
 
     /**
-     * Retrieves the authenticated user's information along with the agency they are affiliated with.
-     * If the user is not affiliated with any agency, it throws a 404 NOT FOUND error.
-     * This is because the base user information are already in the jwt.
+     * Retrieves the authenticated user's information along with the agency they may be affiliated with.
      * @return UserWithAgencyDTO containing user and agency details
-     * @throws ResponseStatusException if the user is not affiliated with any agency
      */
     @GetMapping
-    public BusinessUserResponseDTO getMe() {
-        String cognitoSub = tokenService.getCognitoSub();
+    public BusinessUserResponseDTO getMe(@RequestAttribute(name = "user", required = true) BaseUser user) {
+        BusinessUserResponseDTO res = new BusinessUserResponseDTO();
+        res.setUser(new UserResponseDTO(user));
+        res.setAgency(null);
 
-        BusinessUser user = businessUserRepository.findByUser_CognitoSub(cognitoSub)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not affiliated with any agency"));
-        return new BusinessUserResponseDTO(user);
+        if (!user.getRoles().isEmpty()) {
+            businessUserRepository.findById(user.getId())
+                    .ifPresent(businessUser -> res.setAgency(new RealEstateAgencyResponseDTO(businessUser.getAgency())));
+        }
+        return res;
+    }
+
+    /**
+     * Creates a new user in the system based on the information extracted from the JWT token.
+     * If the user already exists, a 409 Conflict status is returned.
+     * If the token is invalid, a 401 Unauthorized status is returned.
+     * @return UserResponseDTO containing the created user's details
+     * @throws ResponseStatusException with status 401 if the token is invalid
+     * @throws ResponseStatusException with status 409 if the user already exists
+     */
+    @PostMapping
+    public UserResponseDTO postMe() {
+        try {
+            Jwt jwt = tokenService.getJwt();
+            String username = tokenService.getEmail(jwt);
+            String cognitoSub = tokenService.getCognitoSub(jwt);
+            BaseUser user = baseUserRepository.save(new BaseUser(username, cognitoSub));
+            return new UserResponseDTO(user);
+        } catch (TokenServiceException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
+        }
     }
 }

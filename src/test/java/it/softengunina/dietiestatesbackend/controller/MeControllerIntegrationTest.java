@@ -1,14 +1,13 @@
 package it.softengunina.dietiestatesbackend.controller;
 
-import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,19 +17,25 @@ import static org.junit.jupiter.api.Assertions.*;
 class MeControllerIntegrationTest {
     @Autowired
     MeController meController;
+    @Autowired
+    BaseUserRepository baseUserRepository;
 
-    @MockitoBean
-    TokenService tokenService;
+    BaseUser baseUser;
+    BaseUser businessUser;
 
-    @Test
-    void getMe_WhenBusinessUser() {
-        Mockito.when(tokenService.getCognitoSub()).thenReturn("agent1Sub");
-        assertDoesNotThrow(() -> meController.getMe());
+    @BeforeEach
+    void setUp() {
+        baseUser = baseUserRepository.findById(10L).orElseThrow();
+        businessUser = baseUserRepository.findById(20L).orElseThrow();
     }
 
     @Test
     void getMe_WhenBaseUser() {
-        Mockito.when(tokenService.getCognitoSub()).thenReturn("baseUserSub");
-        assertThrows( ResponseStatusException.class, () -> meController.getMe() );
+        assertNull(meController.getMe(baseUser).getAgency());
+    }
+
+    @Test
+    void getMe_WhenBusinessUser() {
+        assertNotNull(meController.getMe(businessUser).getAgency());
     }
 }
