@@ -1,12 +1,17 @@
 package it.softengunina.dietiestatesbackend.controller;
 
+import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
+import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +24,9 @@ class MeControllerIntegrationTest {
     MeController meController;
     @Autowired
     BaseUserRepository baseUserRepository;
+
+    @MockitoBean
+    TokenService tokenService;
 
     BaseUser baseUser;
     BaseUser businessUser;
@@ -37,5 +45,22 @@ class MeControllerIntegrationTest {
     @Test
     void getMe_WhenBusinessUser() {
         assertNotNull(meController.getMe(businessUser).getAgency());
+    }
+
+    @Test
+    void postMe() {
+        Jwt jwt = Mockito.mock(Jwt.class);
+        Mockito.when(tokenService.getJwt()).thenReturn(jwt);
+        Mockito.when(tokenService.getCognitoSub(jwt)).thenReturn("newUserSub");
+        Mockito.when(tokenService.getEmail(jwt)).thenReturn("newuser@email.com");
+
+        UserResponseDTO newUser = meController.postMe();
+
+        assertAll(
+                () -> assertNotNull(baseUserRepository.findById(newUser.getId())),
+                () -> assertNotNull(newUser),
+                () -> assertEquals("newuser@email.com", newUser.getUsername()),
+                () -> assertTrue(newUser.getRoles().isEmpty())
+        );
     }
 }

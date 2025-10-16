@@ -5,16 +5,14 @@ import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
-import it.softengunina.dietiestatesbackend.exceptions.UserIsAlreadyAffiliatedWithAgencyException;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.services.TokenService;
-import it.softengunina.dietiestatesbackend.services.UserNotAffiliatedWithAgencyService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,19 +34,16 @@ public class AgencyController {
     private final RealEstateAgencyRepository agencyRepository;
     private final RealEstateAgentRepository agentRepository;
     private final RealEstateManagerRepository managerRepository;
-    private final UserNotAffiliatedWithAgencyService userNotAffiliatedWithAgencyService;
-    private final TokenService tokenService;
+    private final BusinessUserRepository businessUserRepository;
 
     AgencyController(RealEstateAgencyRepository agencyRepository,
                      RealEstateAgentRepository agentRepository,
                      RealEstateManagerRepository managerRepository,
-                     UserNotAffiliatedWithAgencyService userNotAffiliatedWithAgencyService,
-                     TokenService tokenService) {
+                     BusinessUserRepository businessUserRepository) {
         this.agencyRepository = agencyRepository;
         this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
-        this.userNotAffiliatedWithAgencyService = userNotAffiliatedWithAgencyService;
-        this.tokenService = tokenService;
+        this.businessUserRepository = businessUserRepository;
     }
 
     /**
@@ -98,10 +93,12 @@ public class AgencyController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public BusinessUserResponseDTO createAgency(@Valid @RequestBody RealEstateAgencyRequestDTO req) {
+    public BusinessUserResponseDTO createAgency(@Valid @RequestBody RealEstateAgencyRequestDTO req,
+                                                @RequestAttribute(name = "user", required = true) BaseUser user) {
         try {
-            BaseUser user = userNotAffiliatedWithAgencyService.findByCognitoSub(tokenService.getCognitoSub())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "We could not find you in our database"));
+            if (businessUserRepository.existsById(user.getId())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are already affiliated with an agency");
+            }
 
             RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
 
@@ -110,8 +107,8 @@ public class AgencyController {
 
             return new BusinessUserResponseDTO(manager);
 
-        } catch (UserIsAlreadyAffiliatedWithAgencyException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are already affiliated with an agency");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 }

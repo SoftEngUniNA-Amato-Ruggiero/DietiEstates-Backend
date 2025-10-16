@@ -3,14 +3,13 @@ package it.softengunina.dietiestatesbackend.controller;
 import it.softengunina.dietiestatesbackend.dto.RealEstateAgencyRequestDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
-import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,9 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class AgencyControllerIntegrationTest {
     @Autowired
     AgencyController agencyController;
-
-    @MockitoBean
-    TokenService tokenService;
+    @Autowired
+    BaseUserRepository userRepository;
 
     @Test
     void getAgentsByAgencyId() {
@@ -36,10 +34,10 @@ class AgencyControllerIntegrationTest {
 
     @Test
     void createAgency() {
-        Mockito.when(tokenService.getCognitoSub()).thenReturn("baseUserSub");
+        BaseUser user = userRepository.findById(10L).orElseThrow();
         RealEstateAgencyRequestDTO req = new RealEstateAgencyRequestDTO("1234567890", "New Agency");
 
-        BusinessUserResponseDTO res = agencyController.createAgency(req);
+        BusinessUserResponseDTO res = agencyController.createAgency(req, user);
 
         assertNotNull(res);
         assertEquals("New Agency", res.getAgency().getName());

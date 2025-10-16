@@ -12,8 +12,6 @@ import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.savedsearchesrepository.SavedSearchForRentRepository;
 import it.softengunina.dietiestatesbackend.repository.savedsearchesrepository.SavedSearchForSaleRepository;
 import it.softengunina.dietiestatesbackend.repository.savedsearchesrepository.SavedSearchRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
-import it.softengunina.dietiestatesbackend.services.TokenService;
 import it.softengunina.dietiestatesbackend.visitor.savedsearchvisitor.SavedSearchVisitorImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,28 +23,20 @@ import org.springframework.web.server.ResponseStatusException;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/saved-searches")
 public class SavedSearchController {
-    private static final String AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES = "Please authenticate to see your saved searches.";
-    public static final String AUTHENTICATE_TO_SAVE_YOUR_SEARCHES = "Please authenticate to save your searches.";
     public static final String SAVED_SEARCH_NOT_FOUND = "Saved search not found.";
 
     private final SavedSearchRepository<SavedSearch> savedSearchRepository;
     private final SavedSearchForSaleRepository savedSearchForSaleRepository;
     private final SavedSearchForRentRepository savedSearchForRentRepository;
-    private final BaseUserRepository userRepository;
-    private final TokenService tokenService;
     private final SavedSearchVisitorImpl savedSearchVisitorImpl;
 
     public SavedSearchController(SavedSearchRepository<SavedSearch> savedSearchRepository,
                                  SavedSearchForSaleRepository savedSearchForSaleRepository,
                                  SavedSearchForRentRepository savedSearchForRentRepository,
-                                 BaseUserRepository userRepository,
-                                 TokenService tokenService,
                                  SavedSearchVisitorImpl savedSearchVisitorImpl) {
         this.savedSearchRepository = savedSearchRepository;
         this.savedSearchForSaleRepository = savedSearchForSaleRepository;
         this.savedSearchForRentRepository = savedSearchForRentRepository;
-        this.userRepository = userRepository;
-        this.tokenService = tokenService;
         this.savedSearchVisitorImpl = savedSearchVisitorImpl;
     }
 
@@ -58,9 +48,8 @@ public class SavedSearchController {
      * @throws ResponseStatusException if the user is not authenticated
      */
     @GetMapping
-    public Page<SavedSearch> getAllSavedSearches(Pageable pageable) {
-        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
+    public Page<SavedSearch> getAllSavedSearches(Pageable pageable,
+                                                 @RequestAttribute(name = "user", required = true) BaseUser user) {
         return savedSearchRepository.findByUser(user, pageable);
     }
 
@@ -73,9 +62,8 @@ public class SavedSearchController {
      * @throws ResponseStatusException if the user is not authenticated or if the saved search is not found
      */
     @GetMapping("/{id}")
-    public SavedSearch getSavedSearchById(@PathVariable Long id) {
-        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
+    public SavedSearch getSavedSearchById(@PathVariable Long id,
+                                          @RequestAttribute(name = "user", required = true) BaseUser user) {
         return savedSearchRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
     }
@@ -90,9 +78,8 @@ public class SavedSearchController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteSavedSearchById(@PathVariable Long id) {
-        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
+    public void deleteSavedSearchById(@PathVariable Long id,
+                                      @RequestAttribute(name = "user", required = true) BaseUser user) {
         SavedSearch savedSearch = savedSearchRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
         savedSearchRepository.delete(savedSearch);
@@ -108,9 +95,8 @@ public class SavedSearchController {
      * @throws ResponseStatusException if the user is not authenticated or if the saved search is not found
      */
     @GetMapping("/{id}/execute")
-    public Page<InsertionSearchResultDTO> executeSavedSearchById(@PathVariable Long id, Pageable pageable) {
-        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SEE_YOUR_SAVED_SEARCHES));
+    public Page<InsertionSearchResultDTO> executeSavedSearchById(@PathVariable Long id, Pageable pageable,
+                                                                 @RequestAttribute(name = "user", required = true) BaseUser user) {
         SavedSearch savedSearch = savedSearchRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
         return savedSearch.getResults(savedSearchVisitorImpl, pageable);
@@ -124,9 +110,8 @@ public class SavedSearchController {
      * @throws ResponseStatusException if the user is not authenticated
      */
     @PostMapping
-    public SavedSearch createSavedSearch(@RequestBody SearchRequestDTO searchReq) {
-        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SAVE_YOUR_SEARCHES));
+    public SavedSearch createSavedSearch(@RequestBody SearchRequestDTO searchReq,
+                                         @RequestAttribute(name = "user", required = true) BaseUser user) {
         return savedSearchRepository.save(searchReq.toSavedSearch(user));
     }
 
@@ -138,9 +123,8 @@ public class SavedSearchController {
      * @throws ResponseStatusException if the user is not authenticated
      */
     @PostMapping("/for-sale")
-    public SavedSearchForSale createSavedSearchForSale(@RequestBody SearchRequestForSaleDTO searchReq) {
-        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SAVE_YOUR_SEARCHES));
+    public SavedSearchForSale createSavedSearchForSale(@RequestBody SearchRequestForSaleDTO searchReq,
+                                                       @RequestAttribute(name = "user", required = true) BaseUser user) {
         return savedSearchForSaleRepository.save(searchReq.toSavedSearch(user));
     }
 
@@ -152,9 +136,8 @@ public class SavedSearchController {
      * @throws ResponseStatusException if the user is not authenticated
      */
     @PostMapping("/for-rent")
-    public SavedSearchForRent createSavedSearchForRent(@RequestBody SearchRequestForRentDTO searchReq) {
-        BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, AUTHENTICATE_TO_SAVE_YOUR_SEARCHES));
+    public SavedSearchForRent createSavedSearchForRent(@RequestBody SearchRequestForRentDTO searchReq,
+                                                       @RequestAttribute(name = "user", required = true) BaseUser user) {
         return savedSearchForRentRepository.save(searchReq.toSavedSearch(user));
     }
 }

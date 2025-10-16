@@ -54,3 +54,7 @@ INSERT INTO dietiestatesdb.public.insertions_for_sale (id, price) VALUES
 INSERT INTO dietiestatesdb.public.insertions_for_rent (id, rent) VALUES
     (20, 1500.0),
     (30, 2500.0);
+
+INSERT INTO dietiestatesdb.public.saved_searches (id, user_id, geometry, distance, min_size, min_number_of_rooms, max_floor, has_elevator) VALUES
+    (10, 10, ST_SetSRID(ST_MakePoint(15.0, 25.0), 4326), 5000.0, 50.0, 2, null, null),
+    (20, 10, ST_SetSRID(ST_MakePoint(35.0, 45.0), 4326), 10000.0, null, null, 3, true);

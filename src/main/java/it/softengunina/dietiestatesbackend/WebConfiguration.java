@@ -1,29 +1,35 @@
 package it.softengunina.dietiestatesbackend;
 
-import it.softengunina.dietiestatesbackend.interceptors.UsersInterceptor;
-import org.springframework.beans.factory.annotation.Value;
+import it.softengunina.dietiestatesbackend.interceptors.AgentInterceptor;
+import it.softengunina.dietiestatesbackend.interceptors.ManagerInterceptor;
+import it.softengunina.dietiestatesbackend.interceptors.UserInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
-    @Value("${springdoc.api-docs.path}")
-    private String apiDocsPath;
-    @Value("${springdoc.swagger-ui.path}")
-    private String swaggerPath;
+    UserInterceptor userInterceptor;
+    AgentInterceptor agentInterceptor;
+    ManagerInterceptor managerInterceptor;
 
-    UsersInterceptor usersInterceptor;
-
-    WebConfiguration (UsersInterceptor usersInterceptor) {
-        this.usersInterceptor = usersInterceptor;
+    WebConfiguration (UserInterceptor userInterceptor,
+                      AgentInterceptor agentInterceptor,
+                      ManagerInterceptor managerInterceptor) {
+        this.userInterceptor = userInterceptor;
+        this.agentInterceptor = agentInterceptor;
+        this.managerInterceptor = managerInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-         registry.addInterceptor(usersInterceptor)
-                 .excludePathPatterns(apiDocsPath+"/**", swaggerPath+"/**")
-                 .excludePathPatterns("/insertions/search", "/insertions/{id}")
-                 .excludePathPatterns("/error");
+         registry.addInterceptor(userInterceptor)
+                 .addPathPatterns("/me", "/agencies", "/saved-searches", "/saved-searches/**");
+
+        registry.addInterceptor(agentInterceptor)
+                .addPathPatterns("/insertions", "/insertions/**");
+
+         registry.addInterceptor(managerInterceptor)
+                 .addPathPatterns("/agents", "/managers");
     }
 }
