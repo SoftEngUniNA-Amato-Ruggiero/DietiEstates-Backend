@@ -17,6 +17,10 @@ public class RealEstateAgent extends RealEstateAbstractUser {
         super(businessUser);
     }
 
+    protected RealEstateAgent(@NonNull BaseUser baseUser, @NonNull RealEstateAgency agency) {
+        super(baseUser, agency);
+    }
+
     @Builder
     public RealEstateAgent(@NonNull String username,
                            @NonNull String cognitoSub,

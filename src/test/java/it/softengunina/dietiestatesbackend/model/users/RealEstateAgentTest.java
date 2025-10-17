@@ -13,7 +13,7 @@ class RealEstateAgentTest {
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("testIban", "testAgency");
-        agent = new RealEstateAgent(new BusinessUser(new BaseUser("testAgent", "testSub"), agency));
+        agent = new RealEstateAgent("testAgent", "testSub", agency);
     }
 
     @Test

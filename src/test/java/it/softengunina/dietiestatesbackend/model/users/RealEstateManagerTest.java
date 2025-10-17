@@ -14,7 +14,7 @@ class RealEstateManagerTest {
     @BeforeEach
     void setUp() {
         agency = new RealEstateAgency("testIban", "testAgency");
-        manager = new RealEstateManager(new BusinessUser(new BaseUser("testManager", "testSub"), agency));
+        manager = new RealEstateManager("testManager", "testSub", agency);
     }
 
     @Test

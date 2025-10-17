@@ -30,6 +30,10 @@ public abstract class RealEstateAbstractUser implements UserWithAgency, UserWith
         this.businessUser = businessUser;
     }
 
+    protected RealEstateAbstractUser(@NonNull BaseUser baseUser, @NonNull RealEstateAgency agency) {
+        this.businessUser = new BusinessUser(baseUser, agency);
+    }
+
     protected RealEstateAbstractUser(@NonNull String username, @NonNull String cognitoSub, @NonNull RealEstateAgency agency) {
         this.businessUser = new BusinessUser(username, cognitoSub, agency);
     }
