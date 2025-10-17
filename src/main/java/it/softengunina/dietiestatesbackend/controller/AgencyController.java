@@ -10,6 +10,7 @@ import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.repository.RealEstateAgencyRepository;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
@@ -35,15 +36,18 @@ public class AgencyController {
     private final RealEstateAgentRepository agentRepository;
     private final RealEstateManagerRepository managerRepository;
     private final BusinessUserRepository businessUserRepository;
+    private final BaseUserRepository baseUserRepository;
 
     AgencyController(RealEstateAgencyRepository agencyRepository,
                      RealEstateAgentRepository agentRepository,
                      RealEstateManagerRepository managerRepository,
-                     BusinessUserRepository businessUserRepository) {
+                     BusinessUserRepository businessUserRepository,
+                     BaseUserRepository baseUserRepository) {
         this.agencyRepository = agencyRepository;
         this.agentRepository = agentRepository;
         this.managerRepository = managerRepository;
         this.businessUserRepository = businessUserRepository;
+        this.baseUserRepository = baseUserRepository;
     }
 
     /**
@@ -99,9 +103,12 @@ public class AgencyController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are already affiliated with an agency");
         }
 
-        RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
+        // Reload the user from the database to ensure we have the most up-to-date information
+        BaseUser userToBePromoted = baseUserRepository.findById(user.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found"));
 
-        BusinessUser businessUser = new BusinessUser(user, agency);
+        RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
+        BusinessUser businessUser = businessUserRepository.saveAndFlush(new BusinessUser(userToBePromoted, agency));
         RealEstateManager manager = managerRepository.save(new RealEstateManager(businessUser));
 
         return new BusinessUserResponseDTO(manager);
