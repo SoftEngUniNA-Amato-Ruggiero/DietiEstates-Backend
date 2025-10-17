@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class SavedSearchControllerTest {
+class SavedSearchControllerIntegrationTest {
     @Autowired
     SavedSearchController savedSearchController;
     @Autowired
@@ -55,6 +55,11 @@ class SavedSearchControllerTest {
                 () -> assertNotNull(res),
                 () -> assertEquals(10L, res.getId())
         );
+    }
+
+    @Test
+    void deleteSavedSearchById() {
+        assertDoesNotThrow( () -> savedSearchController.deleteSavedSearchById(10L, user) );
     }
 
     @Test

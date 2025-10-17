@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +23,14 @@ class AgencyControllerIntegrationTest {
     AgencyController agencyController;
     @Autowired
     BaseUserRepository userRepository;
+
+    @Test
+    void getAgencyById() {
+        var res = agencyController.getAgencyById(10L);
+
+        assertNotNull(res);
+        assertEquals("Test Agency 1", res.getName());
+    }
 
     @Test
     void getAgentsByAgencyId() {
@@ -42,5 +51,13 @@ class AgencyControllerIntegrationTest {
         assertNotNull(res);
         assertEquals("New Agency", res.getAgency().getName());
         assertEquals("1234567890", res.getAgency().getIban());
+    }
+
+    @Test
+    void createAgency_AsBusinessUser() {
+        BaseUser user = userRepository.findById(20L).orElseThrow();
+        RealEstateAgencyRequestDTO req = new RealEstateAgencyRequestDTO("1234567890", "New Agency");
+
+        assertThrows(ResponseStatusException.class, () -> agencyController.createAgency(req, user));
     }
 }

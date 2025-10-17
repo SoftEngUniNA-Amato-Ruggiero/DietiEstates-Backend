@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller.insertionscontroller;
 
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestDTO;
 import it.softengunina.dietiestatesbackend.services.TokenService;
@@ -35,7 +36,17 @@ class InsertionControllerIntegrationTest {
     }
 
     @Test
-    void searchInsertionsForSale_WithTags() {
+    void getInsertionById_Success() {
+        InsertionResponseDTO responseDTO = insertionController.getInsertionById(10L);
+
+        assertAll(
+                () -> assertNotNull(responseDTO),
+                () -> assertEquals(10L, responseDTO.getId())
+        );
+    }
+
+    @Test
+    void searchInsertions_WithTags() {
         queryParams = SearchRequestDTO.builder()
                 .lat(40.0)
                 .lng(55.0)
@@ -54,7 +65,7 @@ class InsertionControllerIntegrationTest {
     }
 
     @Test
-    void searchInsertionsForSale_WithoutTags() {
+    void searchInsertions_WithoutTags() {
         queryParams = SearchRequestDTO.builder()
                 .lat(40.0)
                 .lng(55.0)

@@ -95,20 +95,15 @@ public class AgencyController {
     @Transactional
     public BusinessUserResponseDTO createAgency(@Valid @RequestBody RealEstateAgencyRequestDTO req,
                                                 @RequestAttribute(name = "user", required = true) BaseUser user) {
-        try {
-            if (businessUserRepository.existsById(user.getId())) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are already affiliated with an agency");
-            }
-
-            RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
-
-            BusinessUser businessUser = new BusinessUser(user, agency);
-            RealEstateManager manager = managerRepository.save(new RealEstateManager(businessUser));
-
-            return new BusinessUserResponseDTO(manager);
-
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        if (businessUserRepository.existsById(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are already affiliated with an agency");
         }
+
+        RealEstateAgency agency = agencyRepository.saveAndFlush(new RealEstateAgency(req.getIban(), req.getName()));
+
+        BusinessUser businessUser = new BusinessUser(user, agency);
+        RealEstateManager manager = managerRepository.save(new RealEstateManager(businessUser));
+
+        return new BusinessUserResponseDTO(manager);
     }
 }

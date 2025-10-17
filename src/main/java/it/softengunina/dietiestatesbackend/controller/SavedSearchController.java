@@ -95,7 +95,8 @@ public class SavedSearchController {
      * @throws ResponseStatusException if the user is not authenticated or if the saved search is not found
      */
     @GetMapping("/{id}/execute")
-    public Page<InsertionSearchResultDTO> executeSavedSearchById(@PathVariable Long id, Pageable pageable,
+    public Page<InsertionSearchResultDTO> executeSavedSearchById(@PathVariable Long id,
+                                                                 Pageable pageable,
                                                                  @RequestAttribute(name = "user", required = true) BaseUser user) {
         SavedSearch savedSearch = savedSearchRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
