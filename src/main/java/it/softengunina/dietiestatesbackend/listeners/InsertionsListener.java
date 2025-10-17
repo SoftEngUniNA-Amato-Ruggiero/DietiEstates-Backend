@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class InsertionsListener {
+
     TagRepository tagRepository;
     InsertionDTOVisitorImpl dtoVisitor;
     NotificationsService notificationsService;
@@ -38,7 +39,12 @@ public class InsertionsListener {
 
     @PostPersist
     public void sendNotification(Insertion insertion) {
-        String message = insertion.accept(dtoVisitor).toString();
+        String message = buildMessage(insertion);
         notificationsService.sendNotification(message);
     }
+
+    private String buildMessage(Insertion insertion) {
+        return "New insertion uploaded!\nDetails: http://localhost:8081/api/insertions/" + insertion.getId();
+    }
+
 }
