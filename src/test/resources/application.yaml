@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: DietiEstatesBackend
+  config:
+    import: "optional:configtree:/run/secrets/"
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:dietiestatesdb}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USER:admin}
+    password: ${DB_PASSWORD}
+
+  flyway:
+    schemas: testdata
+    enabled: true
+    locations: classpath:db/migration/,classpath:db/testdata/
+    default-schema: testdata
+    clean-disabled: false
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        spatial.connection_finder: org.hibernate.spatial.dialect.postgis.PostgisDialect
+        default_schema: testdata
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://cognito-idp.eu-west-3.amazonaws.com/eu-west-3_tKWUxvA4t
+          jwk-set-uri: https://cognito-idp.eu-west-3.amazonaws.com/eu-west-3_tKWUxvA4t/.well-known/jwks.json
+
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+
+frontend:
+  url: ${FRONTEND_URL:http://localhost:4200}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
