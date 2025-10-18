@@ -5,8 +5,8 @@ import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstate
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NonNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,17 +17,18 @@ public class AgentInterceptor implements HandlerInterceptor {
     TokenService tokenService;
 
     public AgentInterceptor(RealEstateAgentRepository agentRepository,
-                            TokenService tokenService) {
+            TokenService tokenService) {
         this.agentRepository = agentRepository;
         this.tokenService = tokenService;
     }
 
     @Override
-    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull Object handler) throws Exception {
         if (request.getMethod().equals("GET")) {
             return true;
         }
-        
+
         try {
             RealEstateAgent agent = agentRepository.findByBusinessUser_User_CognitoSub(tokenService.getCognitoSub())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not an agent"));

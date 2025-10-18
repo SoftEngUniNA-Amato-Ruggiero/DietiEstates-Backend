@@ -5,8 +5,8 @@ import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRe
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NonNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,20 +17,22 @@ public class UserInterceptor implements HandlerInterceptor {
     BaseUserRepository userRepository;
 
     public UserInterceptor(TokenService tokenService,
-                           BaseUserRepository userRepository) {
+            BaseUserRepository userRepository) {
         this.tokenService = tokenService;
         this.userRepository = userRepository;
     }
 
     @Override
-    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull Object handler) throws Exception {
         if (request.getRequestURI().contains("/me") && request.getMethod().equals("POST")) {
             return true;
         }
 
         try {
             BaseUser user = userRepository.findByCognitoSub(tokenService.getCognitoSub())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Authenticated user not found in the database"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                            "Authenticated user not found in the database"));
             request.setAttribute("user", user);
             return true;
         } catch (Exception e) {
