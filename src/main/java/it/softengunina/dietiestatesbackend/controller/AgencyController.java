@@ -98,7 +98,7 @@ public class AgencyController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public BusinessUserResponseDTO createAgency(@Valid @RequestBody RealEstateAgencyRequestDTO req,
-                                                @RequestAttribute(name = "user", required = true) BaseUser user) {
+                                                @RequestAttribute(name = "user") BaseUser user) {
         if (businessUserRepository.existsById(user.getId())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are already affiliated with an agency");
         }

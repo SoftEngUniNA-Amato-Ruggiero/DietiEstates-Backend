@@ -40,7 +40,7 @@ public class MeController {
      * @return UserWithAgencyDTO containing user and agency details
      */
     @GetMapping
-    public BusinessUserResponseDTO getMe(@RequestAttribute(name = "user", required = true) BaseUser user) {
+    public BusinessUserResponseDTO getMe(@RequestAttribute(name = "user") BaseUser user) {
         BusinessUserResponseDTO res = new BusinessUserResponseDTO();
         res.setUser(new UserResponseDTO(user));
         res.setAgency(null);

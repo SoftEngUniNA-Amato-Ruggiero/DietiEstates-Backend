@@ -49,7 +49,7 @@ public class SavedSearchController {
      */
     @GetMapping
     public Page<SavedSearch> getAllSavedSearches(Pageable pageable,
-                                                 @RequestAttribute(name = "user", required = true) BaseUser user) {
+                                                 @RequestAttribute(name = "user") BaseUser user) {
         return savedSearchRepository.findByUser(user, pageable);
     }
 
@@ -63,7 +63,7 @@ public class SavedSearchController {
      */
     @GetMapping("/{id}")
     public SavedSearch getSavedSearchById(@PathVariable Long id,
-                                          @RequestAttribute(name = "user", required = true) BaseUser user) {
+                                          @RequestAttribute(name = "user") BaseUser user) {
         return savedSearchRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
     }
@@ -79,7 +79,7 @@ public class SavedSearchController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSavedSearchById(@PathVariable Long id,
-                                      @RequestAttribute(name = "user", required = true) BaseUser user) {
+                                      @RequestAttribute(name = "user") BaseUser user) {
         SavedSearch savedSearch = savedSearchRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
         savedSearchRepository.delete(savedSearch);
@@ -97,7 +97,7 @@ public class SavedSearchController {
     @GetMapping("/{id}/execute")
     public Page<InsertionSearchResultDTO> executeSavedSearchById(@PathVariable Long id,
                                                                  Pageable pageable,
-                                                                 @RequestAttribute(name = "user", required = true) BaseUser user) {
+                                                                 @RequestAttribute(name = "user") BaseUser user) {
         SavedSearch savedSearch = savedSearchRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SAVED_SEARCH_NOT_FOUND));
         return savedSearch.getResults(savedSearchVisitorImpl, pageable);
@@ -112,7 +112,7 @@ public class SavedSearchController {
      */
     @PostMapping
     public SavedSearch createSavedSearch(@RequestBody SearchRequestDTO searchReq,
-                                         @RequestAttribute(name = "user", required = true) BaseUser user) {
+                                         @RequestAttribute(name = "user") BaseUser user) {
         return savedSearchRepository.save(searchReq.toSavedSearch(user));
     }
 
@@ -125,7 +125,7 @@ public class SavedSearchController {
      */
     @PostMapping("/for-sale")
     public SavedSearchForSale createSavedSearchForSale(@RequestBody SearchRequestForSaleDTO searchReq,
-                                                       @RequestAttribute(name = "user", required = true) BaseUser user) {
+                                                       @RequestAttribute(name = "user") BaseUser user) {
         return savedSearchForSaleRepository.save(searchReq.toSavedSearch(user));
     }
 
@@ -138,7 +138,7 @@ public class SavedSearchController {
      */
     @PostMapping("/for-rent")
     public SavedSearchForRent createSavedSearchForRent(@RequestBody SearchRequestForRentDTO searchReq,
-                                                       @RequestAttribute(name = "user", required = true) BaseUser user) {
+                                                       @RequestAttribute(name = "user") BaseUser user) {
         return savedSearchForRentRepository.save(searchReq.toSavedSearch(user));
     }
 }
