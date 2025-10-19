@@ -9,8 +9,7 @@ import org.locationtech.jts.geom.Point;
 
 @Entity
 @Table(name = "notifications_preferences")
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
 public class NotificationsPreferences implements NotificationsOperations {
