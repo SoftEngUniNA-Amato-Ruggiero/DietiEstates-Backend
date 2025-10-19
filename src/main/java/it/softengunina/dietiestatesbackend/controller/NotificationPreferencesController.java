@@ -22,7 +22,7 @@ public class NotificationPreferencesController {
 
     @PutMapping("/email/unsubscribe")
     public void unsubscribeEmail(@RequestAttribute(name = "user") BaseUser user) {
-        NotificationsPreferences prefs = repository.findById(user.getId())
+        NotificationsPreferences prefs = repository.findByUser_Id(user.getId())
                 .orElseThrow(() -> new RuntimeException("Notification preferences not found for user: " + user.getUsername()));
 
         prefs.disableEmailNotifications();
