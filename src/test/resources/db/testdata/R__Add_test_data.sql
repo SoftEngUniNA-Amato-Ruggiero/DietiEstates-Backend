@@ -58,3 +58,31 @@ INSERT INTO insertions_for_rent (id, rent) VALUES
 INSERT INTO saved_searches (id, user_id, geometry, distance, min_size, min_number_of_rooms, max_floor, has_elevator) VALUES
     (10, 10, ST_SetSRID(ST_MakePoint(15.0, 25.0), 4326), 5000.0, 50.0, 2, null, null),
     (20, 10, ST_SetSRID(ST_MakePoint(35.0, 45.0), 4326), 10000.0, null, null, 3, true);
+
+
+SELECT setval(pg_get_serial_sequence('testdata.tags', 'id'),
+              COALESCE((SELECT MAX(id) FROM testdata.tags), 0));
+
+SELECT setval(pg_get_serial_sequence('testdata.addresses', 'id'),
+              COALESCE((SELECT MAX(id) FROM testdata.addresses), 0));
+
+SELECT setval(pg_get_serial_sequence('testdata.real_estate_agencies', 'id'),
+              COALESCE((SELECT MAX(id) FROM testdata.real_estate_agencies), 0));
+
+SELECT setval(pg_get_serial_sequence('testdata.users', 'id'),
+              COALESCE((SELECT MAX(id) FROM testdata.users), 0));
+
+SELECT setval(pg_get_serial_sequence('testdata.addresses', 'id'),
+              COALESCE((SELECT MAX(id) FROM testdata.addresses), 0));
+
+SELECT setval(pg_get_serial_sequence('testdata.insertions', 'id'),
+              COALESCE((SELECT MAX(id) FROM testdata.insertions), 0));
+
+SELECT setval(pg_get_serial_sequence('testdata.insertions_for_sale', 'id'),
+              COALESCE((SELECT MAX(id) FROM testdata.insertions_for_sale), 0));
+
+SELECT setval(pg_get_serial_sequence('testdata.insertions_for_rent', 'id'),
+              COALESCE((SELECT MAX(id) FROM testdata.insertions_for_rent), 0));
+
+SELECT setval(pg_get_serial_sequence('testdata.saved_searches', 'id'),
+              COALESCE((SELECT MAX(id) FROM testdata.saved_searches), 0));
