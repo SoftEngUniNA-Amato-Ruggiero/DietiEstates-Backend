@@ -41,7 +41,7 @@ public class InsertionsListener {
     @PostPersist
     public void sendNotification(Insertion insertion) {
         String message = buildMessage(insertion);
-        notificationsService.sendNotification(message);
+        notificationsService.publishNotificationToSNSTopic(message);
     }
 
     private String buildMessage(Insertion insertion) {

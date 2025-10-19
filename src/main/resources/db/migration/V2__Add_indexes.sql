@@ -7,3 +7,4 @@ CREATE INDEX IF NOT EXISTS insertions_tags_insertion_id ON insertion_tags (inser
 CREATE INDEX IF NOT EXISTS insertions_for_rent_rent ON insertions_for_rent (rent);
 CREATE INDEX IF NOT EXISTS insertions_for_sale_price ON insertions_for_sale (price);
 CREATE INDEX IF NOT EXISTS business_users_agency_id ON business_users (agency_id);
+CREATE INDEX idx_saved_searches_user_id ON saved_searches (user_id);

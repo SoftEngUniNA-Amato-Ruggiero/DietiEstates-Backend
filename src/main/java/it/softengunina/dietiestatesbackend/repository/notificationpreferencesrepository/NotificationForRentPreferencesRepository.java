@@ -1,6 +1,0 @@
-package it.softengunina.dietiestatesbackend.repository.notificationpreferencesrepository;
-
-import it.softengunina.dietiestatesbackend.model.notificationpreferences.NotificationForRentPreferences;
-
-public interface NotificationForRentPreferencesRepository extends BaseNotificationPreferencesRepository<NotificationForRentPreferences> {
-}

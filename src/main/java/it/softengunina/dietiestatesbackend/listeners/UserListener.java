@@ -1,6 +1,8 @@
 package it.softengunina.dietiestatesbackend.listeners;
 
-import it.softengunina.dietiestatesbackend.model.users.User;
+import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
+import it.softengunina.dietiestatesbackend.model.users.BaseUser;
+import it.softengunina.dietiestatesbackend.repository.NotificationsPreferencesRepository;
 import it.softengunina.dietiestatesbackend.services.NotificationsService;
 import jakarta.persistence.PostPersist;
 import lombok.extern.slf4j.Slf4j;
@@ -11,15 +13,19 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class UserListener {
     NotificationsService notificationsService;
+    NotificationsPreferencesRepository notificationsPreferencesRepository;
 
-    public UserListener(@Lazy NotificationsService notificationsService) {
+    public UserListener(@Lazy NotificationsService notificationsService,
+                        @Lazy NotificationsPreferencesRepository notificationsPreferencesRepository) {
         this.notificationsService = notificationsService;
+        this.notificationsPreferencesRepository = notificationsPreferencesRepository;
     }
 
     @PostPersist
-    public void afterUserPersist(User user) {
+    public void afterUserPersist(BaseUser user) {
         log.info("User created: {}", user.getUsername());
-        this.notificationsService.subscribeUserToEmailNotifications(user.getUsername());
-        log.info("User {} subscribed to email notifications", user.getUsername());
+        NotificationsPreferences prefs = this.notificationsPreferencesRepository.save(new NotificationsPreferences(user));
+        notificationsService.updateEmailSubscription(prefs);
     }
+
 }

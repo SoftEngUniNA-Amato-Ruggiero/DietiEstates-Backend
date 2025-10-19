@@ -1,15 +1,7 @@
 package it.softengunina.dietiestatesbackend.model.users;
 
-import java.util.Set;
-
-public interface User {
+public interface User extends RoleOperations {
     Long getId();
     String getUsername();
     String getCognitoSub();
-    Set<Role> getRoles();
-    boolean hasRole(Role role);
-    boolean hasRoleById(Long roleId);
-    boolean hasRoleByName(String roleName);
-    boolean addRole(Role role);
-    boolean removeRole(Role role);
 }
