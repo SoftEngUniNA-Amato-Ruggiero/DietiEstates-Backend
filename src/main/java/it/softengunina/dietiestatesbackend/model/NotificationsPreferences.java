@@ -5,14 +5,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.locationtech.jts.geom.Point;
 
 @Entity
 @Table(name = "notifications_preferences")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
-public class NotificationsPreferences implements NotificationsOperations {
+public class NotificationsPreferences {
     @Id
     @Getter
     @Setter(AccessLevel.PROTECTED)
@@ -26,14 +25,9 @@ public class NotificationsPreferences implements NotificationsOperations {
     @Setter(AccessLevel.PROTECTED)
     private BaseUser user;
 
-    @Column(columnDefinition = "geometry(Point, 4326)")
     @Getter
-    @Setter(AccessLevel.PROTECTED)
-    private Point center = null;
-
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
-    private Double radius = null;
+    @Setter
+    private String city;
 
     @Getter
     @Setter
@@ -51,13 +45,6 @@ public class NotificationsPreferences implements NotificationsOperations {
         this.user = user;
     }
 
-    @Override
-    public void setArea(Point center, Double radius) {
-        this.center = center;
-        this.radius = radius;
-    }
-
-    @Override
     public boolean isEmailNotificationsEnabled() {
         return this.subscriptionArn != null && !this.subscriptionArn.isEmpty();
     }

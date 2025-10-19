@@ -11,6 +11,7 @@ import jakarta.persistence.PrePersist;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,11 @@ public class InsertionsListener {
     @PostPersist
     public void sendNotification(Insertion insertion) {
         String message = buildMessage(insertion);
-        notificationsService.publishMessageToTopic(message);
+        Map<String, String> attributes = Map.of(
+                "type", insertion.getClass().getSimpleName(),
+                "city", insertion.getAddress().getCity()
+        );
+        notificationsService.publishMessageToTopic(message, attributes);
     }
 
     private String buildMessage(Insertion insertion) {

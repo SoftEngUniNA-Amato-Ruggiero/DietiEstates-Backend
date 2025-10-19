@@ -6,9 +6,6 @@ import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.NotificationsPreferencesRepository;
 import it.softengunina.dietiestatesbackend.services.NotificationsService;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,10 +29,7 @@ public class NotificationPreferencesController {
         NotificationsPreferences prefs = repository.findByUser_Id(user.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Notification preferences not found for user: " + user.getUsername()));
 
-        Coordinate coordinate = new Coordinate(req.getCenterLat(), req.getCenterLng());
-        Point center = new GeometryFactory().createPoint(coordinate);
-
-        prefs.setArea(center, req.getRadius());
+        prefs.setCity(req.getCity());
         prefs.setNotificationsForSaleEnabled(req.isNotificationsForSaleEnabled());
         prefs.setNotificationsForRentEnabled(req.isNotificationsForRentEnabled());
 

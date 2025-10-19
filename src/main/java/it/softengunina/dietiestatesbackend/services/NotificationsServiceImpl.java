@@ -3,8 +3,11 @@ package it.softengunina.dietiestatesbackend.services;
 import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 import software.amazon.awssdk.services.sns.model.UnsubscribeResponse;
+
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -16,8 +19,18 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public void publishMessageToTopic(String message) {
-        snsService.withClient(client -> snsService.pubTopic(client, message));
+    public void publishMessageToTopic(String message, Map<String, String> attributes) {
+        Map<String, MessageAttributeValue> messageAttributes = attributes.entrySet().stream()
+                .collect(
+                        java.util.stream.Collectors.toMap(
+                                Map.Entry::getKey,
+                                e -> MessageAttributeValue.builder()
+                                        .dataType("String")
+                                        .stringValue(e.getValue())
+                                        .build()
+                        )
+                );
+        snsService.withClient(client -> snsService.pubTopic(client, message, messageAttributes));
     }
 
     @Override

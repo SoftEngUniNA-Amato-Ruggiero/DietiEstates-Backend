@@ -8,6 +8,7 @@ import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.*;
 import software.amazon.awssdk.services.sns.paginators.ListTopicsIterable;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 @Slf4j
@@ -35,8 +36,9 @@ public class SnsService {
                 .forEach(content -> log.info(" Topic ARN: {}", content.topicArn()));
     }
     
-    public PublishResponse pubTopic(SnsClient snsClient, String message) {
+    public PublishResponse pubTopic(SnsClient snsClient, String message, Map<String, MessageAttributeValue> messageAttributes) {
         PublishRequest request = PublishRequest.builder()
+                .messageAttributes(messageAttributes)
                 .message(message)
                 .topicArn(SnsService.TOPIC_ARN)
                 .build();
@@ -68,4 +70,17 @@ public class SnsService {
         log.info("Unsubscribed: {}", subscriptionArn);
         return result;
     }
+
+    public SetSubscriptionAttributesResponse setFilterPolicy(SnsClient snsClient, String subscriptionArn, String filterJson) {
+        SetSubscriptionAttributesRequest req = SetSubscriptionAttributesRequest.builder()
+                .subscriptionArn(subscriptionArn)
+                .attributeName("FilterPolicy")
+                .attributeValue(filterJson)
+                .build();
+
+        SetSubscriptionAttributesResponse res = snsClient.setSubscriptionAttributes(req);
+        log.info("Applied FilterPolicy to subscription: {}", subscriptionArn);
+        return res;
+    }
+
 }
