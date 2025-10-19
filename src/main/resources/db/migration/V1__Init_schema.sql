@@ -81,7 +81,7 @@ CREATE TABLE notifications_preferences
     user_id                        BIGINT  NOT NULL,
     center                         GEOMETRY(Point, 4326),
     radius                         DOUBLE PRECISION,
-    email_notifications_enabled    BOOLEAN NOT NULL,
+    subscription_arn               VARCHAR(255),
     notifications_for_sale_enabled BOOLEAN NOT NULL,
     notifications_for_rent_enabled BOOLEAN NOT NULL,
     CONSTRAINT pk_notifications_preferences PRIMARY KEY (user_id)

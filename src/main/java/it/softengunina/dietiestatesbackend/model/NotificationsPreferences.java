@@ -37,15 +37,15 @@ public class NotificationsPreferences implements NotificationsOperations {
     private Double radius;
 
     @Getter
-    @Setter(AccessLevel.PROTECTED)
-    private boolean emailNotificationsEnabled = true;
+    @Setter
+    private String subscriptionArn = null;
 
     @Getter
-    @Setter(AccessLevel.PROTECTED)
+    @Setter
     private boolean notificationsForSaleEnabled = true;
 
     @Getter
-    @Setter(AccessLevel.PROTECTED)
+    @Setter
     private boolean notificationsForRentEnabled = true;
 
     public NotificationsPreferences(BaseUser user) {
@@ -58,33 +58,7 @@ public class NotificationsPreferences implements NotificationsOperations {
         this.radius = radius;
     }
 
-    @Override
-    public void enableEmailNotifications() {
-        this.emailNotificationsEnabled = true;
-    }
-
-    @Override
-    public void disableEmailNotifications() {
-        this.emailNotificationsEnabled = false;
-    }
-
-    @Override
-    public void enableNotificationsForSale() {
-        this.notificationsForSaleEnabled = true;
-    }
-
-    @Override
-    public void disableNotificationsForSale() {
-        this.notificationsForSaleEnabled = false;
-    }
-
-    @Override
-    public void enableNotificationsForRent() {
-        this.notificationsForRentEnabled = true;
-    }
-
-    @Override
-    public void disableNotificationsForRent() {
-        this.notificationsForRentEnabled = false;
+    public boolean isEmailNotificationsEnabled() {
+        return this.subscriptionArn != null && !this.subscriptionArn.isEmpty();
     }
 }

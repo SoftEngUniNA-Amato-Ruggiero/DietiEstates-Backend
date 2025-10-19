@@ -1,11 +1,17 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import it.softengunina.dietiestatesbackend.dto.NotificationsPreferencesRequestDTO;
 import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.NotificationsPreferencesRepository;
 import it.softengunina.dietiestatesbackend.services.NotificationsService;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
@@ -20,23 +26,27 @@ public class NotificationPreferencesController {
         this.repository = repository;
     }
 
-    @PutMapping("/email/unsubscribe")
-    public void unsubscribeEmail(@RequestAttribute(name = "user") BaseUser user) {
+    @PutMapping
+    public NotificationsPreferences updatePreferences(@RequestAttribute(name = "user") BaseUser user,
+                                                      @RequestBody NotificationsPreferencesRequestDTO req) {
         NotificationsPreferences prefs = repository.findByUser_Id(user.getId())
-                .orElseThrow(() -> new RuntimeException("Notification preferences not found for user: " + user.getUsername()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Notification preferences not found for user: " + user.getUsername()));
 
-        prefs.disableEmailNotifications();
-        repository.save(prefs);
-        notificationsService.updateEmailSubscription(prefs);
-    }
+        Coordinate coordinate = new Coordinate(req.getCenterLat(), req.getCenterLng());
+        Point center = new GeometryFactory().createPoint(coordinate);
 
-    @PutMapping("/email/subscribe")
-    public void subscribeEmail(@RequestAttribute(name = "user") BaseUser user) {
-        NotificationsPreferences prefs = repository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Notification preferences not found for user: " + user.getUsername()));
+        prefs.setArea(center, req.getRadius());
+        prefs.setNotificationsForSaleEnabled(req.isNotificationsForSaleEnabled());
+        prefs.setNotificationsForRentEnabled(req.isNotificationsForRentEnabled());
 
-        prefs.enableEmailNotifications();
-        repository.save(prefs);
-        notificationsService.updateEmailSubscription(prefs);
+        if (req.isEmailNotificationsEnabled() != prefs.isEmailNotificationsEnabled()) {
+            try {
+                notificationsService.toggleEmailSubscription(prefs);
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to toggle email subscription: " + e.getMessage());
+            }
+        }
+
+        return repository.save(prefs);
     }
 }

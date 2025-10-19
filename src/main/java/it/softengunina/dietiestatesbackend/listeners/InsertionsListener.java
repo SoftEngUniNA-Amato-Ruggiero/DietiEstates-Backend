@@ -4,7 +4,7 @@ import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.Inserti
 import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import it.softengunina.dietiestatesbackend.repository.TagRepository;
-import it.softengunina.dietiestatesbackend.services.NotificationsService;
+import it.softengunina.dietiestatesbackend.services.NotificationsServiceImpl;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PrePersist;
@@ -19,11 +19,11 @@ public class InsertionsListener {
 
     TagRepository tagRepository;
     InsertionDTOVisitorImpl dtoVisitor;
-    NotificationsService notificationsService;
+    NotificationsServiceImpl notificationsService;
 
     public InsertionsListener(@Lazy TagRepository tagRepository,
                               @Lazy InsertionDTOVisitorImpl dtoVisitor,
-                              @Lazy NotificationsService notificationsService) {
+                              @Lazy NotificationsServiceImpl notificationsService) {
         this.tagRepository = tagRepository;
         this.dtoVisitor = dtoVisitor;
         this.notificationsService = notificationsService;
@@ -41,7 +41,7 @@ public class InsertionsListener {
     @PostPersist
     public void sendNotification(Insertion insertion) {
         String message = buildMessage(insertion);
-        notificationsService.publishNotificationToSNSTopic(message);
+        notificationsService.publishMessageToTopic(message);
     }
 
     private String buildMessage(Insertion insertion) {

@@ -4,13 +4,10 @@ import org.locationtech.jts.geom.Point;
 
 public interface NotificationsOperations {
     void setArea(Point center, Double radius);
+    boolean isEmailNotificationsEnabled();
+    boolean isNotificationsForSaleEnabled();
+    boolean isNotificationsForRentEnabled();
 
-    void enableEmailNotifications();
-    void disableEmailNotifications();
-
-    void enableNotificationsForSale();
-    void disableNotificationsForSale();
-
-    void enableNotificationsForRent();
-    void disableNotificationsForRent();
+    void setNotificationsForSaleEnabled(boolean enabled);
+    void setNotificationsForRentEnabled(boolean enabled);
 }
