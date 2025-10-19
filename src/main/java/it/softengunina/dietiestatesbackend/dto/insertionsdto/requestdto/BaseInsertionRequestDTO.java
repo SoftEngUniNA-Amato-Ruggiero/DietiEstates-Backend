@@ -18,7 +18,7 @@ public abstract class BaseInsertionRequestDTO {
     private String description;
     @NotNull
     private Set<String> tags;
-    @NonNull
+    @NotNull
     private FeatureCollection address;
 
     private Double size;
