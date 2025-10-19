@@ -25,7 +25,9 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(userInterceptor)
-                .addPathPatterns("/me", "/agencies", "/saved-searches", "/saved-searches/**");
+                .addPathPatterns("/me", "/agencies",
+                        "/saved-searches", "/saved-searches/**",
+                        "/notification-preferences", "/notification-preferences/**");
 
         registry.addInterceptor(agentInterceptor)
                 .addPathPatterns("/insertions", "/insertions/**");
