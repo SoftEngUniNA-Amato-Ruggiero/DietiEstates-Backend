@@ -24,8 +24,9 @@ public class UserListener {
     @PostPersist
     public void afterUserPersist(BaseUser user) {
         log.info("User created: {}", user.getUsername());
-        NotificationsPreferences prefs = this.notificationsPreferencesRepository.save(new NotificationsPreferences(user));
-        notificationsService.toggleEmailSubscription(prefs);
+        NotificationsPreferences prefs = new NotificationsPreferences(user);
+        notificationsService.enableEmailSubscription(prefs);
+        notificationsPreferencesRepository.save(prefs);
     }
 
 }

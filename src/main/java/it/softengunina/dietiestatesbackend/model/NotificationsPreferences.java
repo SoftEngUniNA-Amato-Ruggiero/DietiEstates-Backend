@@ -30,11 +30,11 @@ public class NotificationsPreferences implements NotificationsOperations {
     @Column(columnDefinition = "geometry(Point, 4326)")
     @Getter
     @Setter(AccessLevel.PROTECTED)
-    private Point center;
+    private Point center = null;
 
     @Getter
     @Setter(AccessLevel.PROTECTED)
-    private Double radius;
+    private Double radius = null;
 
     @Getter
     @Setter
@@ -58,6 +58,7 @@ public class NotificationsPreferences implements NotificationsOperations {
         this.radius = radius;
     }
 
+    @Override
     public boolean isEmailNotificationsEnabled() {
         return this.subscriptionArn != null && !this.subscriptionArn.isEmpty();
     }
