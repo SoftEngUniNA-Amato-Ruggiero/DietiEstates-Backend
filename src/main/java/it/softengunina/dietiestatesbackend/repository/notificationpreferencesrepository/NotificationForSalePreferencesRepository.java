@@ -1,0 +1,6 @@
+package it.softengunina.dietiestatesbackend.repository.notificationpreferencesrepository;
+
+import it.softengunina.dietiestatesbackend.model.notificationpreferences.NotificationForSalePreferences;
+
+public interface NotificationForSalePreferencesRepository extends BaseNotificationPreferencesRepository<NotificationForSalePreferences> {
+}
