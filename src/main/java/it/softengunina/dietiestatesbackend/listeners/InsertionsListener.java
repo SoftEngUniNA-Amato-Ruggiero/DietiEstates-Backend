@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.listeners;
 
+import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import it.softengunina.dietiestatesbackend.repository.TagRepository;
@@ -44,7 +45,9 @@ public class InsertionsListener {
     }
 
     private String buildMessage(Insertion insertion) {
-        return "New insertion uploaded!\nDetails: http://localhost:8081/api/insertions/" + insertion.getId();
+        return String.valueOf(
+                new InsertionSearchResultDTO(insertion.getAddress().getLocation(), insertion.getId())
+        );
     }
 
 }
