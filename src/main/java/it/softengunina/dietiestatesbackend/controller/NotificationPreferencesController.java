@@ -23,6 +23,13 @@ public class NotificationPreferencesController {
         this.repository = repository;
     }
 
+    /**
+     * Get notification preferences for the authenticated user.
+     * @param user Authenticated user
+     * @param req Request body containing updated preferences
+     * @return NotificationsPreferences of the user
+     * @throws ResponseStatusException if preferences not found or email subscription toggle fails
+     */
     @PutMapping
     public NotificationsPreferences updatePreferences(@RequestAttribute(name = "user") BaseUser user,
                                                       @RequestBody NotificationsPreferencesRequestDTO req) {
