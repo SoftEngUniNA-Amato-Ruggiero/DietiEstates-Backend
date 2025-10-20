@@ -3,6 +3,7 @@ package it.softengunina.dietiestatesbackend.services;
 import it.softengunina.dietiestatesbackend.exceptions.AuthenticationNotFoundException;
 import it.softengunina.dietiestatesbackend.exceptions.MissingClaimException;
 import it.softengunina.dietiestatesbackend.exceptions.JwtNotFoundException;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -36,7 +37,7 @@ public class TokenService {
      * @return the Cognito subject
      * @throws MissingClaimException if the sub claim is missing or empty
      */
-    public String getCognitoSub(Jwt jwt) {
+    public String getCognitoSub(@NonNull Jwt jwt) {
         String cognitoSub = jwt.getSubject();
         if (cognitoSub == null || cognitoSub.isEmpty()) {
             throw new MissingClaimException("Cognito sub claim is missing or empty.");
@@ -64,7 +65,7 @@ public class TokenService {
      * @return the email
      * @throws MissingClaimException if the email claim is missing or empty
      */
-    public String getEmail(Jwt jwt) {
+    public String getEmail(@NonNull Jwt jwt) {
         String email = jwt.getClaimAsString("email");
         if (email == null || email.isEmpty()) {
             throw new MissingClaimException("Email claim is missing or empty.");
@@ -72,7 +73,7 @@ public class TokenService {
         return email;
     }
 
-    private Authentication getAuthenticationFromSecurityContext(SecurityContext securityContext) {
+    private Authentication getAuthenticationFromSecurityContext(@NonNull SecurityContext securityContext) {
         Authentication authentication = securityContext.getAuthentication();
         if (authentication == null) {
             throw new AuthenticationNotFoundException("No Authentication found in SecurityContext.");
@@ -80,7 +81,7 @@ public class TokenService {
         return authentication;
     }
 
-    private Jwt getJwtFromAuthentication(Authentication authentication) {
+    private Jwt getJwtFromAuthentication(@NonNull Authentication authentication) {
         if (authentication.getPrincipal() instanceof Jwt jwt) {
             return jwt;
         } else {

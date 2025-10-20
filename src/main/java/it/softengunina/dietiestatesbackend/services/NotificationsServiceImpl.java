@@ -8,7 +8,9 @@ import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 import software.amazon.awssdk.services.sns.model.UnsubscribeResponse;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -20,22 +22,20 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public void publishMessageToTopic(@NonNull String message, Map<String, String> attributes) {
+    public void publishMessageToTopic(@NonNull String message,
+                                      Map<String, String> attributes) {
+        if (attributes == null) {
+            attributes = Collections.emptyMap();
+        }
+
         Map<String, MessageAttributeValue> messageAttributes = attributes.entrySet().stream()
-                .collect(
-                        java.util.stream.Collectors.toMap(
-                                Map.Entry::getKey,
-                                e -> MessageAttributeValue.builder()
-                                        .dataType("String")
-                                        .stringValue(e.getValue())
-                                        .build()
-                        )
-                );
+                .collect(Collectors.toMap(Map.Entry::getKey, NotificationsServiceImpl::buildMessageAttribute));
+
         snsService.withClient(client -> snsService.pubTopic(client, message, messageAttributes));
     }
 
     @Override
-    public void enableEmailSubscription(NotificationsPreferences prefs) {
+    public void enableEmailSubscription(@NonNull NotificationsPreferences prefs) {
         String email = prefs.getUser().getUsername();
 
         snsService.withClient(client -> {
@@ -48,7 +48,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public void disableEmailSubscription(NotificationsPreferences prefs) {
+    public void disableEmailSubscription(@NonNull NotificationsPreferences prefs) {
         String subscriptionArn = prefs.getSubscriptionArn();
 
         snsService.withClient(client -> {
@@ -61,11 +61,18 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public void toggleEmailSubscription(NotificationsPreferences prefs) {
+    public void toggleEmailSubscription(@NonNull NotificationsPreferences prefs) {
         if (!prefs.isEmailNotificationsEnabled()) {
             enableEmailSubscription(prefs);
         } else {
             disableEmailSubscription(prefs);
         }
+    }
+
+    private static MessageAttributeValue buildMessageAttribute(@NonNull Map.Entry<String, String> e) {
+        return MessageAttributeValue.builder()
+                .dataType("String")
+                .stringValue(e.getValue())
+                .build();
     }
 }

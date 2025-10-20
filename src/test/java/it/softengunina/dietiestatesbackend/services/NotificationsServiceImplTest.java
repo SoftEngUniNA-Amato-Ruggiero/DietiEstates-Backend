@@ -48,6 +48,10 @@ class NotificationsServiceImplTest {
         mocks.close();
     }
 
+
+    /* ------------------ WHITE BOX TEST SUITE ------------------ */
+    /* ------------------ publishMessageToTopic ------------------ */
+
     @Test
     void publishMessageToTopic() {
         String message = "message";
@@ -61,6 +65,22 @@ class NotificationsServiceImplTest {
                 });
 
         notificationsService.publishMessageToTopic(message, attributes);
+
+        assertTrue(pubTopicCalled.get());
+    }
+
+    @Test
+    void publishMessageToTopic_WhenAttributesIsNull() {
+        String message = "message";
+
+        AtomicBoolean pubTopicCalled = new AtomicBoolean(false);
+        Mockito.when(snsService.pubTopic(Mockito.eq(snsClient), Mockito.any(), Mockito.any()))
+                .thenAnswer(i -> {
+                    pubTopicCalled.set(true);
+                    return null;
+                });
+
+        notificationsService.publishMessageToTopic(message, null);
 
         assertTrue(pubTopicCalled.get());
     }

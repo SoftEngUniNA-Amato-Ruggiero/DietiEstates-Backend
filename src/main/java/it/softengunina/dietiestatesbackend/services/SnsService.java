@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.services;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
@@ -17,7 +18,7 @@ public class SnsService {
     private static final String TOPIC_ARN = "arn:aws:sns:eu-west-3:340752836075:DietiEstates-Insertions";
     private static final ProfileCredentialsProvider CREDENTIALS_PROVIDER = ProfileCredentialsProvider.create();
     
-    public void withClient(Consumer<SnsClient> consumer) {
+    public void withClient(@NonNull Consumer<SnsClient> consumer) {
         try (SnsClient snsClient = SnsClient.builder()
                 .region(Region.EU_WEST_3)
                 .credentialsProvider(CREDENTIALS_PROVIDER)
@@ -29,14 +30,16 @@ public class SnsService {
         }
     }
     
-    public void listTopics(SnsClient snsClient) {
+    public void listTopics(@NonNull SnsClient snsClient) {
         ListTopicsIterable listTopics = snsClient.listTopicsPaginator();
         listTopics.stream()
                 .flatMap(r -> r.topics().stream())
                 .forEach(content -> log.info(" Topic ARN: {}", content.topicArn()));
     }
     
-    public PublishResponse pubTopic(SnsClient snsClient, String message, Map<String, MessageAttributeValue> messageAttributes) {
+    public PublishResponse pubTopic(@NonNull SnsClient snsClient,
+                                    @NonNull String message, Map<String,
+                                    MessageAttributeValue> messageAttributes) {
         PublishRequest request = PublishRequest.builder()
                 .messageAttributes(messageAttributes)
                 .message(message)
@@ -48,7 +51,8 @@ public class SnsService {
         return result;
     }
 
-    public SubscribeResponse subEmail(SnsClient snsClient, String email) {
+    public SubscribeResponse subEmail(@NonNull SnsClient snsClient,
+                                      @NonNull String email) {
         SubscribeRequest request = SubscribeRequest.builder()
                 .protocol("email")
                 .endpoint(email)
@@ -61,7 +65,8 @@ public class SnsService {
         return result;
     }
     
-    public UnsubscribeResponse unsubEmail(SnsClient snsClient, String subscriptionArn) {
+    public UnsubscribeResponse unsubEmail(@NonNull SnsClient snsClient,
+                                          @NonNull String subscriptionArn) {
         UnsubscribeRequest request = UnsubscribeRequest.builder()
                 .subscriptionArn(subscriptionArn)
                 .build();
@@ -71,7 +76,9 @@ public class SnsService {
         return result;
     }
 
-    public SetSubscriptionAttributesResponse setFilterPolicy(SnsClient snsClient, String subscriptionArn, String filterJson) {
+    public SetSubscriptionAttributesResponse setFilterPolicy(@NonNull SnsClient snsClient,
+                                                             @NonNull String subscriptionArn,
+                                                             @NonNull String filterJson) {
         SetSubscriptionAttributesRequest req = SetSubscriptionAttributesRequest.builder()
                 .subscriptionArn(subscriptionArn)
                 .attributeName("FilterPolicy")
