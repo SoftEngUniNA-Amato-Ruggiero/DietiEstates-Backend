@@ -2,14 +2,13 @@ package it.softengunina.dietiestatesbackend.controller.userscontroller;
 
 import it.softengunina.dietiestatesbackend.dto.usersdto.BusinessUserResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserRequestDTO;
-import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
+import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,22 +19,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class RealEstateAgentControllerTest {
     @Autowired
     RealEstateAgentController controller;
+    @Autowired
+    RealEstateManagerRepository managerRepository;
 
-    @MockitoBean
-    TokenService tokenService;
-
+    RealEstateManager manager;
     UserRequestDTO req;
 
     @BeforeEach
     void setUp() {
         req = new UserRequestDTO("baseUserName");
-        Mockito.when(tokenService.getCognitoSub())
-                .thenReturn("manager1Sub");
+        manager = managerRepository.findByBusinessUser_User_CognitoSub("manager1Sub").orElseThrow();
     }
 
     @Test
     void createAgent() {
-        BusinessUserResponseDTO res = controller.createAgent(req);
+        BusinessUserResponseDTO res = controller.createAgent(manager, req);
         assertAll(
                 () -> assertNotNull(res),
                 () -> assertEquals("baseUserName", res.getUsername()),

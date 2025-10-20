@@ -8,10 +8,8 @@ import it.softengunina.dietiestatesbackend.model.users.RealEstateAgent;
 import it.softengunina.dietiestatesbackend.model.users.RealEstateManager;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateAgentRepository;
-import it.softengunina.dietiestatesbackend.repository.usersrepository.RealEstateManagerRepository;
-import it.softengunina.dietiestatesbackend.services.TokenService;
+import it.softengunina.dietiestatesbackend.services.UserPromotionService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,21 +28,15 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/agents")
 public class RealEstateAgentController {
     private final BaseUserRepository userRepository;
-    private final BusinessUserRepository businessUserRepository;
     private final RealEstateAgentRepository agentRepository;
-    private final RealEstateManagerRepository managerRepository;
-    private final TokenService tokenService;
+    private final UserPromotionService userPromotionService;
 
     RealEstateAgentController(BaseUserRepository userRepository,
-                              BusinessUserRepository businessUserRepository,
                               RealEstateAgentRepository agentRepository,
-                              RealEstateManagerRepository managerRepository,
-                              TokenService tokenService) {
+                              UserPromotionService userPromotionService) {
         this.userRepository = userRepository;
-        this.businessUserRepository = businessUserRepository;
         this.agentRepository = agentRepository;
-        this.managerRepository = managerRepository;
-        this.tokenService = tokenService;
+        this.userPromotionService = userPromotionService;
     }
 
     /**
@@ -52,19 +44,18 @@ public class RealEstateAgentController {
      * Access is restricted to users with a manager role.
      * @param req The UserDTO containing the username of the user to be promoted.
      * @return The UserWithAgencyDTO for the newly created agent's data along with agency information.
-     * @throws ResponseStatusException with HttpStatus.FORBIDDEN if the requesting user is not a manager.
+     * @throws ResponseStatusException with HttpStatus.FORBIDDEN if the requesting user is not a manager or
      * @throws ResponseStatusException with HttpStatus.NOT_FOUND if the requested user is not found.
      * @throws ResponseStatusException with HttpStatus.CONFLICT if the requested user is already an agent.
+     * @throws ResponseStatusException with HttpStatus.CONFLICT if the requested user works for a different agency.
      * @throws ResponseStatusException with HttpStatus.INTERNAL_SERVER_ERROR for other errors.
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public BusinessUserResponseDTO createAgent(@Valid @RequestBody UserRequestDTO req) {
+    public BusinessUserResponseDTO createAgent(@RequestAttribute(name="manager") RealEstateManager manager,
+                                               @Valid @RequestBody UserRequestDTO req) {
         try {
-            RealEstateManager manager = managerRepository.findByBusinessUser_User_CognitoSub(tokenService.getCognitoSub())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a manager"));
-
             BaseUser user = userRepository.findByUsername(req.getUsername())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
@@ -72,18 +63,18 @@ public class RealEstateAgentController {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already an agent");
             }
 
-            BusinessUser businessUser = businessUserRepository.findById(user.getId())
-                    .orElse(new BusinessUser(user, manager.getAgency()));
+            BusinessUser businessUser = userPromotionService.promoteToBusinessUser(user, manager.getAgency());
 
             RealEstateAgent agent = agentRepository.save(new RealEstateAgent(businessUser));
             return new BusinessUserResponseDTO(agent);
 
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Data integrity violation: " + e.getMessage());
         } catch (ResponseStatusException e) {
             throw e;
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Data integrity violation: " + e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unknown error: " + e.getMessage());
         }
     }
+
 }
