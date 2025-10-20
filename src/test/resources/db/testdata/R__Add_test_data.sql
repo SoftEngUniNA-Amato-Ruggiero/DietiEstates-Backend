@@ -9,10 +9,10 @@ INSERT INTO users (id, username, cognito_sub) VALUES
     (40, 'agent2UserName', 'agent2Sub'),
     (50, 'manager2UserName', 'manager2Sub');
 
-INSERT INTO notifications_preferences (user_id, center, radius, subscription_arn, notifications_for_sale_enabled, notifications_for_rent_enabled) VALUES
-    (10, ST_SetSRID(ST_MakePoint(15.0, 25.0), 4326), 5, 'baseUserTestSubscriptionArn', true, true),
-    (20, null, null, null, true, false),
-    (30, null, null, null, false, true),
+INSERT INTO notifications_preferences (user_id, city, subscription_arn, notifications_for_sale_enabled, notifications_for_rent_enabled) VALUES
+    (10, 'Napoli', 5, 'baseUserTestSubscriptionArn', true, true),
+    (20, 'Roma', null, null, true, false),
+    (30, 'Milano', null, null, false, true),
     (40, null, null, null, false, false),
     (50, null, null, null, true, true);
 
