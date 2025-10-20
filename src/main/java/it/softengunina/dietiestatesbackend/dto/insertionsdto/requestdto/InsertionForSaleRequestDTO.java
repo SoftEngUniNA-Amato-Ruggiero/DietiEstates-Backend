@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto;
 
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -10,5 +11,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class InsertionForSaleRequestDTO extends BaseInsertionRequestDTO {
+    @Positive
     private double price;
 }
