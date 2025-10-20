@@ -1,6 +1,7 @@
 package it.softengunina.dietiestatesbackend.services;
 
 import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
@@ -19,7 +20,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public void publishMessageToTopic(String message, Map<String, String> attributes) {
+    public void publishMessageToTopic(@NonNull String message, Map<String, String> attributes) {
         Map<String, MessageAttributeValue> messageAttributes = attributes.entrySet().stream()
                 .collect(
                         java.util.stream.Collectors.toMap(

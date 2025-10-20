@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
-import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.*;
 
@@ -13,6 +12,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static it.softengunina.dietiestatesbackend.services.SnsTestUtils.*;
 
 class SnsServiceTest {
     SnsService snsService;
@@ -59,7 +59,7 @@ class SnsServiceTest {
 
     @Test
     void subEmail() {
-        SubscribeResponse result = getSubscribeResponse();
+        SubscribeResponse result = buildSuccesfulSubscribeResponse();
         Mockito.when(snsClient.subscribe(Mockito.any(SubscribeRequest.class)))
                 .thenReturn(result);
 
@@ -74,7 +74,7 @@ class SnsServiceTest {
 
     @Test
     void unsubEmail() {
-        UnsubscribeResponse result = UnsubscribeResponse.builder().build();
+        UnsubscribeResponse result = buildSuccesfulUnsubscribeResponse();
         Mockito.when(snsClient.unsubscribe(Mockito.any(UnsubscribeRequest.class)))
                 .thenReturn(result);
 
@@ -94,36 +94,4 @@ class SnsServiceTest {
         assertNotNull(res);
     }
 
-    private static Map<String, MessageAttributeValue> getMessageAttributes() {
-        return Map.of(
-                "attribute1", MessageAttributeValue.builder()
-                        .dataType("String")
-                        .stringValue("value1")
-                        .build(),
-                "attribute2", MessageAttributeValue.builder()
-                        .dataType("Number")
-                        .stringValue("123")
-                        .build()
-        );
-    }
-
-    private static PublishResponse getPublishResponse() {
-        SdkHttpResponse httpResponse = SdkHttpResponse.builder()
-                .statusCode(200)
-                .build();
-
-        return (PublishResponse) PublishResponse.builder()
-                .messageId("messageId")
-                .sdkHttpResponse(httpResponse)
-                .build();
-    }
-
-    private static SubscribeResponse getSubscribeResponse() {
-        return (SubscribeResponse) SubscribeResponse.builder()
-                .subscriptionArn("subscriptionArn")
-                .sdkHttpResponse(SdkHttpResponse.builder()
-                        .statusCode(200)
-                        .build())
-                .build();
-    }
 }
