@@ -4,6 +4,7 @@ import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BusinessUserRepository;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,7 +19,7 @@ public class UserPromotionService {
         this.businessUserRepository = businessUserRepository;
     }
 
-    public BusinessUser promoteToBusinessUser(BaseUser user, RealEstateAgency agency) {
+    public BusinessUser promoteToBusinessUser(@NonNull BaseUser user, @NonNull RealEstateAgency agency) {
         BusinessUser businessUser;
         Optional<BusinessUser> businessUserOpt = businessUserRepository.findById(user.getId());
         if (businessUserOpt.isEmpty()) {
