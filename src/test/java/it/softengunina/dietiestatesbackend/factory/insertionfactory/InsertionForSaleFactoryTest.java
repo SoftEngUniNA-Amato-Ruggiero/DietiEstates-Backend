@@ -1,65 +1,71 @@
 package it.softengunina.dietiestatesbackend.factory.insertionfactory;
 
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.InsertionForSaleRequestDTO;
-import it.softengunina.dietiestatesbackend.model.Address;
 import it.softengunina.dietiestatesbackend.model.RealEstateAgency;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
-import org.geojson.Feature;
+import it.softengunina.dietiestatesbackend.model.users.BusinessUser;
 import org.geojson.FeatureCollection;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
+import static it.softengunina.dietiestatesbackend.factory.insertionfactory.InsertionsFactoryTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InsertionForSaleFactoryTest {
 
+    public static final double PRICE = 50000.0;
+
+    InsertionForSaleRequestDTO request;
+    RealEstateAgency agency;
+    BusinessUser uploader;
+
+    InsertionForSaleFactory insertionForSaleFactory;
+
+    @BeforeEach
+    void setUp() {
+        request = getInsertionForSaleRequestDTO();
+        agency = new RealEstateAgency("iban", "agencyName");
+        uploader = new BusinessUser("email", "sub", agency);
+
+        insertionForSaleFactory = new InsertionForSaleFactory();
+    }
+
+
+    /* ------------------ WHITE BOX TEST SUITE ------------------ */
+    /* ------------------ InsertionForSaleFactory.createInsertion ------------------ */
+
     @Test
     void createInsertion() {
-        Feature feature = getFeature();
-
-        FeatureCollection featureCollection = new FeatureCollection();
-        featureCollection.add(feature);
-
-        InsertionForSaleRequestDTO request = new InsertionForSaleRequestDTO();
-        request.setDescription("Villa in vendita in zona residenziale con stazione metro (che non esiste, infatti questo è un test");
-        request.setTags(Set.of("giardino", "garage"));
-        request.setAddress(featureCollection);
-        request.setPrice(400000.0);
-
-        RealEstateAgency agency = Mockito.mock (RealEstateAgency.class);
-        var uploader = new it.softengunina.dietiestatesbackend.model.users.BusinessUser("Luigi", "Ruggiero", agency);
-
-        InsertionForSaleFactory insertionForSaleFactory = new InsertionForSaleFactory();
 
         InsertionForSale insertion = insertionForSaleFactory.createInsertion(request, uploader);
 
         assertAll(
-                () -> assertEquals("Villa in vendita in zona residenziale con stazione metro (che non esiste, infatti questo è un test", insertion.getDescription()),
-                () -> assertEquals(Address.fromProperties(feature.getProperties()), insertion.getAddress()),
                 () -> assertEquals(uploader.getUser(), insertion.getUploader()),
                 () -> assertEquals(agency, insertion.getAgency()),
-                () -> assertEquals(400000.0, insertion.getPrice()),
+                () -> assertEquals(DESCRIPTION, insertion.getDescription()),
+                () -> assertEquals(LATITUDE, insertion.getAddress().getLocation().getY()),
+                () -> assertEquals(LONGITUDE, insertion.getAddress().getLocation().getX()),
+                () -> assertEquals(STREET_NAME, insertion.getAddress().getStreet()),
+                () -> assertEquals(HOUSE_NUMBER, insertion.getAddress().getHousenumber()),
+                () -> assertEquals(CITY_NAME, insertion.getAddress().getCity()),
+                () -> assertEquals(POSTAL_CODE, insertion.getAddress().getPostcode()),
+                () -> assertEquals(COUNTRY_NAME, insertion.getAddress().getCountry()),
+                () -> assertEquals(PRICE, insertion.getPrice()),
                 () -> assertTrue(insertion.getTags().stream().anyMatch(tag -> tag.getName().equals("giardino"))),
                 () -> assertTrue(insertion.getTags().stream().anyMatch(tag -> tag.getName().equals("garage")))
         );
     }
 
-    private static Feature getFeature() {
-        Feature feature = new Feature();
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("street", "Via Roma");
-        properties.put("number", "544");
-        properties.put("city", "Melito di Napoli");
-        properties.put("postalCode", "80017");
-        properties.put("province", "NA");
-        properties.put("country", "Italy");
-        properties.put("lon", 14.195827);
-        properties.put("lat", 40.922233);
-        feature.setProperties(properties);
-        return feature;
+    private InsertionForSaleRequestDTO getInsertionForSaleRequestDTO() {
+
+        FeatureCollection featureCollection = getFeatureCollection();
+
+        InsertionForSaleRequestDTO req = new InsertionForSaleRequestDTO();
+        req.setAddress(featureCollection);
+        req.setTags(TAGS);
+        req.setDescription(DESCRIPTION);
+        req.setPrice(PRICE);
+
+        return req;
     }
 }
