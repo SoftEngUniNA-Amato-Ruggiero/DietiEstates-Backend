@@ -4,6 +4,7 @@ import it.softengunina.dietiestatesbackend.dto.insertionsdto.requestdto.Insertio
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
 import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionWithPriceResponseDTO;
 import it.softengunina.dietiestatesbackend.dto.searchdto.SearchRequestForSaleDTO;
+import it.softengunina.dietiestatesbackend.services.NotificationsServiceImpl;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.geojson.Feature;
 import org.geojson.FeatureCollection;
@@ -33,6 +34,8 @@ class InsertionForSaleControllerIntegrationTest {
 
     @MockitoBean
     TokenService tokenService;
+    @MockitoBean
+    NotificationsServiceImpl notificationsService;
 
     String agentSub;
     FeatureCollection addressReq;
@@ -45,6 +48,9 @@ class InsertionForSaleControllerIntegrationTest {
     void setUp() {
         agentSub = "agent1Sub";
         Mockito.when(tokenService.getCognitoSub()).thenReturn(agentSub);
+        Mockito.doNothing()
+                .when(notificationsService)
+                .publishMessageToTopic(Mockito.anyString(), Mockito.anyMap());
 
         Feature feature = Mockito.mock(Feature.class);
         Mockito.when(feature.getProperties()).thenReturn(Map.of(

@@ -1,8 +1,10 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
+import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
+import it.softengunina.dietiestatesbackend.services.NotificationsServiceImpl;
 import it.softengunina.dietiestatesbackend.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,8 @@ class MeControllerIntegrationTest {
 
     @MockitoBean
     TokenService tokenService;
+    @MockitoBean
+    NotificationsServiceImpl notificationsService;
 
     BaseUser baseUser;
     BaseUser businessUser;
@@ -53,6 +57,13 @@ class MeControllerIntegrationTest {
         Mockito.when(tokenService.getJwt()).thenReturn(jwt);
         Mockito.when(tokenService.getCognitoSub(jwt)).thenReturn("newUserSub");
         Mockito.when(tokenService.getEmail(jwt)).thenReturn("newuser@email.com");
+        Mockito.doAnswer(i -> {
+                    NotificationsPreferences prefs = i.getArgument(0);
+                    prefs.setSubscriptionArn("subscriptionArn");
+                    return null;
+                })
+                .when(notificationsService)
+                .enableEmailSubscription(Mockito.any(NotificationsPreferences.class));
 
         UserResponseDTO newUser = meController.postMe();
 
