@@ -40,6 +40,9 @@ class TokenServiceTest {
         mocks.close();
     }
 
+    /* ------------------ WHITE BOX TEST SUITE ------------------ */
+    /* ------------------ getJwt ------------------ */
+
     @Test
     void getJwt_returnsJwt() {
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -62,6 +65,10 @@ class TokenServiceTest {
         assertThrows(JwtNotFoundException.class, () -> tokenService.getJwt());
     }
 
+
+    /* ------------------ WHITE BOX TEST SUITE ------------------ */
+    /* ------------------ getCognitoSub ------------------ */
+
     @Test
     void getCognitoSub_returnsCognitoSub() {
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -75,6 +82,9 @@ class TokenServiceTest {
         Mockito.when(jwt.getSubject()).thenReturn("");
         assertThrows(MissingClaimException.class, () -> tokenService.getCognitoSub(jwt));
     }
+
+    /* ------------------ WHITE BOX TEST SUITE ------------------ */
+    /* ------------------ getEmail ------------------ */
 
     @Test
     void getEmail_returnsEmail() {

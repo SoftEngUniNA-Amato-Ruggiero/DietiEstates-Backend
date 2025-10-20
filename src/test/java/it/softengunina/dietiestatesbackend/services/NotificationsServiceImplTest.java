@@ -85,6 +85,10 @@ class NotificationsServiceImplTest {
         assertTrue(pubTopicCalled.get());
     }
 
+
+    /* ------------------ WHITE BOX TEST SUITE ------------------ */
+    /* ------------------ enableEmailSubscription ------------------ */
+
     @Test
     void enableEmailSubscription() {
         BaseUser user = new BaseUser("email", "sub");
