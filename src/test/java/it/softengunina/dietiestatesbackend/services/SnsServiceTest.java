@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.*;
@@ -32,6 +33,9 @@ class SnsServiceTest {
     void withClient_WhenThrowsSnsException() {
         Consumer<SnsClient> consumer = client -> {
             throw SnsException.builder()
+                    .awsErrorDetails(AwsErrorDetails.builder()
+                            .errorMessage("Test exception")
+                            .build())
                     .build();
         };
         assertDoesNotThrow(() -> snsService.withClient(consumer));
