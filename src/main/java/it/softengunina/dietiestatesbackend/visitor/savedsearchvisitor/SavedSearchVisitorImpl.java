@@ -7,6 +7,7 @@ import it.softengunina.dietiestatesbackend.model.savedsearches.SavedSearch;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.BaseInsertionRepository;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForRentRepository;
 import it.softengunina.dietiestatesbackend.repository.insertionsrepository.InsertionForSaleRepository;
+import lombok.NonNull;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,8 @@ public class SavedSearchVisitorImpl implements SavedSearchVisitor {
         this.insertionForRentRepository = insertionForRentRepository;
     }
 
-    public Page<InsertionSearchResultDTO> visit(SavedSearch savedSearch, Pageable pageable) {
+    public Page<InsertionSearchResultDTO> visit(@NonNull SavedSearch savedSearch,
+                                                Pageable pageable) {
         SearchRequestDTO dto = SearchRequestDTO.builder()
                 .lng(((Point) savedSearch.getGeometry()).getX())
                 .lat(((Point) savedSearch.getGeometry()).getY())

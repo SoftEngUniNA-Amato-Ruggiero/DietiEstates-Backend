@@ -6,12 +6,14 @@ import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionDetails;
 import it.softengunina.dietiestatesbackend.model.insertions.InsertionForSale;
 import it.softengunina.dietiestatesbackend.model.users.UserWithAgency;
+import lombok.NonNull;
 import org.geojson.Feature;
 import org.springframework.stereotype.Component;
 
 @Component
 public class InsertionForSaleFactory implements InsertionFactory<InsertionForSaleRequestDTO> {
-    public InsertionForSale createInsertion(InsertionForSaleRequestDTO req, UserWithAgency uploader) {
+    public InsertionForSale createInsertion(@NonNull InsertionForSaleRequestDTO req,
+                                            @NonNull UserWithAgency uploader) {
         Feature feature = req.getAddress().getFeatures().getFirst();
         Address address = Address.fromProperties(feature.getProperties());
 
