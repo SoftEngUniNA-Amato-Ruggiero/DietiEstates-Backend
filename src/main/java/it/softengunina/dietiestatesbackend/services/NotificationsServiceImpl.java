@@ -69,10 +69,10 @@ public class NotificationsServiceImpl implements NotificationsService {
         }
     }
 
-    private static MessageAttributeValue buildMessageAttribute(@NonNull Map.Entry<String, String> e) {
+    private static MessageAttributeValue buildMessageAttribute(@NonNull Map.Entry<String, String> entry) {
         return MessageAttributeValue.builder()
                 .dataType("String")
-                .stringValue(e.getValue())
+                .stringValue(entry.getValue())
                 .build();
     }
 }
