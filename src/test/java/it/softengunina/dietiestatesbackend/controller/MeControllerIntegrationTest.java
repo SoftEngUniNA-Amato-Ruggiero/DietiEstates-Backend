@@ -1,6 +1,6 @@
 package it.softengunina.dietiestatesbackend.controller;
 
-import it.softengunina.dietiestatesbackend.dto.usersdto.UserResponseDTO;
+import it.softengunina.dietiestatesbackend.dto.usersdto.MeResponseDTO;
 import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.usersrepository.BaseUserRepository;
@@ -65,11 +65,12 @@ class MeControllerIntegrationTest {
                 .when(notificationsService)
                 .enableEmailSubscription(Mockito.any(NotificationsPreferences.class));
 
-        UserResponseDTO newUser = meController.postMe();
+        MeResponseDTO newUser = meController.postMe();
 
         assertAll(
                 () -> assertNotNull(baseUserRepository.findById(newUser.getId())),
                 () -> assertNotNull(newUser),
+                () -> assertNotNull(newUser.getNotificationsPreferences()),
                 () -> assertEquals("newuser@email.com", newUser.getUsername()),
                 () -> assertTrue(newUser.getRoles().isEmpty())
         );
