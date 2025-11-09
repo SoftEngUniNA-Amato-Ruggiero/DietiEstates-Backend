@@ -40,7 +40,7 @@ public class InsertionsListener {
     }
 
     @PostPersist
-    public void sendNotification(Insertion insertion) {
+    public void publishNotification(Insertion insertion) {
         String message = buildMessage(insertion);
         Map<String, String> attributes = Map.of(
                 "type", insertion.getClass().getSimpleName(),
@@ -49,7 +49,7 @@ public class InsertionsListener {
         notificationsService.publishMessageToTopic(message, attributes);
     }
 
-    private String buildMessage(Insertion insertion) {
+    private static String buildMessage(Insertion insertion) {
         return String.valueOf(
                 new InsertionSearchResultDTO(insertion.getAddress().getLocation(), insertion.getId())
         );
