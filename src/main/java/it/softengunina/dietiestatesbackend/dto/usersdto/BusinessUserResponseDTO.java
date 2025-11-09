@@ -18,6 +18,7 @@ public class BusinessUserResponseDTO implements UserResponse {
     @Valid
     private UserResponseDTO user;
 
+    @NotNull
     @Valid
     private RealEstateAgencyResponseDTO agency;
 
