@@ -27,7 +27,7 @@ public class NotificationsPreferences {
 
     @Getter
     @Setter
-    private String city;
+    private String city = null;
 
     @Getter
     @Setter
