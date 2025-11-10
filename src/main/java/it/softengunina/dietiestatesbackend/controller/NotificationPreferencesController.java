@@ -1,11 +1,12 @@
 package it.softengunina.dietiestatesbackend.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import it.softengunina.dietiestatesbackend.dto.NotificationsPreferencesRequestDTO;
+import it.softengunina.dietiestatesbackend.dto.NotificationsPreferencesDTO;
 import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.NotificationsPreferencesRepository;
 import it.softengunina.dietiestatesbackend.services.NotificationsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/notification-preferences")
+@Slf4j
 public class NotificationPreferencesController {
     private final NotificationsService notificationsService;
     private final NotificationsPreferencesRepository repository;
@@ -31,23 +33,30 @@ public class NotificationPreferencesController {
      * @throws ResponseStatusException if preferences not found or email subscription toggle fails
      */
     @PutMapping
-    public NotificationsPreferences updatePreferences(@RequestAttribute(name = "user") BaseUser user,
-                                                      @RequestBody NotificationsPreferencesRequestDTO req) {
+    public NotificationsPreferencesDTO updatePreferences(@RequestAttribute(name = "user") BaseUser user,
+                                                      @RequestBody NotificationsPreferencesDTO req) {
         NotificationsPreferences prefs = repository.findByUser_Id(user.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Notification preferences not found for user: " + user.getUsername()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Notification preferences not found for user: " + user.getUsername()));
 
-        prefs.setCity(req.getCity());
-        prefs.setNotificationsForSaleEnabled(req.isNotificationsForSaleEnabled());
-        prefs.setNotificationsForRentEnabled(req.isNotificationsForRentEnabled());
+        log.info("received update preferences request: {}", req);
 
-        if (req.isEmailNotificationsEnabled() != prefs.isEmailNotificationsEnabled()) {
-            try {
-                notificationsService.toggleEmailSubscription(prefs);
-            } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to toggle email subscription: " + e.getMessage());
+        try {
+            if (req.getCity() != null) {
+                prefs.setCity(req.getCity());
             }
-        }
+            if (req.getEmailNotificationsEnabled() != null) {
+                prefs.setNotificationsForSaleEnabled(req.getNotificationsForSaleEnabled());
+            }
+            if (req.getNotificationsForSaleEnabled() != null) {
+                prefs.setNotificationsForRentEnabled(req.getNotificationsForSaleEnabled());
+            }
 
-        return repository.save(prefs);
+            if (req.getEmailNotificationsEnabled() != null && req.getEmailNotificationsEnabled() != prefs.isEmailNotificationsEnabled()) {
+                notificationsService.toggleEmailSubscription(prefs);
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to change notification preferences");
+        }
+        return new NotificationsPreferencesDTO(repository.save(prefs));
     }
 }
