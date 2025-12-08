@@ -2,6 +2,8 @@ package it.softengunina.dietiestatesbackend.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import it.softengunina.dietiestatesbackend.dto.NotificationsPreferencesDTO;
+import it.softengunina.dietiestatesbackend.exceptions.EmailNotificationsPreferencesUpdateException;
+import it.softengunina.dietiestatesbackend.exceptions.NotificationsPreferencesUpdateException;
 import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import it.softengunina.dietiestatesbackend.repository.NotificationsPreferencesRepository;
@@ -41,19 +43,24 @@ public class NotificationPreferencesController {
         log.info("received update preferences request: {}", req);
 
         try {
-            if (req.getCity() != null) {
-                prefs.setCity(req.getCity());
-            }
-            if (req.getEmailNotificationsEnabled() != null) {
-                prefs.setNotificationsForSaleEnabled(req.getNotificationsForSaleEnabled());
-            }
-            if (req.getNotificationsForSaleEnabled() != null) {
-                prefs.setNotificationsForRentEnabled(req.getNotificationsForSaleEnabled());
-            }
-
             if (req.getEmailNotificationsEnabled() != null && req.getEmailNotificationsEnabled() != prefs.isEmailNotificationsEnabled()) {
                 notificationsService.toggleEmailSubscription(prefs);
             }
+
+            if (req.getCity() != null) {
+                prefs.setCity(req.getCity());
+            }
+            if (req.getNotificationsForSaleEnabled() != null) {
+                prefs.setNotificationsForSaleEnabled(req.getNotificationsForSaleEnabled());
+            }
+            if (req.getNotificationsForRentEnabled() != null) {
+                prefs.setNotificationsForRentEnabled(req.getNotificationsForRentEnabled());
+            }
+            notificationsService.applyFilterPolicy(prefs);
+        } catch (EmailNotificationsPreferencesUpdateException e) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Please verify your email to change this setting");
+        } catch (NotificationsPreferencesUpdateException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update filter policy for notifications");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to change notification preferences");
         }

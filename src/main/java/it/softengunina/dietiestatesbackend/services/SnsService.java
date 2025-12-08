@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.services;
 
+import it.softengunina.dietiestatesbackend.exceptions.EmailNotificationsPreferencesUpdateException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,9 +72,13 @@ public class SnsService {
                 .subscriptionArn(subscriptionArn)
                 .build();
 
-        UnsubscribeResponse result = snsClient.unsubscribe(request);
-        log.info("Unsubscribed: {}", subscriptionArn);
-        return result;
+        try {
+            UnsubscribeResponse result = snsClient.unsubscribe(request);
+            log.info("Unsubscribed: {}", subscriptionArn);
+            return result;
+        } catch (SnsException e) {
+            throw new EmailNotificationsPreferencesUpdateException("Cannot unsubscribe a subscription that is pending confirmation");
+        }
     }
 
     public SetSubscriptionAttributesResponse setFilterPolicy(@NonNull SnsClient snsClient,

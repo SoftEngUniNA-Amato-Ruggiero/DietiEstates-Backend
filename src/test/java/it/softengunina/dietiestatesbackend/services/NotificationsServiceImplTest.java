@@ -1,5 +1,6 @@
 package it.softengunina.dietiestatesbackend.services;
 
+import it.softengunina.dietiestatesbackend.exceptions.NotificationsPreferencesUpdateException;
 import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import org.junit.jupiter.api.AfterEach;
@@ -98,7 +99,7 @@ class NotificationsServiceImplTest {
         Mockito.when(snsService.subEmail(snsClient, prefs.getUser().getUsername()))
                 .thenReturn(res);
 
-        notificationsService.enableEmailSubscription(prefs);
+        assertDoesNotThrow(() -> notificationsService.enableEmailSubscription(prefs));
 
         assertAll(
                 () -> assertTrue(prefs.isEmailNotificationsEnabled()),
@@ -115,7 +116,7 @@ class NotificationsServiceImplTest {
         Mockito.when(snsService.subEmail(snsClient, prefs.getUser().getUsername()))
                 .thenReturn(res);
 
-        notificationsService.enableEmailSubscription(prefs);
+        assertThrows(NotificationsPreferencesUpdateException.class, () -> notificationsService.enableEmailSubscription(prefs));
 
         assertAll(
                 () -> assertFalse(prefs.isEmailNotificationsEnabled()),
@@ -133,7 +134,7 @@ class NotificationsServiceImplTest {
         Mockito.when(snsService.unsubEmail(snsClient, prefs.getSubscriptionArn()))
                 .thenReturn(res);
 
-        notificationsService.disableEmailSubscription(prefs);
+        assertDoesNotThrow(() -> notificationsService.disableEmailSubscription(prefs));
 
         assertAll(
                 () -> assertFalse(prefs.isEmailNotificationsEnabled()),

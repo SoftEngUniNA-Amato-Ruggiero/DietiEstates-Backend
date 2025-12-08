@@ -1,12 +1,12 @@
 package it.softengunina.dietiestatesbackend.services;
 
+import it.softengunina.dietiestatesbackend.exceptions.EmailNotificationsPreferencesUpdateException;
+import it.softengunina.dietiestatesbackend.exceptions.NotificationsPreferencesUpdateException;
 import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
-import software.amazon.awssdk.services.sns.model.SubscribeResponse;
-import software.amazon.awssdk.services.sns.model.UnsubscribeResponse;
+import software.amazon.awssdk.services.sns.model.*;
 
 import java.util.Collections;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public void enableEmailSubscription(@NonNull NotificationsPreferences prefs) {
+    public void enableEmailSubscription(@NonNull NotificationsPreferences prefs) throws EmailNotificationsPreferencesUpdateException {
         String email = prefs.getUser().getUsername();
 
         snsService.withClient(client -> {
@@ -43,12 +43,15 @@ public class NotificationsServiceImpl implements NotificationsService {
             if (res.sdkHttpResponse().isSuccessful()) {
                 prefs.setSubscriptionArn(res.subscriptionArn());
                 log.info("User {} subscribed to email notifications", email);
+            } else {
+                log.error("Error subscribing to email notifications: {}", res.sdkHttpResponse());
+                throw new EmailNotificationsPreferencesUpdateException("Error subscribing to email notifications");
             }
         });
     }
 
     @Override
-    public void disableEmailSubscription(@NonNull NotificationsPreferences prefs) {
+    public void disableEmailSubscription(@NonNull NotificationsPreferences prefs) throws EmailNotificationsPreferencesUpdateException, SnsException {
         String subscriptionArn = prefs.getSubscriptionArn();
 
         snsService.withClient(client -> {
@@ -56,17 +59,35 @@ public class NotificationsServiceImpl implements NotificationsService {
             if (res.sdkHttpResponse().isSuccessful()) {
                 prefs.setSubscriptionArn(null);
                 log.info("User {} unsubscribed from email notifications", prefs.getUser().getUsername());
+            } else {
+                log.error("Error unsubscribing from email notifications: {}", res.sdkHttpResponse());
+                throw new EmailNotificationsPreferencesUpdateException("Error unsubscribing from email notifications");
             }
         });
     }
 
     @Override
-    public void toggleEmailSubscription(@NonNull NotificationsPreferences prefs) {
+    public void toggleEmailSubscription(@NonNull NotificationsPreferences prefs) throws EmailNotificationsPreferencesUpdateException {
         if (!prefs.isEmailNotificationsEnabled()) {
             enableEmailSubscription(prefs);
         } else {
             disableEmailSubscription(prefs);
         }
+    }
+
+    @Override
+    public void applyFilterPolicy(@NonNull NotificationsPreferences prefs) throws NotificationsPreferencesUpdateException {
+        String subscriptionArn = prefs.getSubscriptionArn();
+
+        snsService.withClient(client -> {
+            SetSubscriptionAttributesResponse res = snsService.setFilterPolicy(client, subscriptionArn, prefs.toFilterPolicyJson());
+            if (res.sdkHttpResponse().isSuccessful()) {
+                log.info("Applied filter policy to subscription ARN {}", subscriptionArn);
+            } else {
+                log.error("Error applying filter policy to subscription ARN {}: {}", subscriptionArn, res.sdkHttpResponse());
+                throw new NotificationsPreferencesUpdateException("Error applying filter policy to email subscription");
+            }
+        });
     }
 
     private static MessageAttributeValue buildMessageAttribute(@NonNull Map.Entry<String, String> entry) {

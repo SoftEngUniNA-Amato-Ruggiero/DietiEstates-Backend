@@ -1,6 +1,7 @@
 package it.softengunina.dietiestatesbackend.listeners;
 
-import it.softengunina.dietiestatesbackend.dto.insertionsdto.responsedto.InsertionSearchResultDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import it.softengunina.dietiestatesbackend.repository.TagRepository;
@@ -8,6 +9,7 @@ import it.softengunina.dietiestatesbackend.services.NotificationsServiceImpl;
 import it.softengunina.dietiestatesbackend.visitor.insertionsdtovisitor.InsertionDTOVisitorImpl;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PrePersist;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class InsertionsListener {
 
     TagRepository tagRepository;
@@ -41,18 +44,29 @@ public class InsertionsListener {
 
     @PostPersist
     public void publishNotification(Insertion insertion) {
-        String message = buildMessage(insertion);
-        Map<String, String> attributes = Map.of(
-                "type", insertion.getClass().getSimpleName(),
-                "city", insertion.getAddress().getCity()
-        );
-        notificationsService.publishMessageToTopic(message, attributes);
+        try {
+            String message = buildMessage(insertion);
+            Map<String, String> attributes = Map.of(
+                    "type", insertion.getClass().getSimpleName(),
+                    "city", insertion.getAddress().getCity(),
+                    "location", String.valueOf(insertion.getAddress().getLocation()),
+                    "agency", insertion.getAgency().getName(),
+                    "uploader", insertion.getUploader().getUsername()
+
+            );
+            notificationsService.publishMessageToTopic(message, attributes);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
-    private static String buildMessage(Insertion insertion) {
-        return String.valueOf(
-                new InsertionSearchResultDTO(insertion.getAddress().getLocation(), insertion.getId())
+    private static String buildMessage(Insertion insertion) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(
+                Map.of(
+                "id", insertion.getId(),
+                "location", String.valueOf(insertion.getAddress().getLocation())
+            )
         );
     }
-
 }

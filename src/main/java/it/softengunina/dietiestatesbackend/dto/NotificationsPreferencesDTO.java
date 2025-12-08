@@ -1,9 +1,13 @@
 package it.softengunina.dietiestatesbackend.dto;
 
 import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
-import lombok.Data;
+import lombok.*;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class NotificationsPreferencesDTO {
     private String city;
     private Boolean emailNotificationsEnabled;
