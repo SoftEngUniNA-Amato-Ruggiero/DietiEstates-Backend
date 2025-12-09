@@ -13,7 +13,7 @@ INSERT INTO notifications_preferences (user_id, city, subscription_arn, notifica
     (10, 'Napoli', 'baseUserTestSubscriptionArn', true, true),
     (20, 'Roma', '', true, false),
     (30, 'Milano', '', false, true),
-    (40, null, '', false, false),
+    (40, null, 'agent2TestSubscriptionArn', false, false),
     (50, null, '', true, true);
 
 INSERT INTO business_users (user_id, agency_id) VALUES

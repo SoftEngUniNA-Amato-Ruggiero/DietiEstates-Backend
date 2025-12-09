@@ -62,7 +62,7 @@ public class NotificationPreferencesController {
         }
     }
 
-    private void applyFilters(NotificationsPreferencesDTO req, NotificationsPreferences prefs) {
+    private void applyFilters(NotificationsPreferencesDTO req, NotificationsPreferences prefs) throws NotificationsPreferencesUpdateException {
         NotificationsPreferencesDTO currentPrefs = new NotificationsPreferencesDTO(prefs);
         if (req.equals(currentPrefs) && req.getEmailNotificationsEnabled() == null) {
             log.info("No changes in notification preferences, skipping filter policy update");

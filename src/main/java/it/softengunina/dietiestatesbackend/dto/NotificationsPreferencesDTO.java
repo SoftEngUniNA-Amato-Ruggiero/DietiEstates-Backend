@@ -4,8 +4,9 @@ import it.softengunina.dietiestatesbackend.model.NotificationsPreferences;
 import lombok.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @EqualsAndHashCode
 @ToString
 public class NotificationsPreferencesDTO {
