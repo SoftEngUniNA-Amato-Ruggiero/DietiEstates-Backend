@@ -120,7 +120,7 @@ class NotificationsServiceImplTest {
 
         assertAll(
                 () -> assertFalse(prefs.isEmailNotificationsEnabled()),
-                () -> assertNull(prefs.getSubscriptionArn())
+                () -> assertEquals("", prefs.getSubscriptionArn())
         );
     }
 
@@ -138,7 +138,7 @@ class NotificationsServiceImplTest {
 
         assertAll(
                 () -> assertFalse(prefs.isEmailNotificationsEnabled()),
-                () -> assertNull(prefs.getSubscriptionArn())
+                () -> assertEquals("", prefs.getSubscriptionArn())
         );
     }
 }

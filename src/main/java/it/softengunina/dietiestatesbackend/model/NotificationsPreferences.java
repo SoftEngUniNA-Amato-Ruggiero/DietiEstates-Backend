@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import it.softengunina.dietiestatesbackend.listeners.NotificationsPreferencesListener;
 import it.softengunina.dietiestatesbackend.model.users.BaseUser;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +12,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "notifications_preferences")
-@EntityListeners(NotificationsPreferencesListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
@@ -31,13 +29,14 @@ public class NotificationsPreferences {
     @Setter(AccessLevel.PROTECTED)
     private BaseUser user;
 
+    @Column(nullable = false)
     @Getter
     @Setter
-    private String city = null;
+    private String subscriptionArn = "";
 
     @Getter
     @Setter
-    private String subscriptionArn = null;
+    private String city = null;
 
     @Getter
     @Setter
@@ -52,7 +51,7 @@ public class NotificationsPreferences {
     }
 
     public boolean isEmailNotificationsEnabled() {
-        return this.subscriptionArn != null && !this.subscriptionArn.isEmpty();
+        return !this.subscriptionArn.isEmpty();
     }
 
     public String toFilterPolicyJson() {

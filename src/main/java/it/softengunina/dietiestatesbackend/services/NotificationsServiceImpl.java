@@ -36,6 +36,9 @@ public class NotificationsServiceImpl implements NotificationsService {
 
     @Override
     public void enableEmailSubscription(@NonNull NotificationsPreferences prefs) throws EmailNotificationsPreferencesUpdateException {
+        if (prefs.isEmailNotificationsEnabled()) {
+            return;
+        }
         String email = prefs.getUser().getUsername();
 
         snsService.withClient(client -> {
@@ -51,13 +54,16 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public void disableEmailSubscription(@NonNull NotificationsPreferences prefs) throws EmailNotificationsPreferencesUpdateException, SnsException {
+    public void disableEmailSubscription(@NonNull NotificationsPreferences prefs) throws EmailNotificationsPreferencesUpdateException {
+        if (!prefs.isEmailNotificationsEnabled()) {
+            return;
+        }
         String subscriptionArn = prefs.getSubscriptionArn();
 
         snsService.withClient(client -> {
             UnsubscribeResponse res = snsService.unsubEmail(client, subscriptionArn);
             if (res.sdkHttpResponse().isSuccessful()) {
-                prefs.setSubscriptionArn(null);
+                prefs.setSubscriptionArn("");
                 log.info("User {} unsubscribed from email notifications", prefs.getUser().getUsername());
             } else {
                 log.error("Error unsubscribing from email notifications: {}", res.sdkHttpResponse());

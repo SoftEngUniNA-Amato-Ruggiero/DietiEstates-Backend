@@ -11,10 +11,10 @@ INSERT INTO users (id, username, cognito_sub) VALUES
 
 INSERT INTO notifications_preferences (user_id, city, subscription_arn, notifications_for_sale_enabled, notifications_for_rent_enabled) VALUES
     (10, 'Napoli', 'baseUserTestSubscriptionArn', true, true),
-    (20, 'Roma', null, true, false),
-    (30, 'Milano', null, false, true),
-    (40, null, null, false, false),
-    (50, null, null, true, true);
+    (20, 'Roma', '', true, false),
+    (30, 'Milano', '', false, true),
+    (40, null, '', false, false),
+    (50, null, '', true, true);
 
 INSERT INTO business_users (user_id, agency_id) VALUES
     (20, 10), -- agent1

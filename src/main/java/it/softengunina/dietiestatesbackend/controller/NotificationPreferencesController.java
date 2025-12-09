@@ -37,7 +37,7 @@ public class NotificationPreferencesController {
     @PutMapping
     public NotificationsPreferencesDTO updatePreferences(@RequestAttribute(name = "user") BaseUser user,
                                                       @RequestBody NotificationsPreferencesDTO req) {
-        NotificationsPreferences prefs = repository.findByUser_Id(user.getId())
+        NotificationsPreferences prefs = repository.findByUser(user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Notification preferences not found for user: " + user.getUsername()));
 
         log.info("received update preferences request: {}", req);
@@ -46,24 +46,31 @@ public class NotificationPreferencesController {
             if (req.getEmailNotificationsEnabled() != null && req.getEmailNotificationsEnabled() != prefs.isEmailNotificationsEnabled()) {
                 notificationsService.toggleEmailSubscription(prefs);
             }
+            if (prefs.isEmailNotificationsEnabled()) {
+                applyFilters(req, prefs);
+            }
 
-            if (req.getCity() != null) {
-                prefs.setCity(req.getCity());
-            }
-            if (req.getNotificationsForSaleEnabled() != null) {
-                prefs.setNotificationsForSaleEnabled(req.getNotificationsForSaleEnabled());
-            }
-            if (req.getNotificationsForRentEnabled() != null) {
-                prefs.setNotificationsForRentEnabled(req.getNotificationsForRentEnabled());
-            }
-            notificationsService.applyFilterPolicy(prefs);
+            return new NotificationsPreferencesDTO(repository.save(prefs));
+
         } catch (EmailNotificationsPreferencesUpdateException e) {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Please verify your email to change this setting");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please verify your email to change this setting");
         } catch (NotificationsPreferencesUpdateException e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update filter policy for notifications");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update filter policy for notifications");
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to change notification preferences");
         }
-        return new NotificationsPreferencesDTO(repository.save(prefs));
+    }
+
+    private void applyFilters(NotificationsPreferencesDTO req, NotificationsPreferences prefs) {
+        NotificationsPreferencesDTO currentPrefs = new NotificationsPreferencesDTO(prefs);
+        if (req.equals(currentPrefs) && req.getEmailNotificationsEnabled() == null) {
+            log.info("No changes in notification preferences, skipping filter policy update");
+            return;
+        }
+        prefs.setCity(req.getCity());
+        prefs.setNotificationsForSaleEnabled(req.getNotificationsForSaleEnabled());
+        prefs.setNotificationsForRentEnabled(req.getNotificationsForRentEnabled());
+        notificationsService.applyFilterPolicy(prefs);
     }
 }

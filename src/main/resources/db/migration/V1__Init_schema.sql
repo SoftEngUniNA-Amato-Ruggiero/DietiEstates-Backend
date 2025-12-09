@@ -78,11 +78,11 @@ CREATE TABLE insertions_for_sale
 
 CREATE TABLE notifications_preferences
 (
-    user_id                        BIGINT  NOT NULL,
+    user_id                        BIGINT       NOT NULL,
+    subscription_arn               VARCHAR(255) NOT NULL,
     city                           VARCHAR(255),
-    subscription_arn               VARCHAR(255),
-    notifications_for_sale_enabled BOOLEAN NOT NULL,
-    notifications_for_rent_enabled BOOLEAN NOT NULL,
+    notifications_for_sale_enabled BOOLEAN      NOT NULL,
+    notifications_for_rent_enabled BOOLEAN      NOT NULL,
     CONSTRAINT pk_notifications_preferences PRIMARY KEY (user_id)
 );
 
