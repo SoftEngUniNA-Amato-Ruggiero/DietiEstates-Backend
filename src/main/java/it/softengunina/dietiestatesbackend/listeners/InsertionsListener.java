@@ -1,7 +1,5 @@
 package it.softengunina.dietiestatesbackend.listeners;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import it.softengunina.dietiestatesbackend.model.insertions.Tag;
 import it.softengunina.dietiestatesbackend.model.insertions.Insertion;
 import it.softengunina.dietiestatesbackend.repository.TagRepository;
@@ -60,13 +58,9 @@ public class InsertionsListener {
         }
     }
 
-    private static String buildMessage(Insertion insertion) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(
-                Map.of(
-                "id", insertion.getId(),
-                "location", String.valueOf(insertion.getAddress().getLocation())
-            )
-        );
+    private static String buildMessage(Insertion insertion) {
+        return "New " + insertion.getClass().getSimpleName() +  " published!\n" +
+                "id: " + insertion.getId() + "\n" +
+                "address: " + insertion.getAddress().getAddressLine1() + insertion.getAddress().getAddressLine2() + "\n";
     }
 }
