@@ -57,4 +57,12 @@ public class SnsTestUtils {
                         .build())
                 .build();
     }
+
+    public static UnsubscribeResponse buildUnsuccesfulUnsubscribeResponse() {
+        return (UnsubscribeResponse) UnsubscribeResponse.builder()
+                .sdkHttpResponse(SdkHttpResponse.builder()
+                        .statusCode(500)
+                        .build())
+                .build();
+    }
 }
