@@ -1,11 +1,12 @@
 services:
   app:
+    image: gyus3/dietiestatesbackend-app:latest
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
     ports:
-      - "8081:8081"
+      - "80:8081"
     environment:
       SPRING_PROFILES_ACTIVE: prod
     volumes:
