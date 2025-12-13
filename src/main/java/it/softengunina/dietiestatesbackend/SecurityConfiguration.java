@@ -34,6 +34,7 @@ public class SecurityConfiguration {
             )
             .authorizeHttpRequests(authz -> authz
                     .requestMatchers(apiDocsPath+"/**", swaggerPath+"/**").permitAll()
+                    .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/insertions", "/insertions/**").permitAll()
                     .anyRequest().authenticated()
             )
