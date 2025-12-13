@@ -9,8 +9,6 @@ services:
       - "80:8081"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-    volumes:
-      - ~/.aws:/root/.aws:ro
     secrets:
       - DB_PASSWORD
       - AWS_ACCESS_KEY_ID
