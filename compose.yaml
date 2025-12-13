@@ -47,6 +47,6 @@ secrets:
   DB_PASSWORD:
     file: ./secrets/postgres-passwd.txt
   AWS_ACCESS_KEY_ID:
-    file: secrets/aws-access-key-id.txt
+    file: ./secrets/aws-access-key-id.txt
   AWS_SECRET_ACCESS_KEY:
-    file: secrets/aws-secret-access-key.txt
+    file: ./secrets/aws-secret-access-key.txt
