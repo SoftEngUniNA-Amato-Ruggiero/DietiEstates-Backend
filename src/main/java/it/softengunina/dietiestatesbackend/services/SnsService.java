@@ -3,8 +3,9 @@ package it.softengunina.dietiestatesbackend.services;
 import it.softengunina.dietiestatesbackend.exceptions.EmailNotificationsPreferencesUpdateException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.*;
@@ -16,8 +17,15 @@ import java.util.function.Consumer;
 @Slf4j
 @Service
 public class SnsService {
+    @Value("${aws.access-key-id}")
+    private String awsAccessKeyId;
+    @Value("${aws.secret-access-key}")
+    private String awsSecretAccessKey;
+    @Value("${aws.region}")
+    private String awsRegion;
+
     private static final String TOPIC_ARN = "arn:aws:sns:eu-west-3:340752836075:DietiEstates-Insertions";
-    private static final ProfileCredentialsProvider CREDENTIALS_PROVIDER = ProfileCredentialsProvider.create();
+    private static final DefaultCredentialsProvider CREDENTIALS_PROVIDER = DefaultCredentialsProvider.builder().build();
     
     public void withClient(@NonNull Consumer<SnsClient> consumer) {
         try (SnsClient snsClient = SnsClient.builder()

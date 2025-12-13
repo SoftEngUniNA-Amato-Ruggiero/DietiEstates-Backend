@@ -34,3 +34,5 @@ build/
 
 ### Secrets ###
 /secrets/postgres-passwd.txt
+/secrets/aws-access-key-id.txt
+/secrets/aws-secret-access-key.txt
